@@ -14,7 +14,7 @@ export const achievements: Achievement[] = [
   { id: 'ach_ten_lessons',  title: 'Double Digits',       description: 'Complete ten lessons.',               icon: 'rocket', target: 10 },
   { id: 'ach_twenty',       title: 'Quarter Master',      description: 'Complete twenty lessons.',            icon: 'trophy', target: 20 },
   { id: 'ach_forty',        title: 'Halfway There',       description: 'Complete forty lessons.',             icon: 'trophy', target: 40 },
-  { id: 'ach_seventy',      title: 'Full Journey',        description: 'Complete every lesson in the app.',   icon: 'trophy', target: 130 },
+  { id: 'ach_seventy',      title: 'Full Journey',        description: 'Complete every lesson in the app.',   icon: 'trophy', target: 170 },
 
   { id: 'ach_streak_3',     title: 'On a Roll',           description: 'Reach a 3-day streak.',               icon: 'flame', target: 3 },
   { id: 'ach_streak_7',     title: 'Weekly Rhythm',       description: 'Reach a 7-day streak.',               icon: 'flame', target: 7 },

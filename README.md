@@ -235,7 +235,7 @@ LIF neurons, membrane time constant, threshold/reset/refractoriness, firing rate
 - **Stars**: 0–3 per lesson tied to mastery level
 - **Mastery levels**: not_started → beginner → practicing → strong → mastered
 - **Levels**: grow with total XP using a power-law curve
-- **Achievements**: 19 milestones from "First Step" to "Full Journey"
+- **Achievements**: 21 milestones from "First Step" to "Full Journey"
 - **Daily quests**: 3 deterministic quests per day from a rotating bank
 - **Milestone chests**: unlock every 5 completed lessons
 - **Confetti**: on perfect scores and mastery milestones
