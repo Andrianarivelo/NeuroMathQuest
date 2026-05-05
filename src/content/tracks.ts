@@ -2,6 +2,8 @@ import { Lesson, Module, Track } from './types';
 import { trackALessons } from './trackA';
 import { trackBLessons } from './trackB';
 import { trackCLessons } from './trackC';
+import { trackDLessons } from './trackD';
+import { trackELessons } from './trackE';
 
 function buildModules(lessons: Lesson[]): Module[] {
   const map = new Map<string, Module>();
@@ -40,7 +42,12 @@ function titleFromModuleId(id: string): string {
     'B-calculus': 'Rates of change',
     'B-dynamics': 'State and dynamics',
     'B-prob': 'Probability basics',
+    'B-eigen': 'Eigenvalues and decompositions',
+    'B-stats': 'Statistics and estimation',
+    'B-info': 'Information theory',
     'C-neuron-models': 'Spiking neuron models',
+    'C-dendrites': 'Dendrites and cables',
+    'C-synaptic': 'Synapses and short-term dynamics',
     'C-rate': 'Rate models',
     'C-coding': 'Coding and decoding',
     'C-bayes': 'Bayesian reasoning',
@@ -56,6 +63,25 @@ function titleFromModuleId(id: string): string {
     'C-predictive': 'Predictive coding',
     'C-efficient': 'Efficient coding',
     'C-bci': 'Neural interfaces',
+    'C-decision': 'Decision and working memory',
+    'C-spatial': 'Spatial codes',
+    'C-circuits': 'Microcircuits and modulation',
+    'D-foundations': 'AI foundations',
+    'D-theory': 'Learning theory',
+    'D-models': 'Model families',
+    'D-choose': 'Choosing a model',
+    'D-build': 'Building and splitting data',
+    'D-training': 'Training deep models',
+    'D-inference': 'Inference and deployment',
+    'D-refining': 'Refining models',
+    'E-intro': 'AI meets neuroscience',
+    'E-electro': 'Electrophysiology and AI',
+    'E-imaging': 'Imaging and computer vision',
+    'E-decoding': 'Neural decoding',
+    'E-behavior': 'Behaviour and closed-loop AI',
+    'E-modeling': 'AI as brain models',
+    'E-clinical': 'Clinical applications',
+    'E-frontier': 'NeuroAI frontier',
   };
   return titles[id] ?? id;
 }
@@ -81,7 +107,12 @@ function descriptionFromModuleId(id: string): string {
     'B-calculus': 'How quantities change over time.',
     'B-dynamics': 'State and state space.',
     'B-prob': 'Random variables and their behaviour.',
+    'B-eigen': 'Natural axes, stretching, and low-rank structure.',
+    'B-stats': 'Estimating models and uncertainty from data.',
+    'B-info': 'Entropy, surprise, and shared information.',
     'C-neuron-models': 'Simple but mighty models of spiking neurons.',
+    'C-dendrites': 'How voltage travels through branching neurons.',
+    'C-synaptic': 'Conductances, receptors, and short-term synaptic memory.',
     'C-rate': 'Smooth descriptions of population activity.',
     'C-coding': 'Tuning curves, population codes, and decoding.',
     'C-bayes': 'Combining priors and evidence.',
@@ -97,6 +128,25 @@ function descriptionFromModuleId(id: string): string {
     'C-predictive': 'Predictions, errors, and hierarchies.',
     'C-efficient': 'Using every spike wisely.',
     'C-bci': 'Reading brains and moving the world.',
+    'C-decision': 'Accumulating evidence and holding it online.',
+    'C-spatial': 'How brains represent location and maps.',
+    'C-circuits': 'Layers, cell types, and brain-state control.',
+    'D-foundations': 'What AI is and how it learns.',
+    'D-theory': 'Loss, bias, variance, and generalisation.',
+    'D-models': 'From linear models to transformers.',
+    'D-choose': 'Picking the right model for the data.',
+    'D-build': 'Splits, leaks, and honest evaluation.',
+    'D-training': 'Optimisers, schedules, and stability.',
+    'D-inference': 'Running models in the real world.',
+    'D-refining': 'Fine-tuning, prompting, and alignment.',
+    'E-intro': 'Why AI and neuroscience need each other.',
+    'E-electro': 'AI on spikes and probes.',
+    'E-imaging': 'Vision models for brain images.',
+    'E-decoding': 'From neural activity to behaviour and stimuli.',
+    'E-behavior': 'Tracking and shaping behaviour with AI.',
+    'E-modeling': 'Networks that resemble cortex.',
+    'E-clinical': 'AI in clinics and assistive devices.',
+    'E-frontier': 'Foundation models, causality, and ethics.',
   };
   return descriptions[id] ?? '';
 }
@@ -117,7 +167,7 @@ export const tracks: Track[] = [
     title: 'Math Foundations',
     tagline: 'The math that compneuro actually uses',
     description:
-      'Twenty bite-sized lessons on vectors, matrices, dynamics, and probability \u2014 framed through neurons.',
+      'Forty bite-sized lessons on vectors, linear algebra, calculus, probability, statistics, and information theory — framed through neurons.',
     color: '#0A6B4E',
     unlockedByDefault: false,
     modules: buildModules(trackBLessons),
@@ -127,10 +177,30 @@ export const tracks: Track[] = [
     title: 'Computational Neuroscience',
     tagline: 'Where math and biology meet',
     description:
-      'Thirty lessons on modern computational neuroscience \u2014 from LIF neurons to predictive coding and BCIs.',
+      'Fifty lessons on computational neuroscience — from LIF and Hodgkin-Huxley neurons to synapses, dynamics, decisions, spatial codes, and cortical microcircuits.',
     color: '#8A5A00',
     unlockedByDefault: false,
     modules: buildModules(trackCLessons),
+  },
+  {
+    id: 'aibasis',
+    title: 'AI Basics',
+    tagline: 'Theory, models, training, refining',
+    description:
+      'Thirty lessons on modern AI \u2014 from learning theory and model families to training, inference, and fine-tuning.',
+    color: '#1F6FEB',
+    unlockedByDefault: false,
+    modules: buildModules(trackDLessons),
+  },
+  {
+    id: 'aineuro',
+    title: 'NeuroAI',
+    tagline: 'AI for understanding the brain',
+    description:
+      'Thirty lessons on AI for neuroscience \u2014 spike sorting, neural decoding, brain models, BCIs, and the NeuroAI frontier.',
+    color: '#B82A6E',
+    unlockedByDefault: false,
+    modules: buildModules(trackELessons),
   },
 ];
 
@@ -138,6 +208,8 @@ export const allLessons: Lesson[] = [
   ...trackALessons,
   ...trackBLessons,
   ...trackCLessons,
+  ...trackDLessons,
+  ...trackELessons,
 ];
 
 export const lessonsById: Record<string, Lesson> = Object.fromEntries(

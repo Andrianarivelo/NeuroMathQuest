@@ -6,7 +6,7 @@
  * offline and deterministic.
  */
 
-export type TrackId = 'neuroscience' | 'math' | 'compneuro';
+export type TrackId = 'neuroscience' | 'math' | 'compneuro' | 'aibasis' | 'aineuro';
 
 export type Difficulty = 'intro' | 'beginner' | 'intermediate' | 'advanced';
 

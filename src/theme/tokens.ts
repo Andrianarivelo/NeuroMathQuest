@@ -137,4 +137,6 @@ export const trackTints = {
   neuroscience: { bg: '#EEECFE', fg: '#4530B8', grad: ['#B5ABF9', '#4530B8'] as [string, string] },
   math:         { bg: '#E6F8F2', fg: '#0A6B4E', grad: ['#58CCA7', '#0A6B4E'] as [string, string] },
   compneuro:    { bg: '#FFF4DA', fg: '#8A5A00', grad: ['#FFD866', '#C47A00'] as [string, string] },
+  aibasis:      { bg: '#E1ECFD', fg: '#1F6FEB', grad: ['#7AB1FA', '#1F6FEB'] as [string, string] },
+  aineuro:      { bg: '#FCE5EF', fg: '#B82A6E', grad: ['#F58FB8', '#B82A6E'] as [string, string] },
 } as const;

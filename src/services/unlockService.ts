@@ -7,6 +7,10 @@
  * - Track C (compneuro) unlocks progressively using each lesson's declared
  *   prerequisites, and additionally requires that at least the first three
  *   math lessons are practicing before any Track C lesson becomes available.
+ * - Track D (aibasis) unlocks linearly via prerequisites within the track.
+ * - Track E (aineuro) unlocks progressively via lesson prerequisites and
+ *   additionally requires a foothold in AI Basics (D01-D03) and in
+ *   Neuroscience Basics (A01-A02).
  */
 
 import { Lesson } from '../content/types';
@@ -50,6 +54,26 @@ export function isLessonUnlocked(
     return lesson.prerequisites.every((pid) => isLessonCleared(progressByLesson.get(pid)));
   }
 
+  // Track D (AI Basics): linear unlock via declared prerequisites, similar
+  // to Track B.
+  if (lesson.trackId === 'aibasis') {
+    if (lesson.prerequisites.length === 0) return true;
+    return lesson.prerequisites.every((pid) => isLessonCleared(progressByLesson.get(pid)));
+  }
+
+  // Track E (NeuroAI): require a foothold in AI Basics (first 3 lessons)
+  // and a tiny bit of Neuroscience Basics, plus declared prerequisites.
+  if (lesson.trackId === 'aineuro') {
+    const aiFoothold = ['D01', 'D02', 'D03'].every((pid) =>
+      isLessonCleared(progressByLesson.get(pid))
+    );
+    const neuroFoothold = ['A01', 'A02'].every((pid) =>
+      isLessonCleared(progressByLesson.get(pid))
+    );
+    if (!aiFoothold || !neuroFoothold) return false;
+    return lesson.prerequisites.every((pid) => isLessonCleared(progressByLesson.get(pid)));
+  }
+
   return false;
 }
 
@@ -70,10 +94,12 @@ export function nextRecommendedLesson(
 ): Lesson | null {
   // Recommend the first unlocked, non-mastered lesson across tracks, with a
   // bias toward track order and the user's math track to keep momentum.
-  const tracksOrder: Array<'math' | 'neuroscience' | 'compneuro'> = [
+  const tracksOrder: Array<'math' | 'neuroscience' | 'compneuro' | 'aibasis' | 'aineuro'> = [
     'neuroscience',
     'math',
     'compneuro',
+    'aibasis',
+    'aineuro',
   ];
   for (const trackId of tracksOrder) {
     const lessons = getTrackLessons(trackId);

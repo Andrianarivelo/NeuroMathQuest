@@ -1,9 +1,13 @@
 import { Lesson } from './types';
 
 /**
- * Track C — Computational Neuroscience and Modern Concepts. 30 lessons.
+ * Track C — Computational Neuroscience and Modern Concepts. 50 lessons.
  * Progressively unlocked by prerequisites within the track and basic Track B
- * progress.
+ * progress. Lessons C31-C50 fill in foundational gaps: Hodgkin-Huxley and
+ * channel kinetics, cable theory, synaptic dynamics, short-term plasticity,
+ * receptive-field analysis, network dynamics (Wilson-Cowan, phase planes,
+ * bifurcations), decision and memory models, spatial codes, microcircuits,
+ * and neuromodulation.
  */
 export const trackCLessons: Lesson[] = [
   {
@@ -1664,6 +1668,994 @@ export const trackCLessons: Lesson[] = [
     ],
     xpReward: 30,
     coinReward: 12,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'C31',
+    trackId: 'compneuro',
+    moduleId: 'C-neuron-models',
+    order: 31,
+    title: 'Hodgkin-Huxley model',
+    subtitle: 'The first quantitative spike',
+    estimatedMinutes: 7,
+    difficulty: 'intermediate',
+    prerequisites: ['C01'],
+    explanation:
+      'The Hodgkin-Huxley equations describe the action potential by tracking voltage together with three gating variables m, h, n that govern voltage-dependent sodium and potassium conductances. Their interplay produces the rapid depolarisation and slower repolarisation of a real spike.',
+    notation: 'C dV/dt = -g_Na m³h (V - E_Na) - g_K n⁴ (V - E_K) - g_L (V - E_L) + I',
+    keyTerms: ['Hodgkin-Huxley', 'sodium', 'potassium', 'gating variable'],
+    example:
+      'Hodgkin and Huxley fit their model to the squid giant axon and reproduced spike shape, threshold, and refractory period from first principles.',
+    intuition: 'Voltage opens channels, channels change voltage; the spike is the dance.',
+    whyItMatters:
+      'It is the gold-standard biophysical neuron model and the reference point for every simpler one.',
+    questions: [
+      {
+        prompt: 'Hodgkin-Huxley uses gating variables to describe...',
+        options: [
+          'Synaptic vesicle release',
+          'The voltage-dependent opening of ion channels',
+          'Glial buffering only',
+          'Spike sorting',
+        ],
+        answerIndex: 1,
+        explanation: 'm, h, n track channel state probabilities.',
+      },
+      {
+        prompt: 'Compared with LIF, Hodgkin-Huxley is...',
+        options: [
+          'Less biophysically detailed',
+          'More biophysically detailed but more expensive to simulate',
+          'Equivalent to LIF',
+          'Always faster to simulate',
+        ],
+        answerIndex: 1,
+        explanation: 'It captures channel biophysics at higher computational cost.',
+      },
+      {
+        prompt: 'The fast inward sodium current causes the...',
+        options: ['Repolarisation', 'Rapid depolarisation of the spike', 'Refractory period only', 'Resting potential'],
+        answerIndex: 1,
+        explanation: 'Sodium influx drives the sharp upstroke.',
+      },
+    ],
+    xpReward: 30,
+    coinReward: 12,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'C32',
+    trackId: 'compneuro',
+    moduleId: 'C-neuron-models',
+    order: 32,
+    title: 'Voltage-gated channel kinetics',
+    subtitle: 'Channels as little voltage-driven machines',
+    estimatedMinutes: 6,
+    difficulty: 'intermediate',
+    prerequisites: ['C31'],
+    explanation:
+      'Each gating variable obeys a first-order kinetic equation dm/dt = α(V)(1 − m) − β(V) m, where α and β are voltage-dependent rates. Equivalently, m relaxes toward a steady state m_∞(V) with a voltage-dependent time constant τ_m(V).',
+    notation: 'dm/dt = (m_∞(V) − m) / τ_m(V)',
+    keyTerms: ['gating kinetics', 'activation', 'inactivation', 'steady state'],
+    example:
+      'Sodium activation m_∞(V) is a sharp sigmoid: nearly 0 below threshold, nearly 1 above, switching the channel on rapidly.',
+    intuition: 'Each gate is a voltage-controlled switch with a slight delay.',
+    whyItMatters:
+      'Channel kinetics determine spike shape, refractoriness, and the menagerie of neuron firing types.',
+    questions: [
+      {
+        prompt: 'Each Hodgkin-Huxley gate satisfies a...',
+        options: [
+          'Discrete deterministic rule',
+          'First-order linear ODE driven by voltage',
+          'Random walk only',
+          'Static equation',
+        ],
+        answerIndex: 1,
+        explanation: 'Gates relax to m_∞(V) with τ_m(V).',
+      },
+      {
+        prompt: 'Inactivation gates such as h close...',
+        options: ['Instantly with depolarisation', 'Slowly with depolarisation, ending the spike', 'Never', 'Only at rest'],
+        answerIndex: 1,
+        explanation: 'Inactivation terminates the upstroke and helps refractoriness.',
+      },
+      {
+        prompt: 'Different channel kinetics produce...',
+        options: ['Identical neurons', 'A diversity of firing patterns and excitability classes', 'No spikes', 'Only oscillations'],
+        answerIndex: 1,
+        explanation: 'Channel composition shapes neuron behaviour.',
+      },
+    ],
+    xpReward: 28,
+    coinReward: 11,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'C33',
+    trackId: 'compneuro',
+    moduleId: 'C-dendrites',
+    order: 33,
+    title: 'Cable theory and dendrites',
+    subtitle: 'Voltage spreads, but it leaks',
+    estimatedMinutes: 7,
+    difficulty: 'intermediate',
+    prerequisites: ['C02'],
+    explanation:
+      'Dendrites are leaky cables: voltage decays with distance from a synaptic input due to membrane resistance and intracellular axial resistance. The cable equation describes how voltage spreads, with characteristic length λ and time τ that depend on these resistances.',
+    notation: 'τ ∂V/∂t = λ² ∂²V/∂x² − V + R I(x, t)',
+    keyTerms: ['cable equation', 'space constant', 'dendrite', 'attenuation'],
+    example:
+      'A distal synapse on a long dendrite contributes a smaller voltage at the soma than the same synapse near the soma, because of cable attenuation.',
+    intuition: 'Far inputs whisper; near inputs shout.',
+    whyItMatters:
+      'Cable theory explains how dendritic geometry shapes integration and why location matters.',
+    questions: [
+      {
+        prompt: 'The space constant λ measures...',
+        options: [
+          'The distance over which voltage decays by 1/e along a dendrite',
+          'The time to reach steady state',
+          'The threshold for a spike',
+          'The neuron’s firing rate',
+        ],
+        answerIndex: 0,
+        explanation: 'λ governs spatial attenuation along a passive cable.',
+      },
+      {
+        prompt: 'A distal synapse contributes ___ voltage at the soma than a proximal one...',
+        options: ['More', 'The same', 'Less, because of cable attenuation', 'Always zero'],
+        answerIndex: 2,
+        explanation: 'Distance attenuates the somatic effect.',
+      },
+      {
+        prompt: 'Cable theory treats the dendrite as a...',
+        options: ['Discrete chain of independent compartments only', 'Leaky electrical cable', 'A pure resistor', 'A capacitor in isolation'],
+        answerIndex: 1,
+        explanation: 'It models membrane and axial properties along the cable.',
+      },
+    ],
+    xpReward: 30,
+    coinReward: 12,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'C34',
+    trackId: 'compneuro',
+    moduleId: 'C-synaptic',
+    order: 34,
+    title: 'Synaptic conductance and reversal potentials',
+    subtitle: 'Synapses as voltage-dependent currents',
+    estimatedMinutes: 6,
+    difficulty: 'intermediate',
+    prerequisites: ['C04'],
+    explanation:
+      'A synaptic input opens channels with conductance g_syn(t). The resulting current is I_syn = g_syn(t) (V − E_syn), where E_syn is the reversal potential. Excitatory synapses have E_syn near 0 mV; inhibitory synapses near or below rest.',
+    notation: 'I_syn = g_syn(t) (V − E_syn)',
+    keyTerms: ['conductance', 'reversal potential', 'driving force', 'shunt'],
+    example:
+      'When V approaches E_syn, the driving force shrinks to zero, so the same conductance has less effect — synaptic input self-limits.',
+    intuition: 'Synapse = a leak with a target voltage.',
+    whyItMatters:
+      'Many phenomena (shunting inhibition, divisive gain) are direct consequences of conductance-based synapses.',
+    questions: [
+      {
+        prompt: 'For an excitatory synapse with E_syn = 0 mV, the driving force when V is near rest is...',
+        options: ['Zero', 'Negative and large in magnitude (drives V up toward 0)', 'Saturating immediately', 'Independent of V'],
+        answerIndex: 1,
+        explanation: 'V − E_syn is negative, current flows in to depolarise the cell.',
+      },
+      {
+        prompt: 'When V equals the reversal potential E_syn, the synaptic current is...',
+        options: ['Maximum', 'Zero', 'Random', 'Always negative'],
+        answerIndex: 1,
+        explanation: 'No driving force ⇒ no current.',
+      },
+      {
+        prompt: 'Shunting inhibition refers to...',
+        options: [
+          'Inhibitory currents that hyperpolarise the cell strongly',
+          'Inhibitory conductance near rest that reduces excitatory effects without much voltage change',
+          'Excitatory drive only',
+          'Spike-time-dependent plasticity',
+        ],
+        answerIndex: 1,
+        explanation: 'High conductance near rest divides the impact of excitatory inputs.',
+      },
+    ],
+    xpReward: 26,
+    coinReward: 10,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'C35',
+    trackId: 'compneuro',
+    moduleId: 'C-synaptic',
+    order: 35,
+    title: 'AMPA, NMDA, and GABA dynamics',
+    subtitle: 'A small zoo of synaptic currents',
+    estimatedMinutes: 6,
+    difficulty: 'intermediate',
+    prerequisites: ['C34'],
+    explanation:
+      'AMPA receptors mediate fast excitation with short conductance pulses. NMDA receptors are slower and voltage-dependent: their channel is blocked by Mg²⁺ at rest and unblocks with depolarisation, giving a coincidence-detector flavour. GABA-A produces fast inhibition; GABA-B is slower.',
+    keyTerms: ['AMPA', 'NMDA', 'GABA', 'coincidence detector'],
+    example:
+      'NMDA-mediated calcium entry only when both presynaptic and postsynaptic activity coincide is central to many models of associative plasticity.',
+    intuition: 'AMPA = quick punch, NMDA = listens and unblocks, GABA = brake.',
+    whyItMatters:
+      'These different dynamics shape integration, plasticity, and circuit oscillations.',
+    questions: [
+      {
+        prompt: 'NMDA receptors are special because their conductance is...',
+        options: ['Voltage-independent', 'Voltage-dependent through magnesium block', 'Zero', 'Always saturated'],
+        answerIndex: 1,
+        explanation: 'Mg²⁺ unblocks with depolarisation, enabling coincidence detection.',
+      },
+      {
+        prompt: 'AMPA receptor currents decay on the order of...',
+        options: ['Tens of seconds', 'A few milliseconds', 'Hours', 'No decay'],
+        answerIndex: 1,
+        explanation: 'AMPA is fast.',
+      },
+      {
+        prompt: 'GABA-A typically produces...',
+        options: ['Fast inhibition via Cl⁻ flow', 'Slow excitation', 'Fast excitation', 'Long-term plasticity directly'],
+        answerIndex: 0,
+        explanation: 'GABA-A opens chloride channels for fast inhibition.',
+      },
+    ],
+    xpReward: 28,
+    coinReward: 11,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'C36',
+    trackId: 'compneuro',
+    moduleId: 'C-synaptic',
+    order: 36,
+    title: 'Short-term plasticity',
+    subtitle: 'Synapses with memory of seconds',
+    estimatedMinutes: 6,
+    difficulty: 'intermediate',
+    prerequisites: ['C34'],
+    explanation:
+      'On the timescale of milliseconds to seconds, synapses depress (vesicle depletion) or facilitate (residual calcium) with repeated activity. The Tsodyks-Markram model captures both with one resource variable and a calcium-related utilisation variable.',
+    keyTerms: ['short-term depression', 'facilitation', 'Tsodyks-Markram', 'release probability'],
+    example:
+      'A depressing synapse weakens during sustained presynaptic firing, acting like a high-pass temporal filter.',
+    intuition: 'Synapses are not constant — they have short memories of how recently they were used.',
+    whyItMatters:
+      'Short-term plasticity shapes temporal filtering, network gain, and the response to bursts.',
+    questions: [
+      {
+        prompt: 'Short-term depression usually arises from...',
+        options: ['New receptor synthesis', 'Depletion of presynaptic vesicles or release sites', 'Long-term plasticity', 'Glial uptake only'],
+        answerIndex: 1,
+        explanation: 'Resource depletion makes successive releases smaller.',
+      },
+      {
+        prompt: 'Facilitation usually arises from...',
+        options: ['Residual presynaptic calcium increasing release probability', 'Depleted vesicles', 'No mechanism at all', 'A long-term genetic switch'],
+        answerIndex: 0,
+        explanation: 'Calcium accumulation boosts subsequent release.',
+      },
+      {
+        prompt: 'A depressing synapse acts on rate signals as a...',
+        options: [
+          'Low-pass filter',
+          'High-pass / change-detecting filter',
+          'Pure delay',
+          'Random scrambler',
+        ],
+        answerIndex: 1,
+        explanation: 'It emphasises onsets and adapts to sustained firing.',
+      },
+    ],
+    xpReward: 28,
+    coinReward: 11,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'C37',
+    trackId: 'compneuro',
+    moduleId: 'C-coding',
+    order: 37,
+    title: 'Spike-triggered average',
+    subtitle: 'What stimulus tends to fire this neuron?',
+    estimatedMinutes: 6,
+    difficulty: 'intermediate',
+    prerequisites: ['C24'],
+    explanation:
+      'The spike-triggered average (STA) is the mean stimulus in the time window preceding each spike. For neurons whose firing rate depends linearly on a filtered version of the stimulus, the STA estimates the linear filter.',
+    notation: 'STA(τ) = (1/N) Σₖ s(tₖ − τ)',
+    keyTerms: ['STA', 'linear filter', 'reverse correlation'],
+    example:
+      'STA computed from a V1 simple cell driven by white noise gratings reveals an oriented Gabor-like filter.',
+    intuition: 'Average the stimulus around every spike to see what the neuron likes.',
+    whyItMatters:
+      'STA is a foundational, model-free way to characterise neural feature selectivity.',
+    questions: [
+      {
+        prompt: 'STA estimates...',
+        options: [
+          'The neuron’s exact spike count',
+          'The mean stimulus that precedes spikes',
+          'The synaptic weight matrix',
+          'The membrane time constant',
+        ],
+        answerIndex: 1,
+        explanation: 'It is the average of stimulus snippets aligned to spikes.',
+      },
+      {
+        prompt: 'STA works particularly well when the stimulus is...',
+        options: ['Constant', 'Uncorrelated white noise', 'Periodic only', 'Always zero'],
+        answerIndex: 1,
+        explanation: 'White noise makes the STA an unbiased linear filter estimate.',
+      },
+      {
+        prompt: 'For a V1 simple cell, the STA often resembles a...',
+        options: ['Pure DC offset', 'Localised oriented edge or Gabor-like pattern', 'Uniform image', 'Random texture'],
+        answerIndex: 1,
+        explanation: 'V1 simple cells are oriented edge detectors.',
+      },
+    ],
+    xpReward: 28,
+    coinReward: 11,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'C38',
+    trackId: 'compneuro',
+    moduleId: 'C-coding',
+    order: 38,
+    title: 'Receptive fields',
+    subtitle: 'Where in the world a neuron looks',
+    estimatedMinutes: 5,
+    difficulty: 'beginner',
+    prerequisites: ['C37'],
+    explanation:
+      'A receptive field is the region of stimulus space (visual, auditory, somatosensory) where a stimulus changes a neuron’s response. Receptive fields can be characterised in space, time, and feature dimensions like orientation or frequency.',
+    keyTerms: ['receptive field', 'centre-surround', 'orientation tuning'],
+    example:
+      'Retinal ganglion cells have centre-surround receptive fields; primary visual cortex neurons have oriented edge receptive fields.',
+    intuition: 'A neuron only listens to a small slice of the world.',
+    whyItMatters:
+      'Receptive fields are the most concrete language for sensory neural computation.',
+    questions: [
+      {
+        prompt: 'A receptive field is...',
+        options: [
+          'The full sensory environment',
+          'The region of stimulus space that influences a neuron’s response',
+          'A type of synapse',
+          'The motor output of the neuron',
+        ],
+        answerIndex: 1,
+        explanation: 'It is the part of the world the neuron responds to.',
+      },
+      {
+        prompt: 'Centre-surround receptive fields are typical of...',
+        options: ['V1 simple cells', 'Retinal ganglion cells and LGN cells', 'Motor neurons only', 'Brainstem nuclei only'],
+        answerIndex: 1,
+        explanation: 'They highlight local contrast.',
+      },
+      {
+        prompt: 'V1 simple cell receptive fields are well approximated by...',
+        options: ['Random noise', 'Oriented Gabor-like filters', 'Pure constants', 'Sigmoid functions only'],
+        answerIndex: 1,
+        explanation: 'Oriented edge detectors fit V1 simple-cell tuning.',
+      },
+    ],
+    xpReward: 22,
+    coinReward: 8,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'C39',
+    trackId: 'compneuro',
+    moduleId: 'C-coding',
+    order: 39,
+    title: 'Rate vs temporal coding',
+    subtitle: 'How much do exact spike times matter?',
+    estimatedMinutes: 5,
+    difficulty: 'intermediate',
+    prerequisites: ['C08'],
+    explanation:
+      'Rate coding represents information by mean firing rate over a window. Temporal coding uses precise spike times: latency to first spike, phase relative to an oscillation, or fine inter-spike intervals. Real brains use both, sometimes in the same population.',
+    keyTerms: ['rate code', 'temporal code', 'latency code', 'phase code'],
+    example:
+      'In the auditory system, exact spike timing carries information about sound location through interaural time differences down to microseconds.',
+    intuition: 'The when, not just the how-many, can carry information.',
+    whyItMatters:
+      'The choice between rate and temporal codes shapes both modelling assumptions and analysis tools.',
+    questions: [
+      {
+        prompt: 'Rate coding ignores...',
+        options: ['Spike counts', 'Precise spike timing within the window', 'Tuning curves', 'Stimulus identity'],
+        answerIndex: 1,
+        explanation: 'It only uses the count or rate.',
+      },
+      {
+        prompt: 'Temporal codes can use...',
+        options: [
+          'First-spike latency, phase, or precise ISIs',
+          'Only rates',
+          'Nothing more than means',
+          'Only stimuli',
+        ],
+        answerIndex: 0,
+        explanation: 'Many fine-timing features can carry information.',
+      },
+      {
+        prompt: 'A reason brains plausibly use both is that...',
+        options: [
+          'Rate codes are robust while temporal codes are precise; tasks differ',
+          'Rate codes do not exist',
+          'Temporal codes are forbidden',
+          'Both codes are identical',
+        ],
+        answerIndex: 0,
+        explanation: 'Different tasks reward different coding strategies.',
+      },
+    ],
+    xpReward: 24,
+    coinReward: 9,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'C40',
+    trackId: 'compneuro',
+    moduleId: 'C-stats',
+    order: 40,
+    title: 'Fano factor and ISI distributions',
+    subtitle: 'Diagnosing spike train variability',
+    estimatedMinutes: 5,
+    difficulty: 'intermediate',
+    prerequisites: ['C14'],
+    explanation:
+      'The Fano factor F = Var[N] / E[N] for spike counts equals 1 for a Poisson process. The inter-spike interval (ISI) distribution is exponential for Poisson; refractoriness pulls it toward more regular shapes.',
+    notation: 'F = Var[N] / E[N]',
+    keyTerms: ['Fano factor', 'ISI', 'Poisson', 'regularity'],
+    example:
+      'Cortical neurons often have Fano factors near or slightly above 1 in vivo, suggesting near-Poisson variability.',
+    intuition: 'Fano > 1 = burstier than Poisson; Fano < 1 = more regular than Poisson.',
+    whyItMatters:
+      'These statistics distinguish noise models and constrain coding theories.',
+    questions: [
+      {
+        prompt: 'For a Poisson process, the Fano factor equals...',
+        options: ['0', '1', '2', '∞'],
+        answerIndex: 1,
+        explanation: 'Variance equals mean for Poisson.',
+      },
+      {
+        prompt: 'A spike train with strong absolute refractoriness has...',
+        options: ['F > 1', 'F = 1', 'F < 1', 'No defined Fano factor'],
+        answerIndex: 2,
+        explanation: 'Refractoriness regularises spiking, reducing variance below the mean.',
+      },
+      {
+        prompt: 'The ISI distribution for a homogeneous Poisson process is...',
+        options: ['Gaussian', 'Exponential', 'Uniform', 'Bimodal'],
+        answerIndex: 1,
+        explanation: 'Inter-event times of a Poisson process are exponential.',
+      },
+    ],
+    xpReward: 26,
+    coinReward: 10,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'C41',
+    trackId: 'compneuro',
+    moduleId: 'C-efficient',
+    order: 41,
+    title: 'Sparse coding',
+    subtitle: 'Few neurons active for each input',
+    estimatedMinutes: 6,
+    difficulty: 'intermediate',
+    prerequisites: ['C29'],
+    explanation:
+      'Sparse coding represents each input with only a small subset of active neurons drawn from a larger population. Learning sparse codes on natural images yields oriented, localised, bandpass receptive fields resembling V1 simple cells.',
+    keyTerms: ['sparse coding', 'overcomplete basis', 'L1 penalty', 'V1'],
+    example:
+      'Olshausen and Field showed that maximising sparsity on natural image patches recovers V1-like receptive fields without supervision.',
+    intuition: 'Use a big alphabet but write each word with few letters.',
+    whyItMatters:
+      'Sparse codes are energy-efficient and explain a wide range of sensory representations.',
+    questions: [
+      {
+        prompt: 'A sparse code uses...',
+        options: ['All neurons strongly for every input', 'Few active neurons per input out of many possible', 'No neurons at all', 'A single neuron always'],
+        answerIndex: 1,
+        explanation: 'Sparseness = few active units per input.',
+      },
+      {
+        prompt: 'Olshausen and Field’s sparse coding model on natural images learned filters that resemble...',
+        options: ['Random patterns', 'V1 simple-cell receptive fields', 'Pure constants', 'Audio spectrograms only'],
+        answerIndex: 1,
+        explanation: 'Oriented, localised, bandpass features emerged.',
+      },
+      {
+        prompt: 'Sparseness is often imposed via...',
+        options: ['L1 or similar penalties on activity', 'Random noise', 'Zero loss', 'Larger learning rates'],
+        answerIndex: 0,
+        explanation: 'L1 promotes few non-zero activations.',
+      },
+    ],
+    xpReward: 28,
+    coinReward: 11,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'C42',
+    trackId: 'compneuro',
+    moduleId: 'C-dimred',
+    order: 42,
+    title: 'Independent component analysis',
+    subtitle: 'Finding statistically independent sources',
+    estimatedMinutes: 6,
+    difficulty: 'intermediate',
+    prerequisites: ['C25'],
+    explanation:
+      'ICA seeks a linear unmixing of multivariate data into components that are as statistically independent as possible, not merely uncorrelated. Unlike PCA, it cares about higher-order statistics, which lets it recover non-Gaussian sources.',
+    keyTerms: ['ICA', 'independence', 'non-Gaussianity', 'unmixing'],
+    example:
+      'On EEG, ICA helps separate brain signals from independent artefact sources such as eye blinks or heartbeats.',
+    intuition: 'PCA decorrelates; ICA goes further and seeks independence.',
+    whyItMatters:
+      'ICA is widely used to clean and interpret multichannel neural recordings and imaging data.',
+    questions: [
+      {
+        prompt: 'ICA differs from PCA mainly in that it seeks...',
+        options: [
+          'Decorrelation only',
+          'Statistically independent components, not just uncorrelated ones',
+          'Larger eigenvalues only',
+          'No structure',
+        ],
+        answerIndex: 1,
+        explanation: 'Independence is stronger than uncorrelation.',
+      },
+      {
+        prompt: 'ICA fails or becomes ambiguous when the sources are...',
+        options: ['Highly non-Gaussian', 'All Gaussian', 'Sparse', 'Rare'],
+        answerIndex: 1,
+        explanation: 'Non-Gaussianity is what ICA exploits.',
+      },
+      {
+        prompt: 'A common neuroscience use of ICA is to...',
+        options: ['Sort spikes', 'Remove eye-blink and heartbeat artefacts from EEG/MEG', 'Compute connectomes', 'Train spiking networks'],
+        answerIndex: 1,
+        explanation: 'ICA cleans multichannel recordings.',
+      },
+    ],
+    xpReward: 28,
+    coinReward: 11,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'C43',
+    trackId: 'compneuro',
+    moduleId: 'C-rate',
+    order: 43,
+    title: 'Wilson-Cowan equations',
+    subtitle: 'Two coupled rate equations for E and I',
+    estimatedMinutes: 7,
+    difficulty: 'advanced',
+    prerequisites: ['C04', 'C06'],
+    explanation:
+      'The Wilson-Cowan equations describe the average firing rates E and I of coupled excitatory and inhibitory populations: τ_E dE/dt = −E + f(w_EE E − w_EI I + I_E) and similarly for I. They produce stable activity, oscillations, and bistability depending on parameters.',
+    notation: 'τ_E dE/dt = −E + f(w_EE E − w_EI I + I_E)',
+    keyTerms: ['Wilson-Cowan', 'mean field', 'E-I population', 'gain function'],
+    example:
+      'The same Wilson-Cowan model produces winner-take-all decisions for some parameter sets and gamma-like oscillations for others.',
+    intuition: 'Two interacting populations: excitatory drive vs inhibitory brake.',
+    whyItMatters:
+      'They are the canonical mean-field model of cortical population dynamics.',
+    questions: [
+      {
+        prompt: 'Wilson-Cowan equations describe...',
+        options: [
+          'Single neuron spikes in detail',
+          'Mean firing rates of coupled excitatory and inhibitory populations',
+          'Synaptic vesicles',
+          'Glial cells only',
+        ],
+        answerIndex: 1,
+        explanation: 'They are mean-field rate equations for E and I.',
+      },
+      {
+        prompt: 'For some parameters, Wilson-Cowan can produce...',
+        options: [
+          'Oscillations and bistability',
+          'Only constant activity',
+          'No dynamics at all',
+          'Random walks only',
+        ],
+        answerIndex: 0,
+        explanation: 'Limit cycles and multiple stable fixed points are common regimes.',
+      },
+      {
+        prompt: 'The function f in Wilson-Cowan is typically a...',
+        options: ['Linear function only', 'Saturating sigmoid-like gain', 'Sign function only', 'Random map'],
+        answerIndex: 1,
+        explanation: 'A bounded sigmoid is the standard choice.',
+      },
+    ],
+    xpReward: 30,
+    coinReward: 12,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'C44',
+    trackId: 'compneuro',
+    moduleId: 'C-rate',
+    order: 44,
+    title: 'Phase plane and fixed points',
+    subtitle: 'Picturing dynamics in two variables',
+    estimatedMinutes: 6,
+    difficulty: 'intermediate',
+    prerequisites: ['C43'],
+    explanation:
+      'For a 2D system, the phase plane plots one variable against the other. Nullclines are curves where each variable’s derivative is zero; their intersections are fixed points. Linearising around a fixed point reveals whether it is stable, unstable, or a saddle.',
+    keyTerms: ['phase plane', 'nullcline', 'fixed point', 'stability'],
+    example:
+      'Plotting E and I nullclines for a Wilson-Cowan system makes the location and number of fixed points visually obvious.',
+    intuition: 'Find where the arrows on the plane stop moving — those are fixed points.',
+    whyItMatters:
+      'Phase planes are the standard tool for understanding low-dimensional neural dynamics.',
+    questions: [
+      {
+        prompt: 'A nullcline for variable x is the curve where...',
+        options: ['x = 0', 'dx/dt = 0', 'y = 0', 'The system is unstable'],
+        answerIndex: 1,
+        explanation: 'It is the locus of zero rate of change for x.',
+      },
+      {
+        prompt: 'Fixed points of a 2D system live where...',
+        options: [
+          'Only the x-nullcline lies',
+          'Both nullclines intersect',
+          'Variables are infinite',
+          'Random points',
+        ],
+        answerIndex: 1,
+        explanation: 'Both derivatives must vanish.',
+      },
+      {
+        prompt: 'A saddle point is...',
+        options: ['Stable in every direction', 'Unstable in every direction', 'Stable along one direction and unstable along another', 'Periodic'],
+        answerIndex: 2,
+        explanation: 'Saddles attract along stable manifolds and repel along unstable ones.',
+      },
+    ],
+    xpReward: 28,
+    coinReward: 11,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'C45',
+    trackId: 'compneuro',
+    moduleId: 'C-rate',
+    order: 45,
+    title: 'Bifurcations and Type I/II excitability',
+    subtitle: 'Where neurons begin to fire',
+    estimatedMinutes: 6,
+    difficulty: 'advanced',
+    prerequisites: ['C44'],
+    explanation:
+      'A bifurcation is a qualitative change in dynamics as a parameter varies. Type I neurons start firing at arbitrarily low frequencies via a saddle-node-on-invariant-circle bifurcation. Type II neurons jump to a non-zero frequency via a Hopf bifurcation.',
+    keyTerms: ['bifurcation', 'Type I excitability', 'Type II excitability', 'Hopf'],
+    example:
+      'Cortical pyramidal cells often behave as Type I integrators; squid axon Hodgkin-Huxley behaves as Type II resonator.',
+    intuition: 'Two different ways for a neuron to switch from quiet to spiking, with different signatures.',
+    whyItMatters:
+      'Bifurcations classify neuronal firing onsets and predict response to noise and oscillations.',
+    questions: [
+      {
+        prompt: 'Type I excitability is associated with...',
+        options: [
+          'Firing onsets at arbitrarily low frequency',
+          'Sudden firing at a non-zero rate',
+          'No spiking at all',
+          'Only oscillations',
+        ],
+        answerIndex: 0,
+        explanation: 'Saddle-node-on-invariant-circle gives continuous frequency-current curves.',
+      },
+      {
+        prompt: 'Type II excitability is associated with...',
+        options: [
+          'A Hopf bifurcation and onset at non-zero frequency',
+          'No firing',
+          'Linear dynamics only',
+          'Refractoriness only',
+        ],
+        answerIndex: 0,
+        explanation: 'Hopf bifurcations produce sudden onset at finite frequency.',
+      },
+      {
+        prompt: 'Bifurcations describe...',
+        options: [
+          'Quantitative changes only',
+          'Qualitative changes in dynamics as a parameter varies',
+          'A type of synapse',
+          'A specific neuron type',
+        ],
+        answerIndex: 1,
+        explanation: 'Topology of dynamics changes at a bifurcation.',
+      },
+    ],
+    xpReward: 30,
+    coinReward: 12,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'C46',
+    trackId: 'compneuro',
+    moduleId: 'C-decision',
+    order: 46,
+    title: 'Drift-diffusion model',
+    subtitle: 'Accumulating noisy evidence to a decision',
+    estimatedMinutes: 6,
+    difficulty: 'intermediate',
+    prerequisites: ['C13'],
+    explanation:
+      'The drift-diffusion model represents perceptual decisions as a noisy accumulation of evidence over time. The accumulator drifts at a rate proportional to evidence quality and triggers a decision when it crosses a bound. It captures both choice probability and reaction-time distributions.',
+    notation: 'dx = μ dt + σ dW;  decision when x crosses ±θ',
+    keyTerms: ['DDM', 'evidence accumulation', 'decision bound', 'reaction time'],
+    example:
+      'In random-dot motion tasks, monkey reaction time and accuracy are well captured by a drift-diffusion model whose drift depends on motion coherence.',
+    intuition: 'Imagine a noisy ball rolling between two walls; the wall it hits is the decision.',
+    whyItMatters:
+      'It is the canonical computational model of two-alternative decisions and links neural firing to behaviour.',
+    questions: [
+      {
+        prompt: 'In the drift-diffusion model, the drift rate represents...',
+        options: ['The decision threshold', 'Average evidence per unit time', 'Pure noise only', 'Reaction time only'],
+        answerIndex: 1,
+        explanation: 'Drift is the systematic pull from evidence.',
+      },
+      {
+        prompt: 'A decision is made in the DDM when...',
+        options: ['The accumulator hits a bound', 'Time runs out only', 'The drift becomes zero', 'Noise reverses'],
+        answerIndex: 0,
+        explanation: 'Crossing a threshold triggers a choice.',
+      },
+      {
+        prompt: 'Compared with stronger evidence, weaker evidence in DDM yields...',
+        options: ['Faster, more accurate decisions', 'Slower decisions and more errors', 'No decisions', 'Always correct decisions'],
+        answerIndex: 1,
+        explanation: 'Lower drift means longer accumulation and more noise-driven errors.',
+      },
+    ],
+    xpReward: 28,
+    coinReward: 11,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'C47',
+    trackId: 'compneuro',
+    moduleId: 'C-decision',
+    order: 47,
+    title: 'Working memory and persistent activity',
+    subtitle: 'Holding information without external input',
+    estimatedMinutes: 6,
+    difficulty: 'intermediate',
+    prerequisites: ['C18'],
+    explanation:
+      'During working memory tasks, prefrontal neurons fire persistently for seconds after the cue disappears. Attractor network models reproduce this with strong recurrent excitation balanced by inhibition, yielding stable activity bumps that hold the remembered item.',
+    keyTerms: ['working memory', 'persistent activity', 'recurrent excitation', 'bump attractor'],
+    example:
+      'A continuous attractor network can hold a remembered angle as a stable bump of activity over a delay period.',
+    intuition: 'Memory as a steady self-sustaining pattern of activity.',
+    whyItMatters:
+      'Persistent activity is one of the cleanest links between attractor theory and observed cognitive function.',
+    questions: [
+      {
+        prompt: 'Persistent activity in PFC during a delay period suggests...',
+        options: [
+          'Memory is purely synaptic with no spiking',
+          'A self-sustaining attractor-like dynamic in the network',
+          'No relation to memory',
+          'Only sensory drive',
+        ],
+        answerIndex: 1,
+        explanation: 'Recurrent dynamics hold the memory.',
+      },
+      {
+        prompt: 'Bump attractors hold continuous variables by...',
+        options: [
+          'A randomly moving spike pattern',
+          'A localised stable pattern of activity along a feature axis',
+          'Total silence',
+          'Pure inhibition',
+        ],
+        answerIndex: 1,
+        explanation: 'A stable bump represents the remembered value.',
+      },
+      {
+        prompt: 'A balance between recurrent excitation and inhibition is needed because...',
+        options: [
+          'It prevents both runaway activity and decay',
+          'It is irrelevant',
+          'Only excitation matters',
+          'Only inhibition matters',
+        ],
+        answerIndex: 0,
+        explanation: 'Stable activity bumps require this balance.',
+      },
+    ],
+    xpReward: 28,
+    coinReward: 11,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'C48',
+    trackId: 'compneuro',
+    moduleId: 'C-spatial',
+    order: 48,
+    title: 'Place cells and grid cells',
+    subtitle: 'A neural map of space',
+    estimatedMinutes: 6,
+    difficulty: 'intermediate',
+    prerequisites: ['C20'],
+    explanation:
+      'Hippocampal place cells fire selectively when an animal occupies particular locations. Entorhinal grid cells fire on a triangular lattice covering the environment. Together they implement a flexible cognitive map and inspire continuous attractor and path-integration models.',
+    keyTerms: ['place cell', 'grid cell', 'cognitive map', 'path integration'],
+    example:
+      'Recording grid cells across a maze reveals each cell firing on a regular hexagonal grid that scales across the dorso-ventral axis of MEC.',
+    intuition: 'The brain has GPS, and it is built from these cells.',
+    whyItMatters:
+      'Place and grid cells are some of the strongest demonstrations of structured neural representations of behaviourally relevant variables.',
+    questions: [
+      {
+        prompt: 'Place cells fire when the animal is...',
+        options: [
+          'In a specific location in the environment',
+          'Asleep only',
+          'At any location uniformly',
+          'Stationary only',
+        ],
+        answerIndex: 0,
+        explanation: 'Each place cell has a place field.',
+      },
+      {
+        prompt: 'Grid cells fire on...',
+        options: [
+          'A regular hexagonal lattice covering the environment',
+          'Random points only',
+          'A single location only',
+          'A straight line',
+        ],
+        answerIndex: 0,
+        explanation: 'That triangular structure is their hallmark.',
+      },
+      {
+        prompt: 'A continuous attractor on a 2D sheet can implement...',
+        options: [
+          'Path integration of position from velocity inputs',
+          'Random spiking',
+          'No useful function',
+          'A linear classifier only',
+        ],
+        answerIndex: 0,
+        explanation: 'Bumps drift on a 2D attractor under velocity drive.',
+      },
+    ],
+    xpReward: 28,
+    coinReward: 11,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'C49',
+    trackId: 'compneuro',
+    moduleId: 'C-circuits',
+    order: 49,
+    title: 'Cortical microcircuits',
+    subtitle: 'Layers, columns, and cell types',
+    estimatedMinutes: 6,
+    difficulty: 'intermediate',
+    prerequisites: ['C06'],
+    explanation:
+      'Cortex is organised in six layers and into roughly columnar units. Excitatory pyramidal cells are intermixed with diverse inhibitory interneurons (parvalbumin, somatostatin, VIP) that control gain, timing, and disinhibition. The canonical microcircuit summarises common patterns of inter-laminar connectivity.',
+    keyTerms: ['cortical layers', 'columns', 'interneurons', 'canonical microcircuit'],
+    example:
+      'Inputs to V1 enter mainly in layer 4, propagate to layers 2/3 for local computation, and leave from layers 5/6 to other areas.',
+    intuition: 'Cortex is a stack of repeated mini-circuits with specialised cell types.',
+    whyItMatters:
+      'Microcircuit structure constrains theories of cortical computation and ties anatomy to function.',
+    questions: [
+      {
+        prompt: 'Inputs to primary sensory cortex typically enter via...',
+        options: ['Layer 1 only', 'Layer 4 from thalamus', 'Layer 6 only', 'No specific layer'],
+        answerIndex: 1,
+        explanation: 'Thalamic input mostly arrives at layer 4.',
+      },
+      {
+        prompt: 'Cortical interneurons are...',
+        options: [
+          'A single homogeneous group',
+          'Diverse, including PV, SST, and VIP cells with distinct roles',
+          'All excitatory',
+          'Only present in subcortex',
+        ],
+        answerIndex: 1,
+        explanation: 'Different interneurons play different inhibitory roles.',
+      },
+      {
+        prompt: 'A canonical microcircuit refers to...',
+        options: [
+          'A unique microcircuit in one area only',
+          'Common patterns of laminar connectivity repeated across cortex',
+          'A single neuron type',
+          'A non-cortical circuit',
+        ],
+        answerIndex: 1,
+        explanation: 'It captures recurring motifs across cortical areas.',
+      },
+    ],
+    xpReward: 28,
+    coinReward: 11,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'C50',
+    trackId: 'compneuro',
+    moduleId: 'C-circuits',
+    order: 50,
+    title: 'Neuromodulation and gain control',
+    subtitle: 'Chemical brushes that reshape circuits',
+    estimatedMinutes: 6,
+    difficulty: 'intermediate',
+    prerequisites: ['C04'],
+    explanation:
+      'Neuromodulators such as acetylcholine, noradrenaline, serotonin, and dopamine are released widely and act on slow, second-messenger receptors. They change neural gain, learning rate, and effective connectivity, allowing the same anatomical circuit to behave differently across brain states.',
+    keyTerms: ['neuromodulation', 'gain', 'arousal', 'dopamine'],
+    example:
+      'Increased acetylcholine and noradrenaline during attention raise cortical gain and signal-to-noise ratio for behaviourally relevant inputs.',
+    intuition: 'Modulators are knobs that retune the same circuit for different jobs.',
+    whyItMatters:
+      'Without neuromodulation, brains could not flexibly switch between sleep, attention, exploration, and learning regimes.',
+    questions: [
+      {
+        prompt: 'Neuromodulators differ from classical fast neurotransmitters because they...',
+        options: [
+          'Act faster always',
+          'Act on slower, often second-messenger systems and over wider areas',
+          'Are the same as glutamate',
+          'Have no effect',
+        ],
+        answerIndex: 1,
+        explanation: 'They are slow, broadcast, gain-modulating signals.',
+      },
+      {
+        prompt: 'Dopamine is closely tied to...',
+        options: [
+          'Reward prediction error and motivated learning',
+          'Pure motor noise',
+          'Spike sorting',
+          'Glial buffering only',
+        ],
+        answerIndex: 0,
+        explanation: 'Dopamine reports RPE and shapes learning.',
+      },
+      {
+        prompt: 'A useful conceptual role of neuromodulation is to...',
+        options: [
+          'Replace synapses',
+          'Allow the same circuit to operate in different regimes (sleep, attention, learning)',
+          'Cancel all activity',
+          'Eliminate noise entirely',
+        ],
+        answerIndex: 1,
+        explanation: 'Neuromodulators flexibly retune circuits for context.',
+      },
+    ],
+    xpReward: 28,
+    coinReward: 11,
     masteryThreshold: 0.8,
   },
 ];

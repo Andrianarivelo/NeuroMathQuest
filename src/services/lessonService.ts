@@ -217,6 +217,16 @@ function checkAchievements(): string[] {
           progress.filter((p) => p.track_id === 'compneuro' && p.mastery !== 'not_started')
             .length >= ach.target;
         break;
+      case 'ach_aibasis':
+        unlocked =
+          progress.filter((p) => p.track_id === 'aibasis' && p.mastery !== 'not_started')
+            .length >= ach.target;
+        break;
+      case 'ach_aineuro':
+        unlocked =
+          progress.filter((p) => p.track_id === 'aineuro' && p.mastery !== 'not_started')
+            .length >= ach.target;
+        break;
       case 'ach_chest_first':
       case 'ach_chest_ten':
         unlocked = wallet.chestsOpened >= ach.target;
