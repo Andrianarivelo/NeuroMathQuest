@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, PressableProps, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import { Pressable, PressableProps, Text, ViewStyle, TextStyle, Platform } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../theme/ThemeProvider';
@@ -39,7 +39,9 @@ export function Button({
   const handlePressOut = () => { scale.value = withSpring(1, { damping: 15 }); };
 
   const handlePress = (e: any) => {
-    if (haptic) Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (haptic && Platform.OS !== 'web') {
+      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => undefined);
+    }
     onPress?.(e);
   };
 

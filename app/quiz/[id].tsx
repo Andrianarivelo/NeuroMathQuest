@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, SafeAreaView, Pressable } from 'react-native';
+import { View, Text, SafeAreaView, Pressable, Platform } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Animated, { FadeIn, FadeOut, SlideInRight } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
@@ -40,10 +40,14 @@ export default function QuizScreen() {
     const correct = optionIndex === q.answerIndex;
     if (correct) {
       setCorrectCount((c) => c + 1);
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      if (Platform.OS !== 'web') {
+        void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
+      }
     } else {
       setMissedIds((m) => [...m, `${lesson.id}_q${qi}`]);
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      if (Platform.OS !== 'web') {
+        void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => undefined);
+      }
     }
   };
 

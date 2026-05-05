@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, SafeAreaView } from 'react-native';
+import { View, Text, SafeAreaView, Platform } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Animated, { FadeIn, ZoomIn } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
@@ -34,8 +34,8 @@ export default function QuizSummary() {
       missedQuestionIds: missed,
     });
     setResult(r);
-    if (r.score >= 0.999) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    if (r.score >= 0.999 && Platform.OS !== 'web') {
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
     }
   }, []);
 

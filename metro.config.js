@@ -4,7 +4,11 @@ const path = require('path');
 
 const config = getDefaultConfig(__dirname);
 
-config.resolver.assetExts.push('db');
+for (const extension of ['db', 'wasm']) {
+  if (!config.resolver.assetExts.includes(extension)) {
+    config.resolver.assetExts.push(extension);
+  }
+}
 
 // Inject SharedArrayBuffer polyfill before all modules (needed for Reanimated v4 on web)
 const originalGetPolyfills = config.serializer.getPolyfills

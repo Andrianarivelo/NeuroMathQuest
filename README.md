@@ -1,6 +1,21 @@
 # NeuroMath Quest
 
-A beautiful, gamified mobile learning app that teaches neuroscience, math foundations for computational neuroscience, and modern computational neuroscience concepts. Built with Expo React Native and TypeScript.
+Use the web app here:
+
+https://andrianarivelo.github.io/NeuroMathQuest/
+
+A beautiful, gamified web and mobile learning app that teaches neuroscience, math foundations for computational neuroscience, and modern computational neuroscience concepts. Built with Expo React Native and TypeScript.
+
+## Student Quick Start
+
+1. Open https://andrianarivelo.github.io/NeuroMathQuest/
+2. Click **Let's begin**.
+3. Choose your learning goal and daily lesson target.
+4. Click **Start learning**.
+5. Use **Continue** on the home screen to open the next lesson.
+6. Read the short lesson, then click **Start quiz**.
+
+Progress is saved in the browser on the same device. No account, install, or App Store download is required.
 
 ## Features
 
@@ -69,6 +84,17 @@ npx expo start --ios
 npx expo start --android
 ```
 
+### Web build and preview
+
+```bash
+npm run web:build
+npm run web:preview
+```
+
+The local production preview opens at:
+
+http://localhost:8082/NeuroMathQuest/
+
 ### Run tests
 
 ```bash
@@ -86,6 +112,17 @@ npm run lint
 ```bash
 npx expo-doctor
 ```
+
+## GitHub Pages Deployment
+
+Every push to `master` deploys the web app with GitHub Actions.
+
+- Public student URL: https://andrianarivelo.github.io/NeuroMathQuest/
+- Workflow: `.github/workflows/pages.yml`
+- Build output: `dist`
+- GitHub Pages base path: `/NeuroMathQuest`
+
+If the link is not live yet, open the repository on GitHub, go to **Actions**, wait for **Deploy Web App** to finish, then refresh the link.
 
 ## Building for Production
 
