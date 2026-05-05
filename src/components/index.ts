@@ -6,5 +6,6 @@ export { StarRow } from './StarRow';
 export { StreakChip, XPChip, CoinChip } from './Chips';
 export { EmptyState } from './EmptyState';
 export { LessonNode } from './LessonNode';
+export { LessonCartoon } from './LessonCartoon';
 export { SectionTitle } from './SectionTitle';
 export { Confetti } from './Confetti';

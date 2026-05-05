@@ -3,7 +3,7 @@ import { View, Text, ScrollView, SafeAreaView } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme } from '../../src/theme/ThemeProvider';
 import { getLesson } from '../../src/content/tracks';
-import { Button, Card, StarRow, ProgressBar } from '../../src/components';
+import { Button, Card, StarRow, LessonCartoon } from '../../src/components';
 import { useProgress } from '../../src/hooks/useProgress';
 import { lessonState, isLessonUnlocked } from '../../src/services/unlockService';
 
@@ -38,6 +38,8 @@ export default function LessonScreen() {
         </View>
 
         <View style={{ paddingHorizontal: 16, gap: 14, marginTop: 14 }}>
+          <LessonCartoon lesson={lesson} />
+
           {/* Concept card */}
           <Card>
             <Text style={{ ...theme.typography.h3, color: theme.colors.primary, marginBottom: 6 }}>Concept</Text>
