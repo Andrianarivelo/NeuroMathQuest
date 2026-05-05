@@ -4,7 +4,7 @@ Use the web app here:
 
 https://andrianarivelo.github.io/NeuroMathQuest/
 
-A beautiful, gamified web and mobile learning app that teaches neuroscience, math foundations for computational neuroscience, and modern computational neuroscience concepts. Built with Expo React Native and TypeScript.
+A gamified web and mobile learning app that teaches neuroscience, math foundations for computational neuroscience, and modern computational neuroscience concepts. Built with Expo React Native and TypeScript.
 
 ## Student Quick Start
 
