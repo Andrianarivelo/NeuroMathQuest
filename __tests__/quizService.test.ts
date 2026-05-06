@@ -1,4 +1,4 @@
-import { getLesson } from '../src/content/tracks';
+import { allLessons, getLesson } from '../src/content/tracks';
 import { buildQuizPool, selectQuizQuestions } from '../src/services/quizService';
 
 describe('quizService', () => {
@@ -31,5 +31,13 @@ describe('quizService', () => {
     const generated = buildQuizPool(lesson).filter((question) => question.source === 'generated');
     expect(generated.length).toBeGreaterThan(0);
     expect(generated.every((question) => question.prompt.includes(lesson.title))).toBe(true);
+  });
+
+  it('keeps generated answer choices short enough for mobile cards', () => {
+    const generated = allLessons.flatMap((item) =>
+      buildQuizPool(item).filter((question) => question.source === 'generated')
+    );
+    expect(generated.flatMap((question) => question.options).every((option) => option.length <= 92)).toBe(true);
+    expect(generated.every((question) => question.explanation.length <= 120)).toBe(true);
   });
 });

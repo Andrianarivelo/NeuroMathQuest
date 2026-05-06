@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, ScrollView, SafeAreaView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, ScrollView, SafeAreaView, Pressable } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme } from '../../src/theme/ThemeProvider';
 import { getLesson } from '../../src/content/tracks';
@@ -14,8 +14,13 @@ export default function LessonScreen() {
   const theme = useTheme();
   const router = useRouter();
   const { progressMap } = useProgress();
+  const [courseDetailIndex, setCourseDetailIndex] = useState(0);
 
   const lesson = getLesson(id ?? '');
+  useEffect(() => {
+    setCourseDetailIndex(0);
+  }, [lesson?.id]);
+
   if (!lesson) {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg, justifyContent: 'center', alignItems: 'center' }}>
@@ -29,6 +34,13 @@ export default function LessonScreen() {
   const stars = p ? (p.mastery === 'mastered' ? 3 : p.mastery === 'strong' ? 2 : p.mastery === 'practicing' ? 1 : 0) : 0;
   const notationTerms = getNotationTerms(lesson);
   const courseDetails = buildCourseDetails(lesson);
+  const selectedCourseDetail = courseDetails[courseDetailIndex] ?? courseDetails[0];
+  const goToPreviousDetail = () => {
+    setCourseDetailIndex((current) => Math.max(0, current - 1));
+  };
+  const goToNextDetail = () => {
+    setCourseDetailIndex((current) => Math.min(courseDetails.length - 1, current + 1));
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>
@@ -49,18 +61,45 @@ export default function LessonScreen() {
             <Text style={{ ...theme.typography.h3, color: theme.colors.primary, marginBottom: 6 }}>Concept</Text>
             <Text style={{ ...theme.typography.body, color: theme.colors.text, lineHeight: 24 }}>{lesson.explanation}</Text>
             {courseDetails.length > 0 && (
-              <View style={{ marginTop: 14, gap: 8 }}>
-                <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>
-                  Important details
+              <View
+                style={{
+                  marginTop: 16,
+                  backgroundColor: theme.colors.primarySoft,
+                  borderRadius: theme.radius.md,
+                  padding: 14,
+                  gap: 12,
+                }}
+              >
+                <Text style={{ ...theme.typography.body, color: theme.colors.text, lineHeight: 24 }}>
+                  {selectedCourseDetail}
                 </Text>
-                {courseDetails.map((detail, index) => (
-                  <View key={`${lesson.id}-detail-${index}`} style={{ flexDirection: 'row', gap: 8, alignItems: 'flex-start' }}>
-                    <Text style={{ ...theme.typography.caption, color: theme.colors.primary }}>{index + 1}.</Text>
-                    <Text style={{ ...theme.typography.caption, color: theme.colors.text, flex: 1, lineHeight: 18 }}>
-                      {detail}
-                    </Text>
-                  </View>
-                ))}
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                  <Pressable
+                    onPress={goToPreviousDetail}
+                    disabled={courseDetailIndex === 0}
+                    style={{
+                      paddingVertical: 8,
+                      paddingHorizontal: 10,
+                      opacity: courseDetailIndex === 0 ? 0.4 : 1,
+                    }}
+                  >
+                    <Text style={{ ...theme.typography.caption, color: theme.colors.primaryInk }}>Previous</Text>
+                  </Pressable>
+                  <Text style={{ ...theme.typography.caption, color: theme.colors.primaryInk }}>
+                    {courseDetailIndex + 1}/{courseDetails.length}
+                  </Text>
+                  <Pressable
+                    onPress={goToNextDetail}
+                    disabled={courseDetailIndex + 1 >= courseDetails.length}
+                    style={{
+                      paddingVertical: 8,
+                      paddingHorizontal: 10,
+                      opacity: courseDetailIndex + 1 >= courseDetails.length ? 0.4 : 1,
+                    }}
+                  >
+                    <Text style={{ ...theme.typography.caption, color: theme.colors.primaryInk }}>Next</Text>
+                  </Pressable>
+                </View>
               </View>
             )}
           </Card>

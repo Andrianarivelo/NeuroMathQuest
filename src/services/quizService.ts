@@ -63,6 +63,22 @@ function distractorsFrom(field: (lesson: Lesson) => string, currentLessonId: str
   );
 }
 
+function compactChoice(value: string, maxLength = 92): string {
+  const text = value.replace(/\s+/g, ' ').trim();
+  if (text.length <= maxLength) return text;
+
+  const slice = text.slice(0, maxLength);
+  const cutAt = Math.max(
+    slice.lastIndexOf('. '),
+    slice.lastIndexOf('; '),
+    slice.lastIndexOf(' - '),
+    slice.lastIndexOf(', '),
+    slice.lastIndexOf(': ')
+  );
+  const compact = cutAt >= 45 ? slice.slice(0, cutAt) : slice.replace(/\s+\S*$/, '');
+  return `${compact.replace(/[.,;:\s-]+$/, '')}.`;
+}
+
 function createQuestion(params: {
   id: string;
   prompt: string;
@@ -70,16 +86,17 @@ function createQuestion(params: {
   distractors: string[];
   explanation: string;
 }): QuizQuestionWithId | null {
-  const choices = uniqueStrings([params.answer, ...params.distractors]).slice(0, 4);
+  const choices = uniqueStrings([params.answer, ...params.distractors].map((choice) => compactChoice(choice))).slice(0, 4);
   if (choices.length < 4) return null;
   const options = toFourOptions(choices);
+  const compactAnswer = compactChoice(params.answer);
   return {
     id: params.id,
     source: 'generated',
     prompt: params.prompt,
     options,
-    answerIndex: toAnswerIndex(options.findIndex((choice) => choice === params.answer)),
-    explanation: params.explanation,
+    answerIndex: toAnswerIndex(options.findIndex((choice) => choice === compactAnswer)),
+    explanation: compactChoice(params.explanation, 120),
   };
 }
 
@@ -93,21 +110,21 @@ export function buildQuizPool(lesson: Lesson): QuizQuestionWithId[] {
   const generated: Array<QuizQuestionWithId | null> = [
     createQuestion({
       id: `${lesson.id}_intuition`,
-      prompt: `In "${lesson.title}", which mental model best explains the concept?`,
+      prompt: `Best mental model for "${lesson.title}"?`,
       answer: lesson.intuition,
       distractors: distractorsFrom((item) => item.intuition, lesson.id),
       explanation: lesson.intuition,
     }),
     createQuestion({
       id: `${lesson.id}_example`,
-      prompt: `Which neuroscience example best illustrates "${lesson.title}"?`,
+      prompt: `Best example of "${lesson.title}"?`,
       answer: lesson.example,
       distractors: distractorsFrom((item) => item.example, lesson.id),
       explanation: lesson.example,
     }),
     createQuestion({
       id: `${lesson.id}_why`,
-      prompt: `Why is "${lesson.title}" important for computational neuroscience?`,
+      prompt: `Why does "${lesson.title}" matter?`,
       answer: lesson.whyItMatters,
       distractors: distractorsFrom((item) => item.whyItMatters, lesson.id),
       explanation: lesson.whyItMatters,
@@ -127,7 +144,7 @@ export function buildQuizPool(lesson: Lesson): QuizQuestionWithId[] {
       generated.push(
         createQuestion({
           id: `${lesson.id}_notation_${index}`,
-          prompt: `In the notation for "${lesson.title}", what does ${term.symbol} mean?`,
+          prompt: `In "${lesson.title}", what does ${term.symbol} mean?`,
           answer: term.meaning,
           distractors,
           explanation: `${term.symbol}: ${term.meaning}`,

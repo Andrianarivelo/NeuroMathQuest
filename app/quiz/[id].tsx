@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { View, Text, SafeAreaView, Pressable, Platform } from 'react-native';
+import { View, Text, SafeAreaView, Pressable, Platform, ScrollView, useWindowDimensions } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Animated, { FadeIn, SlideInRight } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
@@ -13,6 +13,7 @@ export default function QuizScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const theme = useTheme();
   const router = useRouter();
+  const { width } = useWindowDimensions();
 
   const lesson = getLesson(id ?? '');
   const [seed] = useState(() => `${Date.now()}-${Math.random()}`);
@@ -34,6 +35,7 @@ export default function QuizScreen() {
   const q = questions[qi];
   const isCorrect = selectedIndex === q.answerIndex;
   const progress = (qi + (answered ? 1 : 0)) / questions.length;
+  const mobileWebBottomPadding = Platform.OS === 'web' && width < 640 ? 84 : 16;
 
   const handleSelect = (optionIndex: number) => {
     if (answered) return;
@@ -80,9 +82,9 @@ export default function QuizScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>
-      <View style={{ flex: 1, paddingHorizontal: 20 }}>
+      <View style={{ flex: 1 }}>
         {/* Top bar */}
-        <View style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 12, gap: 12 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 12, paddingHorizontal: 20, gap: 12 }}>
           <Pressable onPress={() => router.back()}>
             <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.textMuted }}>Close</Text>
           </Pressable>
@@ -93,72 +95,97 @@ export default function QuizScreen() {
         </View>
 
         {/* Question */}
-        <Animated.View entering={SlideInRight.duration(250)} key={`q-${qi}`} style={{ flex: 1, justifyContent: 'center' }}>
-          <Text style={{ ...theme.typography.h2, color: theme.colors.text, marginBottom: 24, lineHeight: 28 }}>
-            {q.prompt}
-          </Text>
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: 'center',
+            paddingHorizontal: 20,
+            paddingTop: 20,
+            paddingBottom: answered ? 20 : mobileWebBottomPadding,
+          }}
+          showsVerticalScrollIndicator={false}
+        >
+          <Animated.View entering={SlideInRight.duration(250)} key={`q-${qi}`}>
+            <Text style={{ ...theme.typography.h2, color: theme.colors.text, marginBottom: 18, lineHeight: 28 }}>
+              {q.prompt}
+            </Text>
 
-          {q.options.map((opt, oi) => {
-            let bg = theme.colors.surface;
-            let borderCol = theme.colors.border;
-            if (answered) {
-              if (oi === q.answerIndex) {
-                bg = theme.colors.successSoft;
-                borderCol = theme.colors.success;
-              } else if (oi === selectedIndex && !isCorrect) {
-                bg = theme.colors.dangerSoft;
-                borderCol = theme.colors.danger;
+            {q.options.map((opt, oi) => {
+              let bg = theme.colors.surface;
+              let borderCol = theme.colors.border;
+              if (answered) {
+                if (oi === q.answerIndex) {
+                  bg = theme.colors.successSoft;
+                  borderCol = theme.colors.success;
+                } else if (oi === selectedIndex && !isCorrect) {
+                  bg = theme.colors.dangerSoft;
+                  borderCol = theme.colors.danger;
+                }
+              } else if (oi === selectedIndex) {
+                borderCol = theme.colors.primary;
               }
-            } else if (oi === selectedIndex) {
-              borderCol = theme.colors.primary;
-            }
 
-            return (
-              <Pressable
-                key={oi}
-                onPress={() => handleSelect(oi)}
-                disabled={answered}
-                style={{
-                  backgroundColor: bg,
-                  borderWidth: 2,
-                  borderColor: borderCol,
+              return (
+                <Pressable
+                  key={oi}
+                  onPress={() => handleSelect(oi)}
+                  disabled={answered}
+                  style={{
+                    backgroundColor: bg,
+                    borderWidth: 2,
+                    borderColor: borderCol,
+                    borderRadius: theme.radius.md,
+                    padding: 14,
+                    marginBottom: 10,
+                  }}
+                >
+                  <Text style={{ ...theme.typography.body, color: theme.colors.text }}>{opt}</Text>
+                </Pressable>
+              );
+            })}
+
+            {/* Feedback */}
+            {answered && (
+              <Animated.View entering={FadeIn.duration(200)} style={{ marginTop: 8 }}>
+                <View style={{
+                  backgroundColor: isCorrect ? theme.colors.successSoft : theme.colors.warningSoft,
                   borderRadius: theme.radius.md,
-                  padding: 16,
-                  marginBottom: 10,
-                }}
-              >
-                <Text style={{ ...theme.typography.body, color: theme.colors.text }}>{opt}</Text>
-              </Pressable>
-            );
-          })}
+                  padding: 14,
+                }}>
+                  <Text style={{ ...theme.typography.bodyStrong, color: isCorrect ? theme.colors.success : theme.colors.warning, marginBottom: 4 }}>
+                    {isCorrect ? 'Correct' : 'Good learning moment'}
+                  </Text>
+                  <Text style={{ ...theme.typography.body, color: theme.colors.text, marginBottom: 8 }}>
+                    {q.explanation}
+                  </Text>
+                  <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted, fontStyle: 'italic' }}>
+                    {encourageMsg}
+                  </Text>
+                </View>
+              </Animated.View>
+            )}
+          </Animated.View>
+        </ScrollView>
 
-          {/* Feedback */}
-          {answered && (
-            <Animated.View entering={FadeIn.duration(200)} style={{ marginTop: 10 }}>
-              <View style={{
-                backgroundColor: isCorrect ? theme.colors.successSoft : theme.colors.warningSoft,
-                borderRadius: theme.radius.md,
-                padding: 14,
-                marginBottom: 10,
-              }}>
-                <Text style={{ ...theme.typography.bodyStrong, color: isCorrect ? theme.colors.success : theme.colors.warning, marginBottom: 4 }}>
-                  {isCorrect ? 'Correct' : 'Good learning moment'}
-                </Text>
-                <Text style={{ ...theme.typography.body, color: theme.colors.text, marginBottom: 8 }}>
-                  {q.explanation}
-                </Text>
-                <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted, fontStyle: 'italic' }}>
-                  {encourageMsg}
-                </Text>
-              </View>
-              <Button
-                label={qi + 1 < questions.length ? 'Next' : 'See results'}
-                fullWidth
-                onPress={handleNext}
-              />
-            </Animated.View>
-          )}
-        </Animated.View>
+        {answered && (
+          <View
+            style={{
+              paddingHorizontal: 20,
+              paddingTop: 10,
+              paddingBottom: mobileWebBottomPadding,
+              backgroundColor: theme.colors.bg,
+              borderTopWidth: 1,
+              borderTopColor: theme.colors.border,
+            }}
+          >
+            <Button
+              label={qi + 1 < questions.length ? 'Next' : 'See results'}
+              fullWidth
+              onPress={handleNext}
+            />
+          </View>
+        )}
       </View>
     </SafeAreaView>
   );
