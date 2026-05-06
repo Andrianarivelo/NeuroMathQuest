@@ -18,6 +18,8 @@ A gamified web and mobile learning app that teaches neuroscience, math foundatio
 
 Progress is saved in the browser on the same device. No account, install, or App Store download is required.
 
+Accounts are optional. Students can use the app as guests forever. If Supabase is configured, signing in adds cloud backup and cross-device sync.
+
 Superuser access for this offline web app is local to the current browser/device. In **Profile**, enter:
 
 ```text
@@ -36,9 +38,10 @@ NEUROMATH-ADMIN
 - **Spaced review system** that resurfaces weak and forgotten concepts
 - **Zoomable lesson illustrations**: click any lesson cartoon to inspect it full-screen
 - **Expanded quiz pools**: each lesson now mixes original and generated concept checks so retries are not always identical
-- **Quiz-ready study guides** on each lesson page so answer material is visible before the quiz
+- **Reference-informed neuroscience details** integrated into Track A so important facts are taught before quizzes
 - **Local learner profiles** with rotating greetings and device-saved progress
 - **Local superuser dashboard** for progress, quiz attempts, average score, active days, and weak lessons on the current installation
+- **Optional Supabase backend** for email accounts, cloud sync, cross-device progress, and real admin stats
 - **Offline-first**: no backend, no sign-in, no network required
 - **SQLite persistence** for all user progress
 - **Polished UI** with Reanimated animations, haptic feedback, and a custom design system
@@ -108,6 +111,48 @@ npm run web:preview
 The local production preview opens at:
 
 http://localhost:8082/NeuroMathQuest/
+
+## Optional Backend Setup
+
+The backend is optional. Without these variables, the app runs in guest/offline mode and keeps local progress exactly as before.
+
+### 1. Create a Supabase project
+
+1. Create a Supabase project.
+2. Open the SQL Editor.
+3. Run `supabase/migrations/001_initial_backend.sql`.
+4. Copy `.env.example` to `.env`.
+5. Fill in:
+
+```bash
+EXPO_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
+
+Expo exposes `EXPO_PUBLIC_*` variables to the web bundle, so do not put service-role secrets in the app.
+
+### 2. Run locally
+
+```bash
+npm install
+npm run web
+```
+
+Students can still skip registration. In **Profile**, they can create an account later and click **Sync now** to attach their local progress to the cloud account.
+
+### 3. Make yourself a cloud admin
+
+After signing up in the app, run this in Supabase SQL Editor with your email:
+
+```sql
+update public.profiles
+set role = 'admin'
+where user_id = (
+  select id from auth.users where email = 'you@example.com'
+);
+```
+
+Cloud admins see classroom-wide stats in **Profile** after signing in. Local superuser mode still exists for offline/demo use.
 
 ### Run tests
 

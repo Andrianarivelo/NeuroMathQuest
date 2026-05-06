@@ -13,6 +13,7 @@ import { questsForDay, QuestDefinition } from '../../src/services/questService';
 import { questsRepository, DailyQuestRow } from '../../src/repositories/questsRepository';
 import { randomEncouragement } from '../../src/content/encouragement';
 import { isoDay } from '../../src/utils/date';
+import { recordUsageEvent } from '../../src/services/backend/syncService';
 
 export default function HomeScreen() {
   const theme = useTheme();
@@ -31,6 +32,7 @@ export default function HomeScreen() {
       refreshWallet();
       refreshSettings();
       setSessionGreeting(randomEncouragement('greeting'));
+      void recordUsageEvent('home_opened');
       // Load daily quests.
       const day = isoDay();
       const defs = questsForDay(day);

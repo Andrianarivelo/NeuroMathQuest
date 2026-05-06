@@ -10,6 +10,20 @@ import { useSettings } from '../../src/hooks/useSettings';
 import { useWallet } from '../../src/hooks/useWallet';
 import { progressRepository } from '../../src/repositories/progressRepository';
 import { streakRepository } from '../../src/repositories/streakRepository';
+import {
+  CloudAdminStats,
+  getCloudAdminStats,
+  syncLocalProgressToCloud,
+} from '../../src/services/backend/syncService';
+import {
+  getCloudProfile,
+  getCloudSession,
+  signInWithEmail,
+  signOutCloud,
+  signUpWithEmail,
+  upsertCloudProfile,
+} from '../../src/services/backend/authService';
+import { isBackendConfigured } from '../../src/services/backend/supabaseClient';
 import { useTheme } from '../../src/theme/ThemeProvider';
 
 const SUPERUSER_CODE = 'NEUROMATH-ADMIN';
@@ -21,12 +35,35 @@ export default function ProfileScreen() {
   const [nameInput, setNameInput] = useState(settings.profileName);
   const [superCode, setSuperCode] = useState('');
   const [notice, setNotice] = useState('');
+  const [cloudEmail, setCloudEmail] = useState<string | null>(null);
+  const [cloudRole, setCloudRole] = useState<'student' | 'admin' | null>(null);
+  const [cloudNotice, setCloudNotice] = useState('');
+  const [cloudBusy, setCloudBusy] = useState(false);
+  const [authEmail, setAuthEmail] = useState('');
+  const [authPassword, setAuthPassword] = useState('');
+  const [cloudStats, setCloudStats] = useState<CloudAdminStats | null>(null);
+  const backendConfigured = isBackendConfigured();
+
+  const loadCloudStatus = useCallback(() => {
+    void (async () => {
+      const session = await getCloudSession();
+      setCloudEmail(session?.user.email ?? null);
+      const profile = await getCloudProfile().catch(() => null);
+      setCloudRole(profile?.role ?? null);
+      if (profile?.role === 'admin') {
+        setCloudStats(await getCloudAdminStats().catch(() => null));
+      } else {
+        setCloudStats(null);
+      }
+    })();
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
       refresh();
       refreshWallet();
-    }, [refresh, refreshWallet])
+      loadCloudStatus();
+    }, [refresh, refreshWallet, loadCloudStatus])
   );
 
   useEffect(() => {
@@ -52,6 +89,55 @@ export default function ProfileScreen() {
     const cleanName = nameInput.trim().slice(0, 32) || 'NeuroMath Explorer';
     update('profileName', cleanName);
     setNotice('Profile saved. Your progress stays attached to this device.');
+    void upsertCloudProfile(cleanName).catch(() => undefined);
+  };
+
+  const handleCloudAuth = async (mode: 'signIn' | 'signUp') => {
+    const email = authEmail.trim();
+    if (!email || authPassword.length < 6) {
+      setCloudNotice('Enter an email and a password with at least 6 characters.');
+      return;
+    }
+
+    setCloudBusy(true);
+    const result =
+      mode === 'signUp'
+        ? await signUpWithEmail(email, authPassword, settings.profileName)
+        : await signInWithEmail(email, authPassword);
+
+    if (!result.ok) {
+      setCloudNotice(result.message);
+      setCloudBusy(false);
+      return;
+    }
+
+    const syncResult = await syncLocalProgressToCloud();
+    setCloudNotice(`${result.message} ${syncResult.message}`);
+    setAuthPassword('');
+    refresh();
+    refreshWallet();
+    loadCloudStatus();
+    setCloudBusy(false);
+  };
+
+  const handleCloudSync = async () => {
+    setCloudBusy(true);
+    const result = await syncLocalProgressToCloud();
+    setCloudNotice(result.message);
+    refresh();
+    refreshWallet();
+    loadCloudStatus();
+    setCloudBusy(false);
+  };
+
+  const handleCloudSignOut = async () => {
+    setCloudBusy(true);
+    await signOutCloud();
+    setCloudEmail(null);
+    setCloudRole(null);
+    setCloudStats(null);
+    setCloudNotice('Signed out. Guest mode is still available on this device.');
+    setCloudBusy(false);
   };
 
   const handleSuperUser = () => {
@@ -197,6 +283,88 @@ export default function ProfileScreen() {
           </Card>
 
           <Text style={{ ...theme.typography.h3, color: theme.colors.text, marginBottom: 6 }}>
+            Cloud account
+          </Text>
+          <Card style={{ marginBottom: 16, gap: 10 }}>
+            <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>
+              Registration is optional. You can keep learning as a guest; an account only adds cloud backup,
+              cross-device sync, and real admin stats.
+            </Text>
+            {!backendConfigured && (
+              <Text style={{ ...theme.typography.caption, color: theme.colors.warning }}>
+                Cloud sync is not configured yet. Add Supabase env vars to enable accounts.
+              </Text>
+            )}
+            {backendConfigured && !cloudEmail && (
+              <>
+                <TextInput
+                  value={authEmail}
+                  onChangeText={setAuthEmail}
+                  placeholder="Email"
+                  placeholderTextColor={theme.colors.textMuted}
+                  autoCapitalize="none"
+                  keyboardType="email-address"
+                  style={inputStyle}
+                />
+                <TextInput
+                  value={authPassword}
+                  onChangeText={setAuthPassword}
+                  placeholder="Password"
+                  placeholderTextColor={theme.colors.textMuted}
+                  secureTextEntry
+                  style={inputStyle}
+                />
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+                  <Button
+                    label="Create account and sync"
+                    fullWidth
+                    disabled={cloudBusy}
+                    onPress={() => void handleCloudAuth('signUp')}
+                  />
+                  <Button
+                    label="Sign in and sync"
+                    variant="outline"
+                    fullWidth
+                    disabled={cloudBusy}
+                    onPress={() => void handleCloudAuth('signIn')}
+                  />
+                </View>
+              </>
+            )}
+            {backendConfigured && cloudEmail && (
+              <View style={{ gap: 10 }}>
+                <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>
+                  Signed in as {cloudEmail}
+                </Text>
+                <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>
+                  Role: {cloudRole ?? 'student'}
+                </Text>
+                <Button
+                  label="Sync now"
+                  fullWidth
+                  disabled={cloudBusy}
+                  onPress={() => void handleCloudSync()}
+                />
+                <Button
+                  label="Sign out"
+                  variant="ghost"
+                  fullWidth
+                  disabled={cloudBusy}
+                  onPress={() => void handleCloudSignOut()}
+                />
+              </View>
+            )}
+            {settings.cloudSyncLastAt > 0 && (
+              <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>
+                Last cloud sync: {new Date(settings.cloudSyncLastAt).toLocaleString()}
+              </Text>
+            )}
+            {cloudNotice.length > 0 && (
+              <Text style={{ ...theme.typography.caption, color: theme.colors.primary }}>{cloudNotice}</Text>
+            )}
+          </Card>
+
+          <Text style={{ ...theme.typography.h3, color: theme.colors.text, marginBottom: 6 }}>
             Settings
           </Text>
           <Card style={{ marginBottom: 16 }}>
@@ -264,7 +432,7 @@ export default function ProfileScreen() {
             <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>
               Superuser stats are local to this device in the current offline web app.
             </Text>
-            {!settings.superUserEnabled && (
+            {!settings.superUserEnabled && cloudRole !== 'admin' && (
               <>
                 <TextInput
                   value={superCode}
@@ -277,7 +445,7 @@ export default function ProfileScreen() {
                 <Button label="Register as superuser" variant="outline" fullWidth onPress={handleSuperUser} />
               </>
             )}
-            {settings.superUserEnabled && (
+            {(settings.superUserEnabled || cloudRole === 'admin') && (
               <View style={{ gap: 12 }}>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
                   {statPanel(`${completed}/${allLessons.length}`, 'lessons completed', theme.colors.primary)}
@@ -342,6 +510,38 @@ export default function ProfileScreen() {
                 )}
                 <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>
                   Mastered lessons: {mastered}
+                </Text>
+              </View>
+            )}
+            {cloudRole === 'admin' && cloudStats && (
+              <View style={{ gap: 12, marginTop: 8 }}>
+                <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>
+                  Cloud classroom stats
+                </Text>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+                  {statPanel(cloudStats.students, 'cloud students', theme.colors.primary)}
+                  {statPanel(cloudStats.quizAttempts, 'cloud quiz attempts', theme.colors.secondary)}
+                </View>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+                  {statPanel(`${Math.round(cloudStats.averageScore * 100)}%`, 'cloud average score', theme.colors.gold)}
+                  {statPanel(cloudStats.activeUsers7d, 'active users in 7 days', theme.colors.primary)}
+                </View>
+                <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>
+                  Cloud lessons to support
+                </Text>
+                {cloudStats.weakLessons.length === 0 ? (
+                  <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>
+                    No cloud weak-lesson data yet.
+                  </Text>
+                ) : (
+                  cloudStats.weakLessons.map((lesson) => (
+                    <Text key={lesson.lessonId} style={{ ...theme.typography.caption, color: theme.colors.text }}>
+                      {lesson.lessonId}: {lesson.learners} learner(s), average best {Math.round(lesson.averageBestScore * 100)}%
+                    </Text>
+                  ))
+                )}
+                <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>
+                  Cloud usage events: {cloudStats.usageEvents}
                 </Text>
               </View>
             )}

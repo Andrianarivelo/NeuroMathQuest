@@ -19,3 +19,10 @@ jest.mock('expo-sqlite', () => {
     }),
   };
 });
+
+jest.mock('react-native', () => ({
+  Platform: {
+    OS: 'web',
+    select: (values) => values.web ?? values.default,
+  },
+}));

@@ -16,6 +16,7 @@ import { computeReward, levelForXp, RewardResult } from './rewardService';
 import { questsForDay, questProgressDelta, QuestId } from './questService';
 import { isoDay } from '../utils/date';
 import { achievements } from '../content/achievements';
+import { syncLocalProgressToCloud } from './backend/syncService';
 
 export interface LessonAttemptInput {
   lesson: Lesson;
@@ -131,6 +132,8 @@ export function completeLessonAttempt(input: LessonAttemptInput): LessonAttemptR
 
   // Achievements.
   const newAchievements = checkAchievements();
+
+  void syncLocalProgressToCloud();
 
   return {
     score,

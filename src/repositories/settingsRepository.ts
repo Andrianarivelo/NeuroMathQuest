@@ -11,6 +11,8 @@ export interface AppSettings {
   onboardingCompleted: boolean;
   profileName: string;
   superUserEnabled: boolean;
+  installId: string;
+  cloudSyncLastAt: number;
 }
 
 export const defaultSettings: AppSettings = {
@@ -24,6 +26,8 @@ export const defaultSettings: AppSettings = {
   onboardingCompleted: false,
   profileName: 'NeuroMath Explorer',
   superUserEnabled: false,
+  installId: '',
+  cloudSyncLastAt: 0,
 };
 
 export const settingsRepository = {
@@ -45,8 +49,14 @@ export const settingsRepository = {
         case 'profileName':
           result.profileName = r.value || defaultSettings.profileName;
           break;
+        case 'installId':
+          result.installId = r.value;
+          break;
         case 'dailyGoalLessons':
           result.dailyGoalLessons = parseInt(r.value, 10) || defaultSettings.dailyGoalLessons;
+          break;
+        case 'cloudSyncLastAt':
+          result.cloudSyncLastAt = parseInt(r.value, 10) || defaultSettings.cloudSyncLastAt;
           break;
         case 'themeMode':
           result.themeMode = (r.value as AppSettings['themeMode']) ?? defaultSettings.themeMode;

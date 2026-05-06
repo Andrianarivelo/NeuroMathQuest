@@ -25,6 +25,16 @@ export const streakRepository = {
     );
   },
 
+  upsertDay(day: string, lessonsCompleted: number, xpEarned: number): void {
+    getDb().runSync(
+      `INSERT INTO streak_log (day, lessons_completed, xp_earned) VALUES (?, ?, ?)
+       ON CONFLICT(day) DO UPDATE SET
+         lessons_completed = MAX(lessons_completed, excluded.lessons_completed),
+         xp_earned = MAX(xp_earned, excluded.xp_earned);`,
+      [day, lessonsCompleted, xpEarned]
+    );
+  },
+
   recent(days: number): StreakDay[] {
     return getDb()
       .getAllSync<StreakDayRow>(

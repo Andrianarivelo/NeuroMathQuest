@@ -92,52 +92,27 @@ export function buildQuizPool(lesson: Lesson): QuizQuestionWithId[] {
 
   const generated: Array<QuizQuestionWithId | null> = [
     createQuestion({
-      id: `${lesson.id}_focus`,
-      prompt: `What is the main focus of "${lesson.title}"?`,
-      answer: lesson.subtitle,
-      distractors: distractorsFrom((item) => item.subtitle, lesson.id),
-      explanation: `This lesson focuses on: ${lesson.subtitle}`,
-    }),
-    createQuestion({
       id: `${lesson.id}_intuition`,
-      prompt: 'Which idea matches the quick intuition from this lesson?',
+      prompt: `In "${lesson.title}", which mental model best explains the concept?`,
       answer: lesson.intuition,
       distractors: distractorsFrom((item) => item.intuition, lesson.id),
       explanation: lesson.intuition,
     }),
     createQuestion({
       id: `${lesson.id}_example`,
-      prompt: 'Which example belongs with this lesson?',
+      prompt: `Which neuroscience example best illustrates "${lesson.title}"?`,
       answer: lesson.example,
       distractors: distractorsFrom((item) => item.example, lesson.id),
       explanation: lesson.example,
     }),
     createQuestion({
       id: `${lesson.id}_why`,
-      prompt: 'Why does this lesson concept matter?',
+      prompt: `Why is "${lesson.title}" important for computational neuroscience?`,
       answer: lesson.whyItMatters,
       distractors: distractorsFrom((item) => item.whyItMatters, lesson.id),
       explanation: lesson.whyItMatters,
     }),
   ];
-
-  lesson.keyTerms.slice(0, 3).forEach((term, index) => {
-    const distractors = uniqueStrings(
-      allLessons
-        .filter((item) => item.id !== lesson.id)
-        .flatMap((item) => item.keyTerms)
-        .filter((item) => item.length <= 40)
-    );
-    generated.push(
-      createQuestion({
-        id: `${lesson.id}_term_${index}`,
-        prompt: 'Which key term appears in this lesson?',
-        answer: term,
-        distractors,
-        explanation: `${term} is one of the key terms for "${lesson.title}".`,
-      })
-    );
-  });
 
   getNotationTerms(lesson)
     .slice(0, 3)
@@ -152,7 +127,7 @@ export function buildQuizPool(lesson: Lesson): QuizQuestionWithId[] {
       generated.push(
         createQuestion({
           id: `${lesson.id}_notation_${index}`,
-          prompt: `In this lesson notation, what does ${term.symbol} mean?`,
+          prompt: `In the notation for "${lesson.title}", what does ${term.symbol} mean?`,
           answer: term.meaning,
           distractors,
           explanation: `${term.symbol}: ${term.meaning}`,
@@ -181,17 +156,4 @@ export function selectQuizQuestions(
   const pool = buildQuizPool(lesson);
   const selected = shuffle(pool, `${lesson.id}:${seed}`).slice(0, Math.min(desiredCount, pool.length));
   return selected.map((question, index) => shuffleOptions(question, `${lesson.id}:${seed}:options:${index}`));
-}
-
-export function quizReadyIdeas(lesson: Lesson): string[] {
-  return uniqueStrings([
-    lesson.subtitle,
-    lesson.intuition,
-    lesson.example,
-    lesson.whyItMatters,
-    ...lesson.questions.map(
-      (question) => `Core quiz fact: ${question.options[question.answerIndex]}. ${question.explanation}`
-    ),
-    ...getNotationTerms(lesson).map((term) => `${term.symbol}: ${term.meaning}`),
-  ]).slice(0, 8);
 }

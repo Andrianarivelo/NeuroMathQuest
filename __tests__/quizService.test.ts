@@ -1,5 +1,5 @@
 import { getLesson } from '../src/content/tracks';
-import { buildQuizPool, quizReadyIdeas, selectQuizQuestions } from '../src/services/quizService';
+import { buildQuizPool, selectQuizQuestions } from '../src/services/quizService';
 
 describe('quizService', () => {
   const lesson = getLesson('A01')!;
@@ -21,9 +21,15 @@ describe('quizService', () => {
     );
   });
 
-  it('creates study-guide ideas from lesson-visible content', () => {
-    const ideas = quizReadyIdeas(lesson);
-    expect(ideas.length).toBeGreaterThan(3);
-    expect(ideas).toContain(lesson.intuition);
+  it('does not generate low-value key-term recognition questions', () => {
+    const pool = buildQuizPool(lesson);
+    expect(pool.some((question) => question.id.includes('_term_'))).toBe(false);
+    expect(pool.some((question) => /key term|appears in this lesson/i.test(question.prompt))).toBe(false);
+  });
+
+  it('adds lesson context to generated conceptual prompts', () => {
+    const generated = buildQuizPool(lesson).filter((question) => question.source === 'generated');
+    expect(generated.length).toBeGreaterThan(0);
+    expect(generated.every((question) => question.prompt.includes(lesson.title))).toBe(true);
   });
 });

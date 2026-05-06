@@ -379,7 +379,10 @@ function executeWebRun(source: string, params: DbParams | undefined): void {
     const xp = firstParam<number>(params, 2);
     mutateWebStore((store) => {
       const existing = store.streak_log.find((row) => row.day === day);
-      if (existing) {
+      if (existing && upper.includes('MAX(LESSONS_COMPLETED')) {
+        existing.lessons_completed = Math.max(existing.lessons_completed, lessons);
+        existing.xp_earned = Math.max(existing.xp_earned, xp);
+      } else if (existing) {
         existing.lessons_completed += lessons;
         existing.xp_earned += xp;
       } else {
@@ -413,6 +416,16 @@ function executeWebRun(source: string, params: DbParams | undefined): void {
   if (upper === 'UPDATE REWARDS_WALLET SET LEVEL = ? WHERE ID = 1;') {
     mutateWebStore((store) => {
       store.rewards_wallet.level = firstParam<number>(params, 0);
+    });
+    return;
+  }
+
+  if (upper === 'UPDATE REWARDS_WALLET SET XP_TOTAL = ?, COINS_TOTAL = ?, CHESTS_OPENED = ?, LEVEL = ? WHERE ID = 1;') {
+    mutateWebStore((store) => {
+      store.rewards_wallet.xp_total = firstParam<number>(params, 0);
+      store.rewards_wallet.coins_total = firstParam<number>(params, 1);
+      store.rewards_wallet.chests_opened = firstParam<number>(params, 2);
+      store.rewards_wallet.level = firstParam<number>(params, 3);
     });
     return;
   }

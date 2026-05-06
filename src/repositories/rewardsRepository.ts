@@ -43,6 +43,13 @@ export const rewardsRepository = {
     getDb().runSync('UPDATE rewards_wallet SET level = ? WHERE id = 1;', [level]);
   },
 
+  replace(wallet: Wallet): void {
+    getDb().runSync(
+      'UPDATE rewards_wallet SET xp_total = ?, coins_total = ?, chests_opened = ?, level = ? WHERE id = 1;',
+      [wallet.xpTotal, wallet.coinsTotal, wallet.chestsOpened, wallet.level]
+    );
+  },
+
   unlockAchievement(id: string, at: number): void {
     getDb().runSync(
       'INSERT OR IGNORE INTO achievements_unlocked (achievement_id, unlocked_at) VALUES (?, ?);',
