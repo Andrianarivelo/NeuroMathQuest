@@ -21,6 +21,11 @@ export interface QuizQuestion {
   explanation: string;
 }
 
+export interface NotationTerm {
+  symbol: string;
+  meaning: string;
+}
+
 export interface Lesson {
   id: string;
   trackId: TrackId;
@@ -35,6 +40,8 @@ export interface Lesson {
   explanation: string;
   /** Optional notation block for formal symbols, rendered monospace. */
   notation?: string;
+  /** Optional plain-language definitions for symbols in the notation. */
+  notationTerms?: NotationTerm[];
   /** Key vocabulary relevant to this lesson. */
   keyTerms: string[];
   /** One concrete neuroscience example grounding the concept. */

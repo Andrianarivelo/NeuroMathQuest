@@ -3,6 +3,7 @@ import { View, Text, ScrollView, SafeAreaView } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme } from '../../src/theme/ThemeProvider';
 import { getLesson } from '../../src/content/tracks';
+import { getNotationTerms } from '../../src/content/notationTerms';
 import { Button, Card, StarRow, LessonCartoon } from '../../src/components';
 import { useProgress } from '../../src/hooks/useProgress';
 import { lessonState, isLessonUnlocked } from '../../src/services/unlockService';
@@ -25,6 +26,7 @@ export default function LessonScreen() {
   const locked = !isLessonUnlocked(lesson, progressMap);
   const p = progressMap.get(lesson.id);
   const stars = p ? (p.mastery === 'mastered' ? 3 : p.mastery === 'strong' ? 2 : p.mastery === 'practicing' ? 1 : 0) : 0;
+  const notationTerms = getNotationTerms(lesson);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>
@@ -51,6 +53,35 @@ export default function LessonScreen() {
             <Card style={{ backgroundColor: theme.colors.bgMuted }}>
               <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted, marginBottom: 4 }}>Notation</Text>
               <Text style={{ fontFamily: 'monospace', fontSize: 16, color: theme.colors.text }}>{lesson.notation}</Text>
+              {notationTerms.length > 0 && (
+                <View style={{ marginTop: 12, gap: 8 }}>
+                  <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>Terms in this notation</Text>
+                  {notationTerms.map((term) => (
+                    <View
+                      key={`${lesson.id}-${term.symbol}`}
+                      style={{
+                        flexDirection: 'row',
+                        gap: 8,
+                        alignItems: 'flex-start',
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontFamily: 'monospace',
+                          fontSize: 14,
+                          color: theme.colors.primary,
+                          minWidth: 64,
+                        }}
+                      >
+                        {term.symbol}
+                      </Text>
+                      <Text style={{ ...theme.typography.caption, color: theme.colors.text, flex: 1 }}>
+                        {term.meaning}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              )}
             </Card>
           )}
 

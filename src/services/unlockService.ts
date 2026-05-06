@@ -92,8 +92,9 @@ export function lessonState(
 export function nextRecommendedLesson(
   progressByLesson: Map<string, LessonProgressSummary>
 ): Lesson | null {
-  // Recommend the first unlocked, non-mastered lesson across tracks, with a
-  // bias toward track order and the user's math track to keep momentum.
+  // Recommend the first unlocked lesson that is not yet cleared. Mastery is
+  // still valuable, but it should not block the learner from moving on after
+  // one successful quiz attempt.
   const tracksOrder: Array<'math' | 'neuroscience' | 'compneuro' | 'aibasis' | 'aineuro'> = [
     'neuroscience',
     'math',
@@ -106,7 +107,7 @@ export function nextRecommendedLesson(
     for (const lesson of lessons) {
       if (!isLessonUnlocked(lesson, progressByLesson)) continue;
       const p = progressByLesson.get(lesson.id);
-      if (!p || p.mastery !== 'mastered') return lesson;
+      if (!isLessonCleared(p)) return lesson;
     }
   }
   return null;

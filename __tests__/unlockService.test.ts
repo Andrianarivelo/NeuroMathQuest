@@ -93,5 +93,14 @@ describe('unlockService', () => {
       expect(next).toBeDefined();
       expect(next!.id).toBe('A01');
     });
+
+    it('moves on after one cleared lesson instead of requiring mastery', () => {
+      const map = new Map<string, LessonProgressSummary>([
+        ['A01', makeProgress('A01', 'practicing')],
+      ]);
+      const next = nextRecommendedLesson(map);
+      expect(next).toBeDefined();
+      expect(next!.id).toBe('A02');
+    });
   });
 });

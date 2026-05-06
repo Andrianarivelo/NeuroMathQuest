@@ -1,7 +1,7 @@
 import { Lesson } from './types';
 
 /**
- * Track A — Neuroscience Basics. 20 lessons. Unlocked from the start.
+ * Track A — Neuroscience Basics. 40 lessons. Unlocked from the start.
  */
 export const trackALessons: Lesson[] = [
   {
@@ -945,6 +945,1066 @@ export const trackALessons: Lesson[] = [
     ],
     xpReward: 26,
     coinReward: 10,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'A21',
+    trackId: 'neuroscience',
+    moduleId: 'A-microstructure',
+    order: 21,
+    title: 'Dendritic spines',
+    subtitle: 'Tiny compartments that shape synaptic input',
+    estimatedMinutes: 5,
+    difficulty: 'beginner',
+    prerequisites: ['A05'],
+    explanation:
+      'Many excitatory synapses land on dendritic spines: small protrusions on dendrites with a narrow neck and a rounded head. A spine can partly isolate chemical and electrical signals, so one synapse can change without immediately changing the whole dendrite. Spine size, shape, and receptor content help determine how strongly an input affects the neuron.',
+    keyTerms: ['dendritic spine', 'spine head', 'spine neck', 'postsynaptic density'],
+    example:
+      'A learning event can enlarge some spines and add more AMPA receptors, making those specific synaptic inputs more effective.',
+    intuition:
+      'Think of spines as tiny workbenches on a dendrite: each one can tune a single connection without rewiring the whole cell.',
+    whyItMatters:
+      'Spines link cellular anatomy to learning, because many long-term synaptic changes happen at this microscopic scale.',
+    questions: [
+      {
+        prompt: 'Most dendritic spines receive which kind of input?',
+        options: ['Excitatory synaptic input', 'Blood-flow input', 'Myelin input', 'Cerebrospinal fluid input'],
+        answerIndex: 0,
+        explanation: 'Spines are common postsynaptic sites for excitatory synapses, especially in cortex and hippocampus.',
+      },
+      {
+        prompt: 'Why does a spine neck matter?',
+        options: [
+          'It can partly isolate local signals',
+          'It makes the neuron unable to spike',
+          'It stores oxygen for the cell',
+          'It blocks all receptor movement',
+        ],
+        answerIndex: 0,
+        explanation: 'The thin neck helps local biochemical and voltage signals remain partly compartmentalised.',
+      },
+      {
+        prompt: 'A larger, receptor-rich spine often indicates...',
+        options: ['A stronger synaptic connection', 'A dead neuron', 'A myelinated axon', 'A blood-brain barrier leak'],
+        answerIndex: 0,
+        explanation: 'Large spines often have larger postsynaptic densities and stronger synaptic responses.',
+      },
+    ],
+    xpReward: 24,
+    coinReward: 9,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'A22',
+    trackId: 'neuroscience',
+    moduleId: 'A-microstructure',
+    order: 22,
+    title: 'Myelin and nodes',
+    subtitle: 'How axons send signals faster',
+    estimatedMinutes: 5,
+    difficulty: 'beginner',
+    prerequisites: ['A09'],
+    explanation:
+      'Myelin is a fatty insulating wrap around many axons. It is made by oligodendrocytes in the central nervous system and Schwann cells in the peripheral nervous system. Gaps in the wrap, called nodes of Ranvier, contain dense voltage-gated sodium channels. Action potentials appear to jump from node to node, which makes signalling faster and more energy efficient.',
+    keyTerms: ['myelin', 'node of Ranvier', 'saltatory conduction', 'oligodendrocyte'],
+    example:
+      'Fast touch and motor signals often travel along large myelinated axons, allowing quick reactions.',
+    intuition:
+      'Myelin works like insulation around a wire, while nodes act like relay stations that refresh the signal.',
+    whyItMatters:
+      'Diseases that damage myelin can slow or block communication, changing movement, sensation, and cognition.',
+    questions: [
+      {
+        prompt: 'A node of Ranvier is...',
+        options: [
+          'A gap in myelin rich in ion channels',
+          'A type of neurotransmitter',
+          'A dendritic spine',
+          'A blood vessel branch',
+        ],
+        answerIndex: 0,
+        explanation: 'Nodes are small unmyelinated gaps with many voltage-gated channels.',
+      },
+      {
+        prompt: 'Myelin generally makes axonal signalling...',
+        options: ['Faster and more efficient', 'Slower and random', 'Impossible', 'Only chemical'],
+        answerIndex: 0,
+        explanation: 'Myelin reduces current leak and supports fast saltatory conduction.',
+      },
+      {
+        prompt: 'In the central nervous system, myelin is produced mainly by...',
+        options: ['Oligodendrocytes', 'Red blood cells', 'Platelets', 'Photoreceptors'],
+        answerIndex: 0,
+        explanation: 'Oligodendrocytes myelinate CNS axons; Schwann cells myelinate peripheral axons.',
+      },
+    ],
+    xpReward: 24,
+    coinReward: 9,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'A23',
+    trackId: 'neuroscience',
+    moduleId: 'A-microstructure',
+    order: 23,
+    title: 'Axonal transport',
+    subtitle: 'Moving supplies through long neurons',
+    estimatedMinutes: 5,
+    difficulty: 'beginner',
+    prerequisites: ['A01'],
+    explanation:
+      'Some neurons have axons that are extremely long, so the cell needs an internal delivery system. Motor proteins move cargo along microtubule tracks. Anterograde transport carries vesicles, proteins, and mitochondria from the cell body toward axon terminals. Retrograde transport carries used materials and signals back to the cell body.',
+    keyTerms: ['microtubule', 'motor protein', 'anterograde transport', 'retrograde transport'],
+    example:
+      'A motor neuron must deliver mitochondria and synaptic vesicle proteins all the way from the spinal cord to a muscle terminal.',
+    intuition:
+      'Axonal transport is the neuron logistics network: tracks, motors, cargo, and return messages.',
+    whyItMatters:
+      'Transport failure can starve synapses of energy and materials, making it relevant to several neurodegenerative diseases.',
+    questions: [
+      {
+        prompt: 'Anterograde transport moves cargo...',
+        options: [
+          'From cell body toward the axon terminal',
+          'From synapse to bloodstream',
+          'Only inside dendritic spines',
+          'From myelin into cerebrospinal fluid',
+        ],
+        answerIndex: 0,
+        explanation: 'Anterograde means outward from the soma toward axon terminals.',
+      },
+      {
+        prompt: 'Microtubules in axons mainly act as...',
+        options: ['Tracks for intracellular transport', 'Neurotransmitters', 'Blood barriers', 'Receptors for light'],
+        answerIndex: 0,
+        explanation: 'Motor proteins walk along microtubules while carrying cargo.',
+      },
+      {
+        prompt: 'Retrograde transport is useful because it...',
+        options: [
+          'Returns signals and used materials to the cell body',
+          'Deletes every synapse',
+          'Stops all action potentials',
+          'Creates myelin by itself',
+        ],
+        answerIndex: 0,
+        explanation: 'Retrograde transport lets the soma receive information from distant axon terminals.',
+      },
+    ],
+    xpReward: 23,
+    coinReward: 8,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'A24',
+    trackId: 'neuroscience',
+    moduleId: 'A-learning',
+    order: 24,
+    title: 'Synaptic plasticity',
+    subtitle: 'How connections become stronger or weaker',
+    estimatedMinutes: 6,
+    difficulty: 'beginner',
+    prerequisites: ['A05'],
+    explanation:
+      'Synaptic plasticity means that synaptic strength can change with activity. Long-term potentiation (LTP) increases the effect of a synapse; long-term depression (LTD) decreases it. Timing, receptor activation, calcium signals, and neuromodulators all influence which change happens. Plasticity is not the whole story of memory, but it is one of its key cellular mechanisms.',
+    keyTerms: ['plasticity', 'LTP', 'LTD', 'Hebbian learning'],
+    example:
+      'If a presynaptic neuron repeatedly helps drive a postsynaptic neuron to fire, that connection can become more effective.',
+    intuition:
+      'Plasticity is the brain updating its wiring weights based on experience.',
+    whyItMatters:
+      'Learning, adaptation, rehabilitation, and maladaptive habits all depend on the fact that circuits can change.',
+    questions: [
+      {
+        prompt: 'Long-term potentiation usually means...',
+        options: ['A synapse becomes stronger', 'A synapse disappears instantly', 'Myelin melts', 'The skull grows'],
+        answerIndex: 0,
+        explanation: 'LTP is a lasting increase in synaptic efficacy.',
+      },
+      {
+        prompt: 'Hebbian learning is often summarised as...',
+        options: [
+          'Cells that fire together wire together',
+          'Neurons cannot change after birth',
+          'Only glia can learn',
+          'All memories live in one cell',
+        ],
+        answerIndex: 0,
+        explanation: 'Hebbian ideas link correlated pre- and postsynaptic activity to stronger connections.',
+      },
+      {
+        prompt: 'Why is calcium important in many plasticity mechanisms?',
+        options: [
+          'It acts as a local biochemical signal',
+          'It is the only neurotransmitter',
+          'It replaces DNA',
+          'It prevents receptors from moving',
+        ],
+        answerIndex: 0,
+        explanation: 'Calcium entering spines can trigger molecular pathways that strengthen or weaken synapses.',
+      },
+    ],
+    xpReward: 26,
+    coinReward: 10,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'A25',
+    trackId: 'neuroscience',
+    moduleId: 'A-learning',
+    order: 25,
+    title: 'Homeostasis in circuits',
+    subtitle: 'Keeping activity in a useful range',
+    estimatedMinutes: 5,
+    difficulty: 'beginner',
+    prerequisites: ['A06'],
+    explanation:
+      'Neural circuits need plasticity, but too much strengthening can make activity unstable. Homeostatic mechanisms keep firing rates and excitability within workable ranges. Neurons can scale synaptic strengths, change ion-channel expression, or adjust inhibition to avoid silence or runaway excitation.',
+    keyTerms: ['homeostasis', 'set point', 'synaptic scaling', 'excitability'],
+    example:
+      'If a neuron receives too little input for a long time, it may increase receptor expression so the remaining inputs have more impact.',
+    intuition:
+      'Homeostasis is the circuit thermostat: it does not encode a specific memory, but it keeps the room usable.',
+    whyItMatters:
+      'Stable learning needs both change and control; homeostasis explains why brains adapt without constantly saturating.',
+    questions: [
+      {
+        prompt: 'Homeostatic plasticity mainly helps circuits...',
+        options: ['Stay within a functional activity range', 'Erase all memories', 'Stop using synapses', 'Turn neurons into glia'],
+        answerIndex: 0,
+        explanation: 'Homeostasis counters extremes such as too much excitation or too little activity.',
+      },
+      {
+        prompt: 'A set point is best described as...',
+        options: [
+          'A target range for a regulated variable',
+          'A fixed memory trace',
+          'A type of axon',
+          'A neurotransmitter vesicle',
+        ],
+        answerIndex: 0,
+        explanation: 'A set point is a reference range the system tends to defend.',
+      },
+      {
+        prompt: 'Synaptic scaling changes...',
+        options: [
+          'Many synapses together to stabilise activity',
+          'Only the colour of a neuron',
+          'Blood oxygenation directly',
+          'The shape of the skull',
+        ],
+        answerIndex: 0,
+        explanation: 'Scaling can adjust many synapses up or down while preserving relative differences.',
+      },
+    ],
+    xpReward: 24,
+    coinReward: 9,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'A26',
+    trackId: 'neuroscience',
+    moduleId: 'A-support',
+    order: 26,
+    title: 'Brain energy',
+    subtitle: 'Why signalling is metabolically expensive',
+    estimatedMinutes: 5,
+    difficulty: 'beginner',
+    prerequisites: ['A09'],
+    explanation:
+      'The brain uses a large share of the body energy budget. Much of that energy restores ion gradients after synaptic currents and spikes. Neurons depend on oxygen and glucose delivered by blood, while astrocytes help coordinate local metabolism. When energy supply fails, electrical signalling is rapidly compromised.',
+    keyTerms: ['glucose', 'oxygen', 'ATP', 'ion gradient'],
+    example:
+      'A burst of local activity increases energy demand, followed by changes in blood flow that imaging methods can detect.',
+    intuition:
+      'Every spike has a hidden bill: pumps must spend ATP to reset ionic gradients.',
+    whyItMatters:
+      'Metabolism connects cellular neuroscience to fMRI signals, fatigue, stroke, and brain health.',
+    questions: [
+      {
+        prompt: 'A major energy cost in neurons is...',
+        options: [
+          'Restoring ion gradients after activity',
+          'Making bones harder',
+          'Keeping blood red',
+          'Producing light for vision',
+        ],
+        answerIndex: 0,
+        explanation: 'Ion pumps use ATP to restore gradients after synaptic currents and spikes.',
+      },
+      {
+        prompt: 'The brain mainly relies on blood to deliver...',
+        options: ['Oxygen and glucose', 'Myelin and memories', 'Axons and dendrites', 'Photons and calcium only'],
+        answerIndex: 0,
+        explanation: 'Oxygen and glucose support ATP production in neural tissue.',
+      },
+      {
+        prompt: 'Astrocytes contribute to energy use by...',
+        options: [
+          'Helping coordinate local metabolism',
+          'Generating every action potential',
+          'Replacing all neurons',
+          'Blocking all blood flow',
+        ],
+        answerIndex: 0,
+        explanation: 'Astrocytes help couple neural activity, metabolism, and blood-flow responses.',
+      },
+    ],
+    xpReward: 24,
+    coinReward: 9,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'A27',
+    trackId: 'neuroscience',
+    moduleId: 'A-support',
+    order: 27,
+    title: 'Blood-brain barrier',
+    subtitle: 'A selective border around neural tissue',
+    estimatedMinutes: 5,
+    difficulty: 'beginner',
+    prerequisites: ['A09'],
+    explanation:
+      'The blood-brain barrier is formed by specialised blood vessel cells, tight junctions, astrocyte endfeet, and pericytes. It keeps the chemical environment of the brain stable by controlling which substances pass from blood into neural tissue. This protection is essential, but it also makes drug delivery to the brain difficult.',
+    keyTerms: ['blood-brain barrier', 'tight junction', 'pericyte', 'astrocyte endfoot'],
+    example:
+      'A useful drug in the bloodstream may fail as a brain treatment if it cannot cross the blood-brain barrier.',
+    intuition:
+      'The barrier acts like a strict border checkpoint, allowing supplies through while blocking many risky molecules.',
+    whyItMatters:
+      'Barrier function matters in inflammation, infection, stroke, drug design, and many neurological disorders.',
+    questions: [
+      {
+        prompt: 'The blood-brain barrier mainly helps...',
+        options: [
+          'Maintain a controlled brain environment',
+          'Create action potentials directly',
+          'Store all memories',
+          'Turn axons into dendrites',
+        ],
+        answerIndex: 0,
+        explanation: 'The barrier limits uncontrolled exchange between blood and neural tissue.',
+      },
+      {
+        prompt: 'Tight junctions are important because they...',
+        options: [
+          'Limit leakage between vessel cells',
+          'Release dopamine at synapses',
+          'Make myelin',
+          'Measure fMRI signals',
+        ],
+        answerIndex: 0,
+        explanation: 'Tight junctions restrict paracellular passage across the vessel wall.',
+      },
+      {
+        prompt: 'A practical consequence of the barrier is that...',
+        options: [
+          'Some drugs cannot easily enter the brain',
+          'All drugs enter the brain freely',
+          'Neurons no longer need oxygen',
+          'Blood vessels stop carrying glucose',
+        ],
+        answerIndex: 0,
+        explanation: 'The barrier protects the brain but complicates delivery of many treatments.',
+      },
+    ],
+    xpReward: 24,
+    coinReward: 9,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'A28',
+    trackId: 'neuroscience',
+    moduleId: 'A-development',
+    order: 28,
+    title: 'Brain development',
+    subtitle: 'From newborn neurons to organised circuits',
+    estimatedMinutes: 6,
+    difficulty: 'beginner',
+    prerequisites: ['A01'],
+    explanation:
+      'Brain development builds circuits through many coordinated steps: neurons are born, migrate to the right region, extend axons and dendrites, form synapses, and later refine connections. Early circuits often produce more connections than they keep. Activity and molecular guidance cues help sculpt the final architecture.',
+    keyTerms: ['neurogenesis', 'migration', 'axon guidance', 'synaptic pruning'],
+    example:
+      'In the developing cortex, young neurons migrate outward along radial glial guides before settling into layers.',
+    intuition:
+      'Development is not just growth; it is construction plus editing.',
+    whyItMatters:
+      'Many adult circuit properties and developmental disorders make more sense when you know how circuits are assembled.',
+    questions: [
+      {
+        prompt: 'Neuronal migration means...',
+        options: [
+          'New neurons move toward their final positions',
+          'Mature neurons leave the skull',
+          'Blood cells become synapses',
+          'Myelin turns into cortex',
+        ],
+        answerIndex: 0,
+        explanation: 'During development, many neurons travel before settling in their target layers or nuclei.',
+      },
+      {
+        prompt: 'Synaptic pruning usually refers to...',
+        options: [
+          'Removing or weakening extra connections',
+          'Making every synapse permanent',
+          'Deleting all inhibition',
+          'Producing glucose',
+        ],
+        answerIndex: 0,
+        explanation: 'Pruning refines circuits by removing some connections and keeping others.',
+      },
+      {
+        prompt: 'Development uses both molecular cues and...',
+        options: ['Neural activity', 'Moonlight', 'Bone density', 'Red blood cell spikes'],
+        answerIndex: 0,
+        explanation: 'Activity helps refine maps and connections after broad molecular guidance.',
+      },
+    ],
+    xpReward: 26,
+    coinReward: 10,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'A29',
+    trackId: 'neuroscience',
+    moduleId: 'A-development',
+    order: 29,
+    title: 'Critical periods',
+    subtitle: 'Windows when experience has extra impact',
+    estimatedMinutes: 5,
+    difficulty: 'beginner',
+    prerequisites: ['A28'],
+    explanation:
+      'A critical period is a developmental window when specific experiences strongly shape a circuit. For example, balanced visual input early in life helps organise visual cortex. Critical periods open and close through changes in inhibition, plasticity molecules, neuromodulators, and circuit maturation. Adult brains remain plastic, but some forms of change become harder.',
+    keyTerms: ['critical period', 'experience-dependent plasticity', 'inhibition', 'circuit maturation'],
+    example:
+      'If one eye is deprived of normal input during an early visual critical period, visual cortex can become biased toward the other eye.',
+    intuition:
+      'A critical period is like wet clay: experience can leave deep marks before the circuit hardens.',
+    whyItMatters:
+      'Critical periods explain why early experience can be powerful and why timing matters in therapy and education.',
+    questions: [
+      {
+        prompt: 'A critical period is...',
+        options: [
+          'A time window of unusually strong experience-dependent plasticity',
+          'A period with no synapses',
+          'Any single action potential',
+          'A method for measuring blood flow',
+        ],
+        answerIndex: 0,
+        explanation: 'Critical periods are developmental windows when experience strongly shapes circuits.',
+      },
+      {
+        prompt: 'Adult brains are best described as...',
+        options: [
+          'Still plastic, but often less flexible than during some early windows',
+          'Completely unable to learn',
+          'Made only of new neurons',
+          'Unconnected to experience',
+        ],
+        answerIndex: 0,
+        explanation: 'Adults can learn, but some circuit changes become more constrained after critical periods.',
+      },
+      {
+        prompt: 'Inhibition can help critical periods by...',
+        options: [
+          'Regulating when circuits become ready for plasticity',
+          'Destroying all sensory maps',
+          'Replacing oxygen in blood',
+          'Making synapses impossible',
+        ],
+        answerIndex: 0,
+        explanation: 'Maturation of inhibitory circuits is one factor controlling critical-period timing.',
+      },
+    ],
+    xpReward: 24,
+    coinReward: 9,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'A30',
+    trackId: 'neuroscience',
+    moduleId: 'A-networks',
+    order: 30,
+    title: 'Connectomes and motifs',
+    subtitle: 'Seeing circuits as networks',
+    estimatedMinutes: 6,
+    difficulty: 'beginner',
+    prerequisites: ['A12'],
+    explanation:
+      'A connectome is a map of connections in a nervous system or brain region. At small scales it may describe synapses between cells; at large scales it may describe pathways between regions. Network motifs are repeated patterns such as feedforward chains, reciprocal loops, and hubs. These structures shape how activity flows through a circuit.',
+    keyTerms: ['connectome', 'network motif', 'hub', 'feedforward loop'],
+    example:
+      'A feedforward inhibitory motif can make responses brief: excitation arrives, then a delayed inhibitory signal shuts the response down.',
+    intuition:
+      'A connectome is the wiring map; motifs are the small circuit patterns that appear again and again.',
+    whyItMatters:
+      'Network structure helps explain why two circuits with similar neurons can compute very different things.',
+    questions: [
+      {
+        prompt: 'A connectome is a map of...',
+        options: ['Neural connections', 'Only blood pressure', 'Skull thickness', 'Hormone names only'],
+        answerIndex: 0,
+        explanation: 'A connectome describes how neurons or brain regions are connected.',
+      },
+      {
+        prompt: 'A network motif is...',
+        options: [
+          'A repeated connection pattern',
+          'A single neurotransmitter molecule',
+          'A type of MRI scanner',
+          'A memory stored in one receptor',
+        ],
+        answerIndex: 0,
+        explanation: 'Motifs are recurring arrangements such as loops, hubs, and feedforward structures.',
+      },
+      {
+        prompt: 'Why do hubs matter in networks?',
+        options: [
+          'They connect many nodes and can strongly affect communication',
+          'They stop all information flow',
+          'They are always inactive',
+          'They only exist in muscles',
+        ],
+        answerIndex: 0,
+        explanation: 'Highly connected hubs can coordinate or bottleneck activity across a network.',
+      },
+    ],
+    xpReward: 26,
+    coinReward: 10,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'A31',
+    trackId: 'neuroscience',
+    moduleId: 'A-networks',
+    order: 31,
+    title: 'Resting-state networks',
+    subtitle: 'Organised activity when you are not doing a task',
+    estimatedMinutes: 5,
+    difficulty: 'beginner',
+    prerequisites: ['A19'],
+    explanation:
+      'The brain is active even at rest. Resting-state networks are groups of regions whose activity fluctuates together when a person is not performing a specific task. Examples include the default mode, attention, salience, and control networks. These patterns are usually measured with fMRI, but they reflect broad coordination rather than direct single-neuron firing.',
+    keyTerms: ['resting state', 'default mode network', 'functional connectivity', 'BOLD signal'],
+    example:
+      'Two regions can show functional connectivity if their fMRI signals rise and fall together across time.',
+    intuition:
+      'Rest is not silence; it is a different operating mode with organised background rhythms.',
+    whyItMatters:
+      'Resting-state networks are used to study development, disease, consciousness, and large-scale brain organisation.',
+    questions: [
+      {
+        prompt: 'Functional connectivity usually means...',
+        options: [
+          'Two signals fluctuate together statistically',
+          'Two neurons are physically fused',
+          'A synapse is always excitatory',
+          'A person is asleep',
+        ],
+        answerIndex: 0,
+        explanation: 'Functional connectivity is commonly inferred from correlated activity patterns.',
+      },
+      {
+        prompt: 'Resting-state fMRI mainly measures...',
+        options: ['Blood-oxygenation related signals', 'Individual vesicle release', 'DNA sequence', 'Muscle fibre length'],
+        answerIndex: 0,
+        explanation: 'Resting-state fMRI tracks slow BOLD fluctuations across brain regions.',
+      },
+      {
+        prompt: 'The default mode network is often active during...',
+        options: [
+          'Internally focused thought and rest',
+          'Only spinal reflexes',
+          'Only eye blinks',
+          'Complete brain inactivity',
+        ],
+        answerIndex: 0,
+        explanation: 'The default mode network is associated with rest, memory, self-related thought, and internal mentation.',
+      },
+    ],
+    xpReward: 24,
+    coinReward: 9,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'A32',
+    trackId: 'neuroscience',
+    moduleId: 'A-networks',
+    order: 32,
+    title: 'Arousal and brain state',
+    subtitle: 'Why the same circuit behaves differently over time',
+    estimatedMinutes: 5,
+    difficulty: 'beginner',
+    prerequisites: ['A13'],
+    explanation:
+      'Arousal is the global level of wakefulness, alertness, and readiness to respond. Brain state changes with sleep, attention, stress, motivation, and neuromodulators such as acetylcholine, dopamine, noradrenaline, and serotonin. The same sensory input can produce different responses depending on state.',
+    keyTerms: ['arousal', 'brain state', 'neuromodulator', 'wakefulness'],
+    example:
+      'A quiet sound may be ignored during deep sleep, noticed during calm wakefulness, and trigger a rapid response during high alertness.',
+    intuition:
+      'Brain state is a context dial that changes the gain and priorities of many circuits at once.',
+    whyItMatters:
+      'Experiments, learning, perception, and clinical symptoms all depend on state, not just on the stimulus.',
+    questions: [
+      {
+        prompt: 'Arousal describes...',
+        options: [
+          'The brain level of wakefulness and readiness',
+          'Only muscle size',
+          'The number of skull bones',
+          'The colour of a neuron',
+        ],
+        answerIndex: 0,
+        explanation: 'Arousal is a global state variable related to alertness and responsiveness.',
+      },
+      {
+        prompt: 'Neuromodulators often...',
+        options: [
+          'Change circuit gain and state over broad areas',
+          'Act only as structural proteins',
+          'Prevent any learning',
+          'Replace every synapse with myelin',
+        ],
+        answerIndex: 0,
+        explanation: 'Neuromodulators can adjust excitability, plasticity, and network mode across circuits.',
+      },
+      {
+        prompt: 'The same stimulus can evoke different responses because...',
+        options: [
+          'Brain state changes how circuits process input',
+          'Stimuli never reach the brain',
+          'Neurons are identical at all times',
+          'Synapses cannot change',
+        ],
+        answerIndex: 0,
+        explanation: 'Attention, sleep, motivation, and arousal can all change neural responses.',
+      },
+    ],
+    xpReward: 24,
+    coinReward: 9,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'A33',
+    trackId: 'neuroscience',
+    moduleId: 'A-body',
+    order: 33,
+    title: 'Pain pathways',
+    subtitle: 'Signals, gates, and perception',
+    estimatedMinutes: 6,
+    difficulty: 'beginner',
+    prerequisites: ['A10'],
+    explanation:
+      'Pain begins with nociceptors that detect potentially damaging stimuli. Their signals enter the spinal cord, ascend toward the thalamus and cortex, and interact with emotion and attention systems. Pain is not just a raw input: descending pathways from the brain can amplify or suppress spinal signals, which is why context changes pain experience.',
+    keyTerms: ['nociceptor', 'spinal cord', 'thalamus', 'descending modulation'],
+    example:
+      'An athlete may notice an injury less during a competition because attention, stress, and descending control alter pain processing.',
+    intuition:
+      'Pain is a protected warning system with a volume knob, not a simple damage meter.',
+    whyItMatters:
+      'Chronic pain often involves altered nervous-system processing, so treatment must consider both body and brain.',
+    questions: [
+      {
+        prompt: 'Nociceptors detect...',
+        options: ['Potentially damaging stimuli', 'Only pleasant touch', 'Blood oxygen only', 'Memories directly'],
+        answerIndex: 0,
+        explanation: 'Nociceptors respond to tissue threat such as heat, mechanical damage, or chemical irritation.',
+      },
+      {
+        prompt: 'Descending modulation means...',
+        options: [
+          'Brain pathways can alter spinal pain signals',
+          'Pain only travels from cortex to skin',
+          'The thalamus is disconnected',
+          'Nociceptors become blood vessels',
+        ],
+        answerIndex: 0,
+        explanation: 'Descending pathways can inhibit or facilitate pain transmission in the spinal cord.',
+      },
+      {
+        prompt: 'Pain differs from a simple damage meter because...',
+        options: [
+          'Attention, emotion, and context shape perception',
+          'It never involves the brain',
+          'It is always proportional to injury size',
+          'It only occurs during sleep',
+        ],
+        answerIndex: 0,
+        explanation: 'Pain is constructed by nervous-system processing, not read out as a fixed physical value.',
+      },
+    ],
+    xpReward: 26,
+    coinReward: 10,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'A34',
+    trackId: 'neuroscience',
+    moduleId: 'A-body',
+    order: 34,
+    title: 'Interoception',
+    subtitle: 'How the brain senses the body from inside',
+    estimatedMinutes: 5,
+    difficulty: 'beginner',
+    prerequisites: ['A13'],
+    explanation:
+      'Interoception is sensing the internal state of the body: heartbeat, breathing, gut signals, temperature, inflammation, and more. These signals reach brainstem, thalamus, insula, anterior cingulate, and other regions. Interoception helps regulate behaviour because the brain needs to know the body condition before choosing actions.',
+    keyTerms: ['interoception', 'insula', 'body state', 'homeostasis'],
+    example:
+      'Feeling thirsty, nauseous, hungry, breathless, or calm all depends partly on interoceptive processing.',
+    intuition:
+      'Interoception is the brain dashboard for the body interior.',
+    whyItMatters:
+      'Mood, anxiety, fatigue, decision-making, and self-awareness all interact with internal body signals.',
+    questions: [
+      {
+        prompt: 'Interoception refers to sensing...',
+        options: ['Internal body state', 'Only distant sounds', 'Only colour', 'Only written words'],
+        answerIndex: 0,
+        explanation: 'Interoception covers signals such as heartbeat, breathing, hunger, and gut state.',
+      },
+      {
+        prompt: 'The insula is often linked to...',
+        options: ['Body-state awareness', 'Making myelin only', 'Producing blood cells', 'Blocking every hormone'],
+        answerIndex: 0,
+        explanation: 'The insula is a key cortical region for integrating internal body signals.',
+      },
+      {
+        prompt: 'Interoception matters for behaviour because...',
+        options: [
+          'Actions depend on the current body state',
+          'The body sends no signals to the brain',
+          'It prevents emotion',
+          'It is separate from homeostasis',
+        ],
+        answerIndex: 0,
+        explanation: 'The brain uses internal state information to regulate needs and choose appropriate actions.',
+      },
+    ],
+    xpReward: 24,
+    coinReward: 9,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'A35',
+    trackId: 'neuroscience',
+    moduleId: 'A-body',
+    order: 35,
+    title: 'Autonomic nervous system',
+    subtitle: 'Automatic control of organs',
+    estimatedMinutes: 5,
+    difficulty: 'beginner',
+    prerequisites: ['A11'],
+    explanation:
+      'The autonomic nervous system controls organs without requiring conscious effort. The sympathetic branch prepares the body for action by increasing heart rate and mobilising energy. The parasympathetic branch supports restoration, digestion, and calm regulation. These branches work with the brainstem, hypothalamus, and body feedback loops.',
+    keyTerms: ['autonomic nervous system', 'sympathetic', 'parasympathetic', 'vagus nerve'],
+    example:
+      'Before an exam, sympathetic activity can raise heart rate; after eating, parasympathetic activity supports digestion.',
+    intuition:
+      'Autonomic control is the body autopilot that keeps organs matched to the situation.',
+    whyItMatters:
+      'Stress, sleep, emotion, exercise, digestion, and many clinical symptoms involve autonomic regulation.',
+    questions: [
+      {
+        prompt: 'The sympathetic branch generally supports...',
+        options: ['Action and energy mobilisation', 'Only digestion during sleep', 'Visual image formation', 'Synaptic pruning only'],
+        answerIndex: 0,
+        explanation: 'Sympathetic activation prepares the body for challenge or action.',
+      },
+      {
+        prompt: 'The parasympathetic branch often supports...',
+        options: ['Restoration and digestion', 'Bone growth only', 'Spinal myelination only', 'Random spikes only'],
+        answerIndex: 0,
+        explanation: 'Parasympathetic activity supports rest, digestion, and recovery.',
+      },
+      {
+        prompt: 'Autonomic control is important because...',
+        options: [
+          'The brain must regulate organs continuously',
+          'Organs are disconnected from nerves',
+          'All organ control is voluntary',
+          'Heart rate never changes',
+        ],
+        answerIndex: 0,
+        explanation: 'Autonomic circuits regulate heart rate, blood pressure, digestion, breathing, and more.',
+      },
+    ],
+    xpReward: 24,
+    coinReward: 9,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'A36',
+    trackId: 'neuroscience',
+    moduleId: 'A-body',
+    order: 36,
+    title: 'Stress and the HPA axis',
+    subtitle: 'How brain and hormones coordinate challenge',
+    estimatedMinutes: 6,
+    difficulty: 'beginner',
+    prerequisites: ['A17'],
+    explanation:
+      'Stress responses involve fast autonomic changes and slower hormonal loops. The HPA axis connects hypothalamus, pituitary, and adrenal glands. It helps release cortisol, which mobilises energy and feeds back to the brain. Acute stress can be adaptive; chronic stress can disrupt sleep, mood, immunity, and cognition.',
+    keyTerms: ['stress', 'HPA axis', 'cortisol', 'feedback loop'],
+    example:
+      'A sudden threat can rapidly increase heart rate, while cortisol rises more slowly to support sustained energy mobilisation.',
+    intuition:
+      'The HPA axis is a brain-body alarm loop with feedback so the alarm can turn down again.',
+    whyItMatters:
+      'Stress biology links neuroscience to mental health, learning, immune function, and everyday behaviour.',
+    questions: [
+      {
+        prompt: 'HPA stands for...',
+        options: [
+          'Hypothalamus, pituitary, adrenal',
+          'Hippocampus, pons, amygdala',
+          'Heart, pancreas, artery',
+          'High-power axon',
+        ],
+        answerIndex: 0,
+        explanation: 'The HPA axis links hypothalamus, pituitary, and adrenal glands.',
+      },
+      {
+        prompt: 'Cortisol is best described as...',
+        options: ['A stress-related hormone', 'A myelin protein', 'A visual pigment', 'A synaptic vesicle'],
+        answerIndex: 0,
+        explanation: 'Cortisol is released through HPA-axis activity and helps regulate energy and stress responses.',
+      },
+      {
+        prompt: 'Chronic stress can be harmful because it may...',
+        options: [
+          'Disrupt sleep, mood, immunity, and cognition',
+          'Improve every circuit without cost',
+          'Stop all hormone release forever',
+          'Turn off the brain permanently during exams',
+        ],
+        answerIndex: 0,
+        explanation: 'Long-lasting stress responses can strain many body and brain systems.',
+      },
+    ],
+    xpReward: 26,
+    coinReward: 10,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'A37',
+    trackId: 'neuroscience',
+    moduleId: 'A-health',
+    order: 37,
+    title: 'Neuroinflammation and repair',
+    subtitle: 'Immune signals inside the nervous system',
+    estimatedMinutes: 5,
+    difficulty: 'beginner',
+    prerequisites: ['A09'],
+    explanation:
+      'The brain has immune-like support systems. Microglia survey tissue, remove debris, shape synapses, and release inflammatory signals when needed. Inflammation can protect and repair, but excessive or chronic inflammation can damage circuits. Astrocytes, blood vessels, and the blood-brain barrier also participate in injury responses.',
+    keyTerms: ['microglia', 'neuroinflammation', 'cytokine', 'repair'],
+    example:
+      'After injury, microglia can help clear damaged material, but prolonged activation can also disturb synaptic function.',
+    intuition:
+      'Inflammation is a repair crew that becomes risky when it stays overactive.',
+    whyItMatters:
+      'Inflammatory processes are relevant to infection, trauma, multiple sclerosis, ageing, and psychiatric symptoms.',
+    questions: [
+      {
+        prompt: 'Microglia are important because they...',
+        options: [
+          'Survey tissue and respond to damage',
+          'Carry visual images to the retina',
+          'Produce every action potential',
+          'Replace the skull',
+        ],
+        answerIndex: 0,
+        explanation: 'Microglia are resident immune-like cells of the central nervous system.',
+      },
+      {
+        prompt: 'Neuroinflammation can be...',
+        options: [
+          'Protective in moderation and harmful when chronic',
+          'Always absent from the brain',
+          'Only a type of myelin',
+          'The same thing as learning a word',
+        ],
+        answerIndex: 0,
+        explanation: 'Inflammation can help repair but can also disrupt tissue if excessive or persistent.',
+      },
+      {
+        prompt: 'Cytokines are...',
+        options: ['Immune signalling molecules', 'Voltage-gated channels only', 'Brain ventricles', 'Motor proteins only'],
+        answerIndex: 0,
+        explanation: 'Cytokines are signalling molecules used by immune and support cells.',
+      },
+    ],
+    xpReward: 24,
+    coinReward: 9,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'A38',
+    trackId: 'neuroscience',
+    moduleId: 'A-health',
+    order: 38,
+    title: 'Neurodegeneration',
+    subtitle: 'When circuits lose cells and connections',
+    estimatedMinutes: 6,
+    difficulty: 'beginner',
+    prerequisites: ['A12'],
+    explanation:
+      'Neurodegenerative diseases involve progressive loss of neuronal function, synapses, or cells. Different diseases target different circuits: dopamine systems in Parkinson disease, memory networks in Alzheimer disease, and motor neurons in ALS. Symptoms emerge from circuit failure, not just from a single damaged molecule.',
+    keyTerms: ['neurodegeneration', 'synapse loss', 'circuit failure', 'protein aggregation'],
+    example:
+      'In Parkinson disease, loss of dopamine neurons disrupts basal ganglia loops that help select and initiate movement.',
+    intuition:
+      'A brain disorder can look like a network losing important bridges and support nodes over time.',
+    whyItMatters:
+      'Understanding circuits helps connect molecular pathology to real symptoms and treatment strategies.',
+    questions: [
+      {
+        prompt: 'Neurodegeneration usually involves...',
+        options: [
+          'Progressive loss of neuronal function, synapses, or cells',
+          'Instant perfect learning',
+          'Only temporary boredom',
+          'A normal increase in every synapse',
+        ],
+        answerIndex: 0,
+        explanation: 'Neurodegenerative disorders progressively impair neurons and circuits.',
+      },
+      {
+        prompt: 'Parkinson disease strongly affects...',
+        options: ['Dopamine-related basal ganglia circuits', 'Only the retina', 'Only blood cells', 'Only skull bones'],
+        answerIndex: 0,
+        explanation: 'Parkinson disease is linked to degeneration of dopamine neurons that influence basal ganglia loops.',
+      },
+      {
+        prompt: 'Why think about circuits in neurodegeneration?',
+        options: [
+          'Symptoms reflect failing networks, not isolated molecules alone',
+          'Circuits are irrelevant to symptoms',
+          'All diseases damage every region equally',
+          'Synapses cannot be lost',
+        ],
+        answerIndex: 0,
+        explanation: 'Circuit-level thinking helps explain which functions are affected and why.',
+      },
+    ],
+    xpReward: 26,
+    coinReward: 10,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'A39',
+    trackId: 'neuroscience',
+    moduleId: 'A-health',
+    order: 39,
+    title: 'Psychiatric circuit disorders',
+    subtitle: 'Mental health through interacting systems',
+    estimatedMinutes: 6,
+    difficulty: 'beginner',
+    prerequisites: ['A18'],
+    explanation:
+      'Psychiatric disorders are not just problems in one brain spot. They involve interacting circuits for mood, threat, reward, attention, control, memory, sleep, and body state. Genes, development, stress, learning, social context, and inflammation can all shift these systems. Circuit thinking helps avoid overly simple explanations.',
+    keyTerms: ['circuit disorder', 'mood network', 'reward circuit', 'cognitive control'],
+    example:
+      'Depression can involve changes in reward learning, sleep, stress hormones, rumination, body energy, and social behaviour together.',
+    intuition:
+      'Mental health is a systems problem: many loops can push each other toward stability or instability.',
+    whyItMatters:
+      'A circuit view supports more humane explanations and connects symptoms to multiple treatment routes.',
+    questions: [
+      {
+        prompt: 'A circuit view of psychiatric disorders emphasises...',
+        options: [
+          'Interacting brain and body systems',
+          'One isolated neuron as the full cause',
+          'No role for learning or context',
+          'Only skull shape',
+        ],
+        answerIndex: 0,
+        explanation: 'Mental health symptoms often emerge from interacting networks and body systems.',
+      },
+      {
+        prompt: 'Reward circuits are especially relevant to...',
+        options: ['Motivation and reinforcement', 'Blood filtration only', 'Myelin thickness only', 'Skin colour'],
+        answerIndex: 0,
+        explanation: 'Reward circuits influence motivation, reinforcement learning, and action selection.',
+      },
+      {
+        prompt: 'Why avoid one-cause explanations?',
+        options: [
+          'Psychiatric symptoms usually reflect many interacting mechanisms',
+          'The brain has no interacting systems',
+          'All symptoms are identical',
+          'Context never affects the brain',
+        ],
+        answerIndex: 0,
+        explanation: 'Genes, development, stress, learning, social context, and circuits can all contribute.',
+      },
+    ],
+    xpReward: 26,
+    coinReward: 10,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'A40',
+    trackId: 'neuroscience',
+    moduleId: 'A-science',
+    order: 40,
+    title: 'Reading neuroscience evidence',
+    subtitle: 'Claims, methods, and limits',
+    estimatedMinutes: 6,
+    difficulty: 'beginner',
+    prerequisites: ['A20'],
+    explanation:
+      'A neuroscience claim is only as strong as the evidence behind it. Good reading asks: What was measured? At what scale? In which species or participants? Was the result correlational or causal? Are there controls, effect sizes, uncertainty, and replication? A strong paper usually has a clear method, a careful result, and modest conclusions.',
+    keyTerms: ['evidence', 'correlation', 'causation', 'replication'],
+    example:
+      'If fMRI activity correlates with a behaviour, that does not prove the region causes the behaviour unless causal tests or converging evidence support it.',
+    intuition:
+      'Read each claim by tracing the chain from method to measurement to conclusion.',
+    whyItMatters:
+      'This skill protects students from overhyped brain claims and prepares them to interpret real research responsibly.',
+    questions: [
+      {
+        prompt: 'A correlation between brain activity and behaviour proves...',
+        options: [
+          'Association, not causation by itself',
+          'A complete causal mechanism immediately',
+          'That no control is needed',
+          'That the result applies to every species',
+        ],
+        answerIndex: 0,
+        explanation: 'Correlation is informative but does not by itself establish causal necessity or sufficiency.',
+      },
+      {
+        prompt: 'A careful neuroscience reader asks first...',
+        options: [
+          'What was measured and at what scale?',
+          'Whether the figure is colourful',
+          'Whether the title sounds exciting',
+          'Whether the method can be ignored',
+        ],
+        answerIndex: 0,
+        explanation: 'The measurement method defines what kind of inference is justified.',
+      },
+      {
+        prompt: 'Replication matters because it...',
+        options: [
+          'Tests whether a finding is reliable beyond one study',
+          'Makes controls unnecessary',
+          'Turns correlation into causation automatically',
+          'Removes the need for statistics',
+        ],
+        answerIndex: 0,
+        explanation: 'Replication checks whether a result is robust across samples, labs, or methods.',
+      },
+    ],
+    xpReward: 28,
+    coinReward: 11,
     masteryThreshold: 0.8,
   },
 ];

@@ -19,10 +19,12 @@ Progress is saved in the browser on the same device. No account, install, or App
 
 ## Features
 
-- **70 hand-written lessons** across 3 learning tracks
-- **Track A — Neuroscience Basics** (20 lessons, fully unlocked from day one)
-- **Track B — Math Foundations** (20 lessons, sequential unlock)
-- **Track C — Computational Neuroscience** (30 lessons, prerequisite-based unlock)
+- **190 hand-written lessons** across 5 learning tracks
+- **Track A - Neuroscience Basics** (40 lessons, fully unlocked from day one)
+- **Track B - Math Foundations** (40 lessons, sequential unlock)
+- **Track C - Computational Neuroscience** (50 lessons, prerequisite-based unlock)
+- **Track D - AI Basics** (30 lessons, prerequisite-based unlock)
+- **Track E - NeuroAI** (30 lessons, prerequisite-based unlock)
 - **Gamified reward loop**: XP, coins, streaks, 0–3 star mastery, levels, achievements, daily quests, milestone chests
 - **Spaced review system** that resurfaces weak and forgotten concepts
 - **Offline-first**: no backend, no sign-in, no network required
@@ -198,7 +200,7 @@ NeuroMathQuest/
 │   └── quiz/[id].tsx       # Quiz screen
 ├── src/
 │   ├── components/         # Reusable UI components
-│   ├── content/            # 70 lessons + encouragement + achievements
+│   ├── content/            # 190 lessons + encouragement + achievements
 │   ├── db/                 # SQLite schema and initialization
 │   ├── hooks/              # React hooks (useProgress, useSettings, etc.)
 │   ├── repositories/       # Data access layer
@@ -218,14 +220,20 @@ NeuroMathQuest/
 
 ## Content
 
-### Track A: Neuroscience Basics (20 lessons)
-Neuron anatomy, resting potential, ion channels, action potentials, chemical synapses, excitatory/inhibitory transmission, neurotransmitters, receptors, glia, sensory systems, motor systems, cortex, thalamus, basal ganglia, cerebellum, hippocampus, amygdala, attention, sleep/rhythms, modern methods.
+### Track A: Neuroscience Basics (40 lessons)
+Neuron anatomy, resting potential, ion channels, action potentials, chemical synapses, excitatory/inhibitory transmission, neurotransmitters, receptors, glia, sensory systems, motor systems, cortex, thalamus, basal ganglia, cerebellum, hippocampus, amygdala, attention, sleep/rhythms, modern methods, dendritic spines, myelin, axonal transport, plasticity, homeostasis, brain energy, blood-brain barrier, development, critical periods, connectomes, resting-state networks, arousal, pain, interoception, autonomic regulation, stress, inflammation, degeneration, psychiatric circuits, and reading neuroscience evidence.
 
-### Track B: Math Foundations (20 lessons)
-Scalars, vectors, components, dimension, subscript notation, time notation, R^n, matrices, rows/columns, matrix-vector product, weighted sums, connectivity matrices, functions, derivatives, differential equations, system state, state space, random variables, Bernoulli/spikes, Poisson/spike counts.
+### Track B: Math Foundations (40 lessons)
+Scalars, vectors, components, dimension, subscript notation, time notation, R^n, matrices, rows/columns, matrix-vector product, weighted sums, connectivity matrices, functions, derivatives, differential equations, system state, state space, random variables, Bernoulli/spikes, Poisson/spike counts, distributions, expectation, variance, covariance, Bayes, optimisation, gradients, eigenvectors, PCA, entropy, mutual information, and model-fitting basics.
 
-### Track C: Computational Neuroscience (30 lessons)
-LIF neurons, membrane time constant, threshold/reset/refractoriness, firing rate models, recurrent networks, E/I balance, tuning curves, population coding, neural decoding, Bayesian inference, correlation/covariance, noise correlations, Markov processes, stochastic spike trains, Hebbian plasticity, STDP, homeostatic plasticity, attractor networks, Hopfield networks, continuous attractors, oscillations, Fourier intuition, filtering/convolution, GLMs, PCA, neural manifolds, RL/dopamine, predictive coding, efficient coding, brain-computer interfaces.
+### Track C: Computational Neuroscience (50 lessons)
+LIF neurons, Hodgkin-Huxley intuition, dendritic cables, conductance synapses, firing rate models, recurrent networks, E/I balance, tuning curves, population coding, decoding, Bayesian inference, neural statistics, stochastic processes, plasticity, attractors, rhythms, filters, GLMs, dimensionality reduction, reinforcement learning, predictive coding, efficient coding, neural interfaces, decisions, spatial codes, and cortical microcircuits.
+
+### Track D: AI Basics (30 lessons)
+Learning theory, losses, data splits, model families, optimisation, training deep models, evaluation, inference, fine-tuning, prompting, and alignment.
+
+### Track E: NeuroAI (30 lessons)
+AI for electrophysiology, imaging, behaviour, decoding, closed-loop experiments, brain models, clinical tools, and the NeuroAI frontier.
 
 ## Gamification System
 
@@ -250,13 +258,13 @@ Tone: warm, respectful, smart, concise — never patronizing, sarcastic, or puni
 ## What Makes This App Feel Motivating
 
 ### Reward loop
-Every interaction produces visible progress. Complete a lesson and you see XP animate, coins appear, stars fill, and the path advance. Wrong answers still earn XP (minimum 40% of base) and show a kind explanation. Perfect scores trigger confetti and sound effects. Every 5 lessons unlock a milestone chest. Mastery takes repeated success, not a lucky guess — so earning 3 stars genuinely feels earned.
+Every interaction produces visible progress. Complete a lesson and you see XP animate, coins appear, stars fill, and the path advance. Wrong answers still earn XP (minimum 40% of base) and show a kind explanation. Perfect scores trigger confetti and sound effects. Every 5 lessons unlock a milestone chest. One successful quiz advances the recommended path; mastery still rewards repeated success, so earning 3 stars genuinely feels earned.
 
 ### Encouraging UX
 The encouragement engine uses context-specific copy that is warm and intelligent without being patronizing. Wrong answers say "Not quite — but now you have a sharper idea" rather than "Wrong!" or "Try harder!" The daily goal ring and streak chip provide gentle positive pressure without making the user feel punished for missing a day. The comeback messages welcome returning users without guilt.
 
 ### Progression model
-Three tracks create a layered progression: neuroscience basics unlock immediately (zero friction to start), math unlocks linearly (clear next-step), and computational neuroscience unlocks through prerequisites (a sense of convergence). The path map makes locked, current, and mastered lessons visually distinct. Users always know what to do next because the recommended lesson is one tap away. Review resurfaces weak concepts automatically, making forgetting feel like a normal part of learning rather than a failure.
+Five tracks create a layered progression: neuroscience basics unlock immediately (zero friction to start), math unlocks linearly (clear next-step), and computational neuroscience, AI Basics, and NeuroAI unlock through prerequisites (a sense of convergence). The path map makes locked, current, cleared, and mastered lessons visually distinct. Users always know what to do next because the recommended lesson is one tap away. Review resurfaces weak concepts automatically, making forgetting feel like a normal part of learning rather than a failure.
 
 ### Why it works
 The combination of short lessons (4–6 min), visible XP counters, daily quests, streak mechanics, and spaced review creates a compounding sense of competence and momentum. The learner finishes each session having completed something real and seeing tangible proof of it. That feeling of "I am actually learning this" is the core motivation engine.
