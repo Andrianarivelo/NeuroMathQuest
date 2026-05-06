@@ -5,11 +5,12 @@ import { useTheme } from '../../src/theme/ThemeProvider';
 import { useProgress } from '../../src/hooks/useProgress';
 import { useStreak } from '../../src/hooks/useStreak';
 import { useWallet } from '../../src/hooks/useWallet';
-import { Card, ProgressRing, StreakChip, StarRow } from '../../src/components';
+import { Card, ProgressBar, ProgressRing, StreakChip, StarRow } from '../../src/components';
 import { tracks, getTrackLessons } from '../../src/content/tracks';
 import { rewardsRepository } from '../../src/repositories/rewardsRepository';
 import { achievements } from '../../src/content/achievements';
 import { MasteryLevel } from '../../src/services/masteryService';
+import { nextAchievementProgress } from '../../src/services/achievementProgressService';
 
 export default function ProgressScreen() {
   const theme = useTheme();
@@ -20,6 +21,20 @@ export default function ProgressScreen() {
   useFocusEffect(useCallback(() => { rp(); rs(); rw(); }, []));
 
   const unlocked = rewardsRepository.listUnlockedAchievements();
+  const completedByTrack = Object.fromEntries(
+    tracks.map((track) => [
+      track.id,
+      rows.filter((row) => row.track_id === track.id && row.mastery !== 'not_started').length,
+    ])
+  );
+  const nextBadge = nextAchievementProgress(achievements, unlocked, {
+    completedLessons: completedCount,
+    masteredLessons: masteredCount,
+    currentStreak,
+    xpTotal: wallet.xpTotal,
+    chestsOpened: wallet.chestsOpened,
+    completedByTrack,
+  });
 
   const weakLessons = rows
     .filter((r) => r.mastery === 'beginner' || r.mastery === 'practicing')
@@ -49,6 +64,24 @@ export default function ProgressScreen() {
               </View>
             </View>
           </Card>
+
+          {nextBadge && (
+            <Card style={{ marginBottom: 14, backgroundColor: theme.colors.goldSoft }}>
+              <Text style={{ ...theme.typography.caption, color: theme.colors.gold, marginBottom: 4 }}>
+                Next badge
+              </Text>
+              <Text style={{ ...theme.typography.h3, color: theme.colors.text }}>
+                {nextBadge.achievement.title}
+              </Text>
+              <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted, marginTop: 2, marginBottom: 10 }}>
+                {nextBadge.achievement.description}
+              </Text>
+              <ProgressBar value={nextBadge.ratio} height={8} color={theme.colors.gold} />
+              <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted, marginTop: 6 }}>
+                {Math.min(nextBadge.current, nextBadge.target)}/{nextBadge.target}
+              </Text>
+            </Card>
+          )}
 
           {/* Streak + coins */}
           <View style={{ flexDirection: 'row', gap: 12, marginBottom: 14 }}>

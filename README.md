@@ -37,6 +37,10 @@ NEUROMATH-ADMIN
 - **Gamified reward loop**: XP, coins, streaks, 0–3 star mastery, levels, achievements, daily quests, milestone chests
 - **Mixed exam system** that resurfaces weak and forgotten concepts
 - **Zoomable lesson illustrations**: click any lesson cartoon to inspect it full-screen
+- **Home mission card** with a clear next step, quick exam shortcut, and daily momentum stats
+- **Active recall prompts** inside lessons so students pause, predict, and reveal a memory hook
+- **Lettered answer cards** with clearer feedback during quizzes and exams
+- **Next badge tracker** that points students toward the closest achievement
 - **Expanded quiz pools**: each lesson now mixes original and generated concept checks so retries are not always identical
 - **Reference-informed neuroscience details** integrated into Track A so important facts are taught before quizzes
 - **Local learner profiles** with rotating greetings and device-saved progress

@@ -15,10 +15,12 @@ export default function LessonScreen() {
   const router = useRouter();
   const { progressMap } = useProgress();
   const [courseDetailIndex, setCourseDetailIndex] = useState(0);
+  const [memoryHookOpen, setMemoryHookOpen] = useState(false);
 
   const lesson = getLesson(id ?? '');
   useEffect(() => {
     setCourseDetailIndex(0);
+    setMemoryHookOpen(false);
   }, [lesson?.id]);
 
   if (!lesson) {
@@ -104,6 +106,36 @@ export default function LessonScreen() {
             )}
           </Card>
 
+          {/* Active recall */}
+          <Card style={{ backgroundColor: theme.colors.secondarySoft }}>
+            <Text style={{ ...theme.typography.h3, color: theme.colors.secondary, marginBottom: 6 }}>
+              Recall check
+            </Text>
+            <Text style={{ ...theme.typography.body, color: theme.colors.text, lineHeight: 24, marginBottom: 12 }}>
+              Pause for ten seconds and say the idea in your own words.
+            </Text>
+            {memoryHookOpen ? (
+              <View style={{ gap: 12 }}>
+                <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text, lineHeight: 24 }}>
+                  {lesson.intuition}
+                </Text>
+                <Button
+                  label="Hide memory hook"
+                  variant="outline"
+                  fullWidth
+                  onPress={() => setMemoryHookOpen(false)}
+                />
+              </View>
+            ) : (
+              <Button
+                label="Reveal memory hook"
+                variant="secondary"
+                fullWidth
+                onPress={() => setMemoryHookOpen(true)}
+              />
+            )}
+          </Card>
+
           {/* Notation */}
           {lesson.notation && (
             <Card style={{ backgroundColor: theme.colors.bgMuted }}>
@@ -140,12 +172,6 @@ export default function LessonScreen() {
               )}
             </Card>
           )}
-
-          {/* Intuition */}
-          <Card>
-            <Text style={{ ...theme.typography.h3, color: theme.colors.secondary, marginBottom: 6 }}>Quick intuition</Text>
-            <Text style={{ ...theme.typography.body, color: theme.colors.text }}>{lesson.intuition}</Text>
-          </Card>
 
           {/* Example */}
           <Card style={{ borderLeftWidth: 4, borderLeftColor: theme.colors.primary }}>

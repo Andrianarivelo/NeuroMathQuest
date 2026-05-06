@@ -4,9 +4,11 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import Animated, { FadeIn, SlideInRight, ZoomIn } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../src/theme/ThemeProvider';
-import { Button, CoinChip, ProgressBar, XPChip } from '../src/components';
+import { AnswerOption, AnswerOptionState, Button, CoinChip, ProgressBar, XPChip } from '../src/components';
 import { randomEncouragement } from '../src/content/encouragement';
 import { buildExamQuestions, completeExamAttempt, ExamAttemptResult } from '../src/services/examService';
+
+const optionLabels = ['A', 'B', 'C', 'D'];
 
 export default function ExamScreen() {
   const params = useLocalSearchParams<{ lessonIds?: string }>();
@@ -118,6 +120,7 @@ export default function ExamScreen() {
   const answered = selectedIndex !== undefined;
   const isCorrect = selectedIndex === question.answerIndex;
   const progress = (questionIndex + (answered ? 1 : 0)) / questions.length;
+  const answeredCount = Object.keys(selectedByQuestionId).length;
   const encourageMsg = answered
     ? isCorrect
       ? randomEncouragement('correct')
@@ -160,6 +163,18 @@ export default function ExamScreen() {
             {questionIndex + 1}/{questions.length}
           </Text>
         </View>
+        <View style={{ paddingHorizontal: 20, paddingTop: 8, flexDirection: 'row', gap: 8 }}>
+          <View style={{ backgroundColor: theme.colors.reviewSoft, borderRadius: theme.radius.pill, paddingHorizontal: 10, paddingVertical: 5 }}>
+            <Text style={{ ...theme.typography.tiny, color: theme.colors.review }}>
+              {answeredCount}/{questions.length} answered
+            </Text>
+          </View>
+          <View style={{ backgroundColor: theme.colors.secondarySoft, borderRadius: theme.radius.pill, paddingHorizontal: 10, paddingVertical: 5 }}>
+            <Text style={{ ...theme.typography.tiny, color: theme.colors.secondaryInk }}>
+              {lessonIds.length} topics
+            </Text>
+          </View>
+        </View>
 
         <ScrollView
           style={{ flex: 1 }}
@@ -181,34 +196,24 @@ export default function ExamScreen() {
             </Text>
 
             {question.options.map((option, optionIndex) => {
-              let backgroundColor = theme.colors.surface;
-              let borderColor = theme.colors.border;
+              let state: AnswerOptionState = 'idle';
               if (answered) {
                 if (optionIndex === question.answerIndex) {
-                  backgroundColor = theme.colors.successSoft;
-                  borderColor = theme.colors.success;
+                  state = 'correct';
                 } else if (optionIndex === selectedIndex && !isCorrect) {
-                  backgroundColor = theme.colors.dangerSoft;
-                  borderColor = theme.colors.danger;
+                  state = 'incorrect';
                 }
               }
 
               return (
-                <Pressable
+                <AnswerOption
                   key={optionIndex}
+                  label={optionLabels[optionIndex]}
+                  text={option}
+                  state={state}
                   onPress={() => handleSelect(optionIndex)}
                   disabled={answered}
-                  style={{
-                    backgroundColor,
-                    borderWidth: 2,
-                    borderColor,
-                    borderRadius: theme.radius.md,
-                    padding: 14,
-                    marginBottom: 10,
-                  }}
-                >
-                  <Text style={{ ...theme.typography.body, color: theme.colors.text }}>{option}</Text>
-                </Pressable>
+                />
               );
             })}
 

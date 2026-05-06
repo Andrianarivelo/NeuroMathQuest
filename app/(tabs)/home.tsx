@@ -1,8 +1,8 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { View, Text, ScrollView, SafeAreaView } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Button, Card, ProgressRing, StreakChip, XPChip, CoinChip } from '../../src/components';
+import { Button, Card, ProgressBar, ProgressRing, StreakChip, XPChip, CoinChip } from '../../src/components';
 import { useTheme } from '../../src/theme/ThemeProvider';
 import { useProgress } from '../../src/hooks/useProgress';
 import { useStreak } from '../../src/hooks/useStreak';
@@ -14,11 +14,12 @@ import { questsRepository, DailyQuestRow } from '../../src/repositories/questsRe
 import { randomEncouragement } from '../../src/content/encouragement';
 import { isoDay } from '../../src/utils/date';
 import { recordUsageEvent } from '../../src/services/backend/syncService';
+import { pickReviewSet, ReviewCandidate } from '../../src/services/reviewService';
 
 export default function HomeScreen() {
   const theme = useTheme();
   const router = useRouter();
-  const { progressMap, completedCount, refresh: refreshProgress } = useProgress();
+  const { rows, progressMap, completedCount, masteredCount, refresh: refreshProgress } = useProgress();
   const { currentStreak, todayLessons, refresh: refreshStreak } = useStreak();
   const { wallet, levelInfo, refresh: refreshWallet } = useWallet();
   const { settings, refresh: refreshSettings } = useSettings();
@@ -48,8 +49,18 @@ export default function HomeScreen() {
   );
 
   const nextLesson = nextRecommendedLesson(progressMap);
+  const examCandidates: ReviewCandidate[] = rows.map((row) => ({
+    lessonId: row.lesson_id,
+    mastery: row.mastery as any,
+    lastReviewedAt: row.last_attempt_at,
+    lastMissedAt: row.last_score < 0.8 ? row.last_attempt_at : null,
+    bestScore: row.best_score,
+  }));
+  const examSet = useMemo(() => pickReviewSet(examCandidates, 6), [rows]);
+  const examLessonIds = examSet.map((candidate) => candidate.lessonId).join(',');
   const dailyGoal = settings.dailyGoalLessons;
   const goalProgress = dailyGoal > 0 ? Math.min(1, todayLessons / dailyGoal) : 0;
+  const completedQuestCount = quests.filter((quest) => quest.completed).length;
 
   const learnerName = settings.profileName?.trim() || 'NeuroMath Explorer';
   const heroMsg = `${sessionGreeting}, ${learnerName}.`;
@@ -79,6 +90,54 @@ export default function HomeScreen() {
         </LinearGradient>
 
         <View style={{ paddingHorizontal: 16, marginTop: 20 }}>
+          {/* Mission card */}
+          <Card style={{ marginBottom: 16, gap: 14 }}>
+            <View>
+              <Text style={{ ...theme.typography.h3, color: theme.colors.text, marginBottom: 4 }}>
+                Today's mission
+              </Text>
+              <Text style={{ ...theme.typography.body, color: theme.colors.textMuted }}>
+                {nextLesson
+                  ? 'Learn one concept, then test yourself when you feel ready.'
+                  : examSet.length > 0
+                  ? 'You are ready for a quick mixed exam.'
+                  : 'Explore any unlocked lesson and build your first streak.'}
+              </Text>
+            </View>
+
+            {nextLesson && (
+              <Button
+                label={`Continue: ${nextLesson.title}`}
+                size="md"
+                fullWidth
+                onPress={() => router.push(`/lesson/${nextLesson.id}`)}
+              />
+            )}
+            {examSet.length > 1 && (
+              <Button
+                label="Quick exam"
+                variant={nextLesson ? 'outline' : 'secondary'}
+                fullWidth
+                onPress={() => router.push(`/exam?lessonIds=${encodeURIComponent(examLessonIds)}` as any)}
+              />
+            )}
+
+            <View style={{ flexDirection: 'row', gap: 8 }}>
+              <View style={{ flex: 1, backgroundColor: theme.colors.bgMuted, borderRadius: theme.radius.md, padding: 10 }}>
+                <Text style={{ ...theme.typography.tiny, color: theme.colors.textMuted }}>TODAY</Text>
+                <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>{todayLessons}/{dailyGoal}</Text>
+              </View>
+              <View style={{ flex: 1, backgroundColor: theme.colors.bgMuted, borderRadius: theme.radius.md, padding: 10 }}>
+                <Text style={{ ...theme.typography.tiny, color: theme.colors.textMuted }}>QUESTS</Text>
+                <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>{completedQuestCount}/{quests.length || 3}</Text>
+              </View>
+              <View style={{ flex: 1, backgroundColor: theme.colors.bgMuted, borderRadius: theme.radius.md, padding: 10 }}>
+                <Text style={{ ...theme.typography.tiny, color: theme.colors.textMuted }}>MASTERED</Text>
+                <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>{masteredCount}</Text>
+              </View>
+            </View>
+          </Card>
+
           {/* Daily goal ring + continue */}
           <Card style={{ flexDirection: 'row', alignItems: 'center', gap: 16, marginBottom: 16 }}>
             <ProgressRing
@@ -99,17 +158,6 @@ export default function HomeScreen() {
             </View>
           </Card>
 
-          {/* Continue button */}
-          {nextLesson && (
-            <Button
-              label={`Continue: ${nextLesson.title}`}
-              size="lg"
-              fullWidth
-              onPress={() => router.push(`/lesson/${nextLesson.id}`)}
-              style={{ marginBottom: 16 }}
-            />
-          )}
-
           {/* Quests */}
           <Text style={{ ...theme.typography.h3, color: theme.colors.text, marginBottom: 10, marginTop: 6 }}>
             Daily quests
@@ -124,6 +172,11 @@ export default function HomeScreen() {
                 <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>
                   {q.progress}/{q.target} - {q.def.description}
                 </Text>
+                <ProgressBar
+                  value={q.progress / Math.max(1, q.target)}
+                  height={6}
+                  style={{ marginTop: 6 }}
+                />
               </View>
             </Card>
           ))}

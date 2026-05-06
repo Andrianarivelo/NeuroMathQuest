@@ -9,3 +9,5 @@ export { LessonNode } from './LessonNode';
 export { LessonCartoon } from './LessonCartoon';
 export { SectionTitle } from './SectionTitle';
 export { Confetti } from './Confetti';
+export { AnswerOption } from './AnswerOption';
+export type { AnswerOptionState } from './AnswerOption';

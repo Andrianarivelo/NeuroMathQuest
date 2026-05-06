@@ -5,9 +5,11 @@ import Animated, { FadeIn, SlideInRight } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../../src/theme/ThemeProvider';
 import { getLesson } from '../../src/content/tracks';
-import { ProgressBar, Button } from '../../src/components';
+import { ProgressBar, Button, AnswerOption, AnswerOptionState } from '../../src/components';
 import { randomEncouragement } from '../../src/content/encouragement';
 import { selectQuizQuestions } from '../../src/services/quizService';
+
+const optionLabels = ['A', 'B', 'C', 'D'];
 
 export default function QuizScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -22,6 +24,7 @@ export default function QuizScreen() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [answered, setAnswered] = useState(false);
   const [correctCount, setCorrectCount] = useState(0);
+  const [correctRun, setCorrectRun] = useState(0);
   const [missedIds, setMissedIds] = useState<string[]>([]);
 
   if (!lesson) {
@@ -44,10 +47,12 @@ export default function QuizScreen() {
     const correct = optionIndex === q.answerIndex;
     if (correct) {
       setCorrectCount((c) => c + 1);
+      setCorrectRun((run) => run + 1);
       if (Platform.OS !== 'web') {
         void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
       }
     } else {
+      setCorrectRun(0);
       setMissedIds((m) => [...m, q.id]);
       if (Platform.OS !== 'web') {
         void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => undefined);
@@ -93,6 +98,18 @@ export default function QuizScreen() {
             {qi + 1}/{questions.length}
           </Text>
         </View>
+        <View style={{ paddingHorizontal: 20, paddingTop: 8, flexDirection: 'row', gap: 8 }}>
+          <View style={{ backgroundColor: theme.colors.primarySoft, borderRadius: theme.radius.pill, paddingHorizontal: 10, paddingVertical: 5 }}>
+            <Text style={{ ...theme.typography.tiny, color: theme.colors.primaryInk }}>
+              {correctCount}/{qi + (answered ? 1 : 0)} correct
+            </Text>
+          </View>
+          <View style={{ backgroundColor: theme.colors.goldSoft, borderRadius: theme.radius.pill, paddingHorizontal: 10, paddingVertical: 5 }}>
+            <Text style={{ ...theme.typography.tiny, color: theme.colors.gold }}>
+              streak {correctRun}
+            </Text>
+          </View>
+        </View>
 
         {/* Question */}
         <ScrollView
@@ -112,36 +129,26 @@ export default function QuizScreen() {
             </Text>
 
             {q.options.map((opt, oi) => {
-              let bg = theme.colors.surface;
-              let borderCol = theme.colors.border;
+              let state: AnswerOptionState = 'idle';
               if (answered) {
                 if (oi === q.answerIndex) {
-                  bg = theme.colors.successSoft;
-                  borderCol = theme.colors.success;
+                  state = 'correct';
                 } else if (oi === selectedIndex && !isCorrect) {
-                  bg = theme.colors.dangerSoft;
-                  borderCol = theme.colors.danger;
+                  state = 'incorrect';
                 }
               } else if (oi === selectedIndex) {
-                borderCol = theme.colors.primary;
+                state = 'selected';
               }
 
               return (
-                <Pressable
+                <AnswerOption
                   key={oi}
+                  label={optionLabels[oi]}
+                  text={opt}
+                  state={state}
                   onPress={() => handleSelect(oi)}
                   disabled={answered}
-                  style={{
-                    backgroundColor: bg,
-                    borderWidth: 2,
-                    borderColor: borderCol,
-                    borderRadius: theme.radius.md,
-                    padding: 14,
-                    marginBottom: 10,
-                  }}
-                >
-                  <Text style={{ ...theme.typography.body, color: theme.colors.text }}>{opt}</Text>
-                </Pressable>
+                />
               );
             })}
 
