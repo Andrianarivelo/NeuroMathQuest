@@ -45,8 +45,8 @@ export const QUEST_BANK: Record<QuestId, QuestDefinition> = {
   },
   one_review: {
     id: 'one_review',
-    title: 'One review session',
-    description: 'Finish one review session.',
+    title: 'One exam session',
+    description: 'Finish one mixed exam.',
     target: 1,
     icon: 'leaf',
   },

@@ -156,7 +156,7 @@ function estimateSuccessfulAttempts(attempts: number, bestScore: number, thresho
   return Math.min(attempts, 2);
 }
 
-function applyDailyQuestProgress(evt: {
+export function applyDailyQuestProgress(evt: {
   lessonsCompleted: number;
   xpEarned: number;
   masteryEvents: number;

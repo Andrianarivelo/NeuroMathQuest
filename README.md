@@ -35,7 +35,7 @@ NEUROMATH-ADMIN
 - **Track D - AI Basics** (30 lessons, prerequisite-based unlock)
 - **Track E - NeuroAI** (30 lessons, prerequisite-based unlock)
 - **Gamified reward loop**: XP, coins, streaks, 0–3 star mastery, levels, achievements, daily quests, milestone chests
-- **Spaced review system** that resurfaces weak and forgotten concepts
+- **Mixed exam system** that resurfaces weak and forgotten concepts
 - **Zoomable lesson illustrations**: click any lesson cartoon to inspect it full-screen
 - **Expanded quiz pools**: each lesson now mixes original and generated concept checks so retries are not always identical
 - **Reference-informed neuroscience details** integrated into Track A so important facts are taught before quizzes
@@ -45,7 +45,7 @@ NEUROMATH-ADMIN
 - **Offline-first**: no backend, no sign-in, no network required
 - **SQLite persistence** for all user progress
 - **Polished UI** with Reanimated animations, haptic feedback, and a custom design system
-- **5 tab navigation**: Home, Learn, Review, Progress, Profile
+- **5 tab navigation**: Home, Learn, Exam, Progress, Profile
 - **Onboarding flow** with goal selection and daily target setting
 
 ## Tech Stack
@@ -308,7 +308,7 @@ AI for electrophysiology, imaging, behaviour, decoding, closed-loop experiments,
 
 ## Encouragement System
 
-Copy banks for 12 contexts: greetings, correct answers, incorrect answers, first lesson, lesson complete, mastery earned, streak saved, chest opened, quest complete, review win, comeback, daily goal, and milestones.
+Copy banks for 12 contexts: greetings, correct answers, incorrect answers, first lesson, lesson complete, mastery earned, streak saved, chest opened, quest complete, exam win, comeback, daily goal, and milestones.
 
 Tone: warm, respectful, smart, concise - never patronizing, sarcastic, or punitive.
 
@@ -321,7 +321,7 @@ Every interaction produces visible progress. Complete a lesson and you see XP an
 The encouragement engine uses context-specific copy that is warm and intelligent without being patronizing. Wrong answers say "Nice effort. The explanation gives the missing piece." rather than "Wrong!" or "Try harder!" The daily goal ring and streak chip provide gentle positive pressure without making the user feel punished for missing a day. The greeting messages welcome returning users without guilt.
 
 ### Progression model
-Five tracks create a layered progression: neuroscience basics unlock immediately (zero friction to start), math unlocks linearly (clear next-step), and computational neuroscience, AI Basics, and NeuroAI unlock through prerequisites (a sense of convergence). The path map makes locked, current, cleared, and mastered lessons visually distinct. Users always know what to do next because the recommended lesson is one tap away. Review resurfaces weak concepts automatically, making forgetting feel like a normal part of learning rather than a failure.
+Five tracks create a layered progression: neuroscience basics unlock immediately (zero friction to start), math unlocks linearly (clear next-step), and computational neuroscience, AI Basics, and NeuroAI unlock through prerequisites (a sense of convergence). The path map makes locked, current, cleared, and mastered lessons visually distinct. Users always know what to do next because the recommended lesson is one tap away. Exams resurface weak concepts automatically, making forgetting feel like a normal part of learning rather than a failure.
 
 ### Why it works
-The combination of short lessons (4–6 min), visible XP counters, daily quests, streak mechanics, and spaced review creates a compounding sense of competence and momentum. The learner finishes each session having completed something real and seeing tangible proof of it. That feeling of "I am actually learning this" is the core motivation engine.
+The combination of short lessons (4–6 min), visible XP counters, daily quests, streak mechanics, and mixed exams creates a compounding sense of competence and momentum. The learner finishes each session having completed something real and seeing tangible proof of it. That feeling of "I am actually learning this" is the core motivation engine.

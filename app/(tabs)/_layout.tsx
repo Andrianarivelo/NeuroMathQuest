@@ -78,7 +78,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="review"
         options={{
-          title: 'Review',
+          title: 'Exam',
           tabBarIcon: ({ color, size }) => <TabIcon name="review" color={color} size={size} />,
         }}
       />

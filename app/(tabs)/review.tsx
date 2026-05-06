@@ -23,6 +23,7 @@ export default function ReviewScreen() {
   }));
 
   const reviewSet = useMemo(() => pickReviewSet(candidates, 6), [rows]);
+  const examLessonIds = reviewSet.map((candidate) => candidate.lessonId).join(',');
 
   const weakConcepts = reviewSet.filter((c) => c.mastery === 'beginner' || c.mastery === 'practicing');
   const strengthening = reviewSet.filter((c) => c.mastery === 'strong' || c.mastery === 'mastered');
@@ -31,8 +32,8 @@ export default function ReviewScreen() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>
         <EmptyState
-          title="Nothing to review yet"
-          message="Complete a few lessons and concepts will appear here for smart review."
+          title="No exam ready yet"
+          message="Complete a few lessons and concepts will appear here for a mixed exam."
           action={<Button label="Start learning" onPress={() => router.push('/(tabs)/learn')} />}
         />
       </SafeAreaView>
@@ -42,15 +43,15 @@ export default function ReviewScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>
       <ScrollView contentContainerStyle={{ paddingBottom: 48 }} showsVerticalScrollIndicator={false}>
-        <SectionTitle title="Review" />
+        <SectionTitle title="Exam" />
         <Text style={{ ...theme.typography.body, color: theme.colors.textMuted, paddingHorizontal: 16, marginBottom: 16 }}>
-          Strengthen your memory through spaced practice.
+          Test a small mix of concepts from lessons you have already started.
         </Text>
 
         {weakConcepts.length > 0 && (
           <>
             <Text style={{ ...theme.typography.h3, color: theme.colors.text, paddingHorizontal: 16, marginBottom: 8 }}>
-              Because you missed these recently
+              Exam focus
             </Text>
             {weakConcepts.map((c) => {
               const lesson = getLesson(c.lessonId);
@@ -77,7 +78,7 @@ export default function ReviewScreen() {
         {strengthening.length > 0 && (
           <>
             <Text style={{ ...theme.typography.h3, color: theme.colors.text, paddingHorizontal: 16, marginTop: 12, marginBottom: 8 }}>
-              Warm-up drills
+              Ready topics
             </Text>
             {strengthening.map((c) => {
               const lesson = getLesson(c.lessonId);
@@ -100,11 +101,13 @@ export default function ReviewScreen() {
         )}
 
         <Button
-          label="Start mixed review"
+          label="Start exam"
           variant="secondary"
           fullWidth
           onPress={() => {
-            if (reviewSet[0]) router.push(`/quiz/${reviewSet[0].lessonId}`);
+            if (examLessonIds) {
+              router.push(`/exam?lessonIds=${encodeURIComponent(examLessonIds)}` as any);
+            }
           }}
           style={{ marginHorizontal: 16, marginTop: 20 }}
         />

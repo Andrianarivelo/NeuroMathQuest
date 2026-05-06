@@ -33,6 +33,7 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="lesson/[id]" options={{ animation: 'slide_from_bottom' }} />
         <Stack.Screen name="quiz/[id]" options={{ animation: 'slide_from_bottom' }} />
+        <Stack.Screen name="exam" options={{ animation: 'slide_from_bottom' }} />
         <Stack.Screen name="quiz-summary" options={{ animation: 'fade' }} />
       </Stack>
     </ThemeProvider>

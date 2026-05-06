@@ -81,8 +81,8 @@ export const encouragementCopy: Record<EncouragementContext, string[]> = {
   ],
   review_win: [
     'Welcome back, concept. You remembered it.',
-    'Review win. That memory is stronger now.',
-    'Nice recovery. Spaced practice is doing its job.',
+    'Exam win. That memory is stronger now.',
+    'Nice recovery. Practice is doing its job.',
   ],
   comeback: [
     'Good to see you again.',
