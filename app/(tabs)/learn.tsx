@@ -9,6 +9,14 @@ import { LessonNode, SectionTitle, Card, ProgressBar } from '../../src/component
 import { Lesson, TrackId } from '../../src/content/types';
 import { trackTints } from '../../src/theme';
 
+const trackTabLabels: Record<TrackId, string> = {
+  neuroscience: 'Neuro',
+  math: 'Math',
+  compneuro: 'Comp',
+  aibasis: 'AI',
+  aineuro: 'NeuroAI',
+};
+
 export default function LearnScreen() {
   const theme = useTheme();
   const router = useRouter();
@@ -29,7 +37,12 @@ export default function LearnScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>
       {/* Track picker */}
-      <View style={{ flexDirection: 'row', paddingHorizontal: 16, paddingTop: 16, gap: 8 }}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 16, gap: 6 }}
+        style={{ flexGrow: 0 }}
+      >
         {tracks.map((t) => {
           const tint = trackTints[t.id as keyof typeof trackTints];
           const active = t.id === activeTrack;
@@ -38,22 +51,33 @@ export default function LearnScreen() {
               key={t.id}
               onPress={() => setActiveTrack(t.id)}
               style={{
-                flex: 1,
+                minWidth: 70,
                 paddingVertical: 10,
+                paddingHorizontal: 8,
                 borderRadius: theme.radius.md,
                 backgroundColor: active ? tint.bg : theme.colors.surface,
                 borderWidth: 2,
                 borderColor: active ? tint.fg : 'transparent',
                 alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
-              <Text style={{ ...theme.typography.caption, color: active ? tint.fg : theme.colors.textMuted }}>
-                {t.title.split(' ')[0]}
+              <Text
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.78}
+                style={{
+                  ...theme.typography.caption,
+                  color: active ? tint.fg : theme.colors.textMuted,
+                  textAlign: 'center',
+                }}
+              >
+                {trackTabLabels[t.id]}
               </Text>
             </Pressable>
           );
         })}
-      </View>
+      </ScrollView>
 
       {/* Track header */}
       <View style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 }}>

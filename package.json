@@ -13,7 +13,8 @@
     "test:watch": "jest --watch",
     "lint": "tsc --noEmit",
     "doctor": "expo-doctor",
-    "generate:assets": "node scripts/generate-assets.js"
+    "generate:assets": "node scripts/generate-assets.js",
+    "generate:lesson-art": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/generate-lesson-art.ps1"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.105.3",

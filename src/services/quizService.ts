@@ -54,15 +54,6 @@ function toAnswerIndex(index: number): 0 | 1 | 2 | 3 {
   return Math.max(0, Math.min(3, index)) as 0 | 1 | 2 | 3;
 }
 
-function distractorsFrom(field: (lesson: Lesson) => string, currentLessonId: string): string[] {
-  return uniqueStrings(
-    allLessons
-      .filter((lesson) => lesson.id !== currentLessonId)
-      .map(field)
-      .filter((value) => value.length <= 180)
-  );
-}
-
 function compactChoice(value: string, maxLength = 92): string {
   const text = value.replace(/\s+/g, ' ').trim();
   if (text.length <= maxLength) return text;
@@ -77,6 +68,33 @@ function compactChoice(value: string, maxLength = 92): string {
   );
   const compact = cutAt >= 45 ? slice.slice(0, cutAt) : slice.replace(/\s+\S*$/, '');
   return `${compact.replace(/[.,;:\s-]+$/, '')}.`;
+}
+
+function explanationDistractors(lesson: Lesson, currentExplanation: string): string[] {
+  return uniqueStrings([
+    ...lesson.questions
+      .map((question) => question.explanation)
+      .filter((explanation) => explanation !== currentExplanation),
+    ...allLessons
+      .filter((item) => item.trackId === lesson.trackId && item.id !== lesson.id)
+      .flatMap((item) => item.questions.map((question) => question.explanation)),
+    ...allLessons
+      .filter((item) => item.id !== lesson.id)
+      .flatMap((item) => item.questions.map((question) => question.explanation)),
+  ]).filter((value) => value.length <= 160);
+}
+
+function optionDistractors(lesson: Lesson, question: QuizQuestion): string[] {
+  const correctAnswer = question.options[question.answerIndex];
+  return uniqueStrings([
+    ...question.options.filter((option) => option !== correctAnswer),
+    ...allLessons
+      .filter((item) => item.trackId === lesson.trackId && item.id !== lesson.id)
+      .flatMap((item) => item.questions.map((candidate) => candidate.options[candidate.answerIndex])),
+    ...allLessons
+      .filter((item) => item.id !== lesson.id)
+      .flatMap((item) => item.questions.map((candidate) => candidate.options[candidate.answerIndex])),
+  ]).filter((value) => value.length <= 140);
 }
 
 function createQuestion(params: {
@@ -107,29 +125,32 @@ export function buildQuizPool(lesson: Lesson): QuizQuestionWithId[] {
     source: 'lesson',
   }));
 
-  const generated: Array<QuizQuestionWithId | null> = [
-    createQuestion({
-      id: `${lesson.id}_intuition`,
-      prompt: `Best mental model for "${lesson.title}"?`,
-      answer: lesson.intuition,
-      distractors: distractorsFrom((item) => item.intuition, lesson.id),
-      explanation: lesson.intuition,
-    }),
-    createQuestion({
-      id: `${lesson.id}_example`,
-      prompt: `Best example of "${lesson.title}"?`,
-      answer: lesson.example,
-      distractors: distractorsFrom((item) => item.example, lesson.id),
-      explanation: lesson.example,
-    }),
-    createQuestion({
-      id: `${lesson.id}_why`,
-      prompt: `Why does "${lesson.title}" matter?`,
-      answer: lesson.whyItMatters,
-      distractors: distractorsFrom((item) => item.whyItMatters, lesson.id),
-      explanation: lesson.whyItMatters,
-    }),
-  ];
+  const generated: Array<QuizQuestionWithId | null> = [];
+
+  lesson.questions.forEach((question, index) => {
+    const correctAnswer = question.options[question.answerIndex];
+    const wrongAnswer = question.options.find((option) => option !== correctAnswer) ?? question.options[0];
+
+    generated.push(
+      createQuestion({
+        id: `${lesson.id}_repair_${index}`,
+        prompt: `In "${lesson.title}", a learner chose "${compactChoice(wrongAnswer, 54)}". Which correction matches the lesson?`,
+        answer: correctAnswer,
+        distractors: optionDistractors(lesson, question),
+        explanation: question.explanation,
+      })
+    );
+
+    generated.push(
+      createQuestion({
+        id: `${lesson.id}_reason_${index}`,
+        prompt: `In "${lesson.title}", why is "${compactChoice(correctAnswer, 46)}" the right idea?`,
+        answer: question.explanation,
+        distractors: explanationDistractors(lesson, question.explanation),
+        explanation: question.explanation,
+      })
+    );
+  });
 
   getNotationTerms(lesson)
     .slice(0, 3)

@@ -27,6 +27,15 @@ describe('quizService', () => {
     expect(pool.some((question) => /key term|appears in this lesson/i.test(question.prompt))).toBe(false);
   });
 
+  it('does not generate generic mental-model or example-matching prompts', () => {
+    const generated = allLessons.flatMap((item) =>
+      buildQuizPool(item).filter((question) => question.source === 'generated')
+    );
+    expect(generated.some((question) => /^best mental model/i.test(question.prompt))).toBe(false);
+    expect(generated.some((question) => /^best example/i.test(question.prompt))).toBe(false);
+    expect(generated.some((question) => /best mental model|best example of/i.test(question.prompt))).toBe(false);
+  });
+
   it('adds lesson context to generated conceptual prompts', () => {
     const generated = buildQuizPool(lesson).filter((question) => question.source === 'generated');
     expect(generated.length).toBeGreaterThan(0);
