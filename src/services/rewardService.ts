@@ -29,7 +29,7 @@ export function computeReward(params: {
 }): RewardResult {
   const { lesson, score, alreadyMastered, newlyMastered, completedLessonsCount } = params;
 
-  // Scale base XP by score but never below 40% of base \u2014 wrong answers are not
+  // Scale base XP by score but never below 40% of base - wrong answers are not
   // punitive.
   const baseXp = lesson.xpReward;
   const scaledXp = Math.round(baseXp * Math.max(0.4, score));

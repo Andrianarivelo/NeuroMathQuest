@@ -1,7 +1,7 @@
 import { Lesson } from './types';
 
 /**
- * Track C — Computational Neuroscience and Modern Concepts. 50 lessons.
+ * Track C - Computational Neuroscience and Modern Concepts. 50 lessons.
  * Progressively unlocked by prerequisites within the track and basic Track B
  * progress. Lessons C31-C50 fill in foundational gaps: Hodgkin-Huxley and
  * channel kinetics, cable theory, synaptic dynamics, short-term plasticity,
@@ -132,7 +132,7 @@ export const trackCLessons: Lesson[] = [
     keyTerms: ['threshold', 'reset', 'refractory period'],
     example:
       'A refractory period of 2 ms limits a neuron to roughly 500 spikes per second even under very strong input.',
-    intuition: 'Thresholds and refractoriness keep the neuron honest \u2014 it cannot shout forever.',
+    intuition: 'Thresholds and refractoriness keep the neuron honest - it cannot shout forever.',
     whyItMatters:
       'These parameters set how faithfully a neuron can represent high-frequency inputs.',
     questions: [
@@ -235,7 +235,7 @@ export const trackCLessons: Lesson[] = [
       'Cortical microcircuits are strongly recurrent and can sustain activity after a brief input, as in working memory tasks.',
     intuition: 'Feedback lets the network remember, amplify, and filter.',
     whyItMatters:
-      'Most interesting dynamics \u2014 memory, decisions, prediction \u2014 rely on recurrence.',
+      'Most interesting dynamics - memory, decisions, prediction - rely on recurrence.',
     questions: [
       {
         prompt: 'What distinguishes a recurrent network from a pure feedforward one?',
@@ -290,7 +290,7 @@ export const trackCLessons: Lesson[] = [
     keyTerms: ['E/I balance', 'irregular firing', 'stability'],
     example:
       'Balanced recurrent networks reproduce the highly irregular, Poisson-like spiking seen in real cortical neurons.',
-    intuition: 'A neuron in balance is always one nudge away from firing \u2014 fast, sensitive, and never runaway.',
+    intuition: 'A neuron in balance is always one nudge away from firing - fast, sensitive, and never runaway.',
     whyItMatters:
       'Balance explains why cortex can respond quickly while still being stable.',
     questions: [
@@ -515,7 +515,7 @@ export const trackCLessons: Lesson[] = [
     notation: 'P(x | data) \u221d P(data | x) \u00d7 P(x)',
     keyTerms: ['prior', 'likelihood', 'posterior'],
     example:
-      'When a light source is dim, the brain relies more on prior assumptions and less on the weak visual input \u2014 a Bayesian-flavoured computation.',
+      'When a light source is dim, the brain relies more on prior assumptions and less on the weak visual input - a Bayesian-flavoured computation.',
     intuition: 'Mix what you expected with what you saw. Trust each in proportion to its reliability.',
     whyItMatters:
       'Many perception and decision models are grounded in Bayesian reasoning.',
@@ -955,10 +955,10 @@ export const trackCLessons: Lesson[] = [
       'An attractor is a state a dynamical system settles into. Neural attractor networks have special states shaped by the weight matrix so that similar initial activity patterns converge to the nearest attractor.',
     keyTerms: ['attractor', 'basin of attraction', 'fixed point'],
     example:
-      'Attractor models are used to explain working memory \u2014 a short stimulus pushes the network into a persistent state it holds after the stimulus ends.',
+      'Attractor models are used to explain working memory - a short stimulus pushes the network into a persistent state it holds after the stimulus ends.',
     intuition: 'Attractors are the grooves the dynamics settle into.',
     whyItMatters:
-      'Many cognitive functions \u2014 memory, decisions, categorisation \u2014 are modelled as attractor dynamics.',
+      'Many cognitive functions - memory, decisions, categorisation - are modelled as attractor dynamics.',
     questions: [
       {
         prompt: 'A basin of attraction is the set of initial states that...',
@@ -1009,7 +1009,7 @@ export const trackCLessons: Lesson[] = [
     difficulty: 'intermediate',
     prerequisites: ['C18'],
     explanation:
-      'A Hopfield network is a recurrent network with symmetric weights and binary units. It stores patterns as attractors. Given a corrupted version of a stored pattern, the dynamics converge to the closest stored one \u2014 a form of content-addressable memory.',
+      'A Hopfield network is a recurrent network with symmetric weights and binary units. It stores patterns as attractors. Given a corrupted version of a stored pattern, the dynamics converge to the closest stored one - a form of content-addressable memory.',
     keyTerms: ['Hopfield', 'energy', 'associative memory'],
     example:
       'Presented with a noisy version of a learned pattern, a Hopfield network settles onto the clean stored pattern.',
@@ -1510,7 +1510,7 @@ export const trackCLessons: Lesson[] = [
     difficulty: 'advanced',
     prerequisites: ['C10'],
     explanation:
-      'Predictive coding proposes that the brain continuously generates predictions about sensory input and only propagates the errors \u2014 the differences between prediction and input \u2014 up to higher areas. Feedback connections carry predictions; feedforward connections carry prediction errors.',
+      'Predictive coding proposes that the brain continuously generates predictions about sensory input and only propagates the errors - the differences between prediction and input - up to higher areas. Feedback connections carry predictions; feedforward connections carry prediction errors.',
     keyTerms: ['prediction', 'error unit', 'feedback', 'hierarchy'],
     example:
       'In models of visual cortex, higher areas predict what lower areas should see; the lower areas pass up only what is surprising.',
@@ -1834,7 +1834,7 @@ export const trackCLessons: Lesson[] = [
     notation: 'I_syn = g_syn(t) (V − E_syn)',
     keyTerms: ['conductance', 'reversal potential', 'driving force', 'shunt'],
     example:
-      'When V approaches E_syn, the driving force shrinks to zero, so the same conductance has less effect — synaptic input self-limits.',
+      'When V approaches E_syn, the driving force shrinks to zero, so the same conductance has less effect - synaptic input self-limits.',
     intuition: 'Synapse = a leak with a target voltage.',
     whyItMatters:
       'Many phenomena (shunting inhibition, divisive gain) are direct consequences of conductance-based synapses.',
@@ -1924,7 +1924,7 @@ export const trackCLessons: Lesson[] = [
     keyTerms: ['short-term depression', 'facilitation', 'Tsodyks-Markram', 'release probability'],
     example:
       'A depressing synapse weakens during sustained presynaptic firing, acting like a high-pass temporal filter.',
-    intuition: 'Synapses are not constant — they have short memories of how recently they were used.',
+    intuition: 'Synapses are not constant - they have short memories of how recently they were used.',
     whyItMatters:
       'Short-term plasticity shapes temporal filtering, network gain, and the response to bursts.',
     questions: [
@@ -2303,7 +2303,7 @@ export const trackCLessons: Lesson[] = [
     keyTerms: ['phase plane', 'nullcline', 'fixed point', 'stability'],
     example:
       'Plotting E and I nullclines for a Wilson-Cowan system makes the location and number of fixed points visually obvious.',
-    intuition: 'Find where the arrows on the plane stop moving — those are fixed points.',
+    intuition: 'Find where the arrows on the plane stop moving - those are fixed points.',
     whyItMatters:
       'Phase planes are the standard tool for understanding low-dimensional neural dynamics.',
     questions: [

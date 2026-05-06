@@ -6,7 +6,8 @@ import { getLesson } from '../../src/content/tracks';
 import { getNotationTerms } from '../../src/content/notationTerms';
 import { Button, Card, StarRow, LessonCartoon } from '../../src/components';
 import { useProgress } from '../../src/hooks/useProgress';
-import { lessonState, isLessonUnlocked } from '../../src/services/unlockService';
+import { isLessonUnlocked } from '../../src/services/unlockService';
+import { quizReadyIdeas } from '../../src/services/quizService';
 
 export default function LessonScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -27,6 +28,7 @@ export default function LessonScreen() {
   const p = progressMap.get(lesson.id);
   const stars = p ? (p.mastery === 'mastered' ? 3 : p.mastery === 'strong' ? 2 : p.mastery === 'practicing' ? 1 : 0) : 0;
   const notationTerms = getNotationTerms(lesson);
+  const studyGuide = quizReadyIdeas(lesson);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>
@@ -110,6 +112,20 @@ export default function LessonScreen() {
               {lesson.keyTerms.map((t) => (
                 <View key={t} style={{ backgroundColor: theme.colors.primarySoft, borderRadius: theme.radius.pill, paddingHorizontal: 12, paddingVertical: 5 }}>
                   <Text style={{ ...theme.typography.caption, color: theme.colors.primaryInk }}>{t}</Text>
+                </View>
+              ))}
+            </View>
+          </Card>
+
+          <Card style={{ borderLeftWidth: 4, borderLeftColor: theme.colors.secondary }}>
+            <Text style={{ ...theme.typography.h3, color: theme.colors.text, marginBottom: 8 }}>Quiz-ready ideas</Text>
+            <View style={{ gap: 8 }}>
+              {studyGuide.map((idea, index) => (
+                <View key={`${lesson.id}-idea-${index}`} style={{ flexDirection: 'row', gap: 8, alignItems: 'flex-start' }}>
+                  <Text style={{ ...theme.typography.caption, color: theme.colors.secondary }}>{index + 1}.</Text>
+                  <Text style={{ ...theme.typography.caption, color: theme.colors.text, flex: 1, lineHeight: 18 }}>
+                    {idea}
+                  </Text>
                 </View>
               ))}
             </View>

@@ -14,8 +14,15 @@ A gamified web and mobile learning app that teaches neuroscience, math foundatio
 4. Click **Start learning**.
 5. Use **Continue** on the home screen to open the next lesson.
 6. Read the short lesson, then click **Start quiz**.
+7. Open **Profile** to set a learner name, export a progress backup, or unlock the local superuser dashboard.
 
 Progress is saved in the browser on the same device. No account, install, or App Store download is required.
+
+Superuser access for this offline web app is local to the current browser/device. In **Profile**, enter:
+
+```text
+NEUROMATH-ADMIN
+```
 
 ## Features
 
@@ -27,6 +34,11 @@ Progress is saved in the browser on the same device. No account, install, or App
 - **Track E - NeuroAI** (30 lessons, prerequisite-based unlock)
 - **Gamified reward loop**: XP, coins, streaks, 0–3 star mastery, levels, achievements, daily quests, milestone chests
 - **Spaced review system** that resurfaces weak and forgotten concepts
+- **Zoomable lesson illustrations**: click any lesson cartoon to inspect it full-screen
+- **Expanded quiz pools**: each lesson now mixes original and generated concept checks so retries are not always identical
+- **Quiz-ready study guides** on each lesson page so answer material is visible before the quiz
+- **Local learner profiles** with rotating greetings and device-saved progress
+- **Local superuser dashboard** for progress, quiz attempts, average score, active days, and weak lessons on the current installation
 - **Offline-first**: no backend, no sign-in, no network required
 - **SQLite persistence** for all user progress
 - **Polished UI** with Reanimated animations, haptic feedback, and a custom design system
@@ -251,9 +263,9 @@ AI for electrophysiology, imaging, behaviour, decoding, closed-loop experiments,
 
 ## Encouragement System
 
-Copy banks for 11 contexts: correct answers, incorrect answers, first lesson, lesson complete, mastery earned, streak saved, chest opened, quest complete, review win, comeback, daily goal, and milestones.
+Copy banks for 12 contexts: greetings, correct answers, incorrect answers, first lesson, lesson complete, mastery earned, streak saved, chest opened, quest complete, review win, comeback, daily goal, and milestones.
 
-Tone: warm, respectful, smart, concise — never patronizing, sarcastic, or punitive.
+Tone: warm, respectful, smart, concise - never patronizing, sarcastic, or punitive.
 
 ## What Makes This App Feel Motivating
 
@@ -261,7 +273,7 @@ Tone: warm, respectful, smart, concise — never patronizing, sarcastic, or puni
 Every interaction produces visible progress. Complete a lesson and you see XP animate, coins appear, stars fill, and the path advance. Wrong answers still earn XP (minimum 40% of base) and show a kind explanation. Perfect scores trigger confetti and sound effects. Every 5 lessons unlock a milestone chest. One successful quiz advances the recommended path; mastery still rewards repeated success, so earning 3 stars genuinely feels earned.
 
 ### Encouraging UX
-The encouragement engine uses context-specific copy that is warm and intelligent without being patronizing. Wrong answers say "Not quite — but now you have a sharper idea" rather than "Wrong!" or "Try harder!" The daily goal ring and streak chip provide gentle positive pressure without making the user feel punished for missing a day. The comeback messages welcome returning users without guilt.
+The encouragement engine uses context-specific copy that is warm and intelligent without being patronizing. Wrong answers say "Nice effort. The explanation gives the missing piece." rather than "Wrong!" or "Try harder!" The daily goal ring and streak chip provide gentle positive pressure without making the user feel punished for missing a day. The greeting messages welcome returning users without guilt.
 
 ### Progression model
 Five tracks create a layered progression: neuroscience basics unlock immediately (zero friction to start), math unlocks linearly (clear next-step), and computational neuroscience, AI Basics, and NeuroAI unlock through prerequisites (a sense of convergence). The path map makes locked, current, cleared, and mastered lessons visually distinct. Users always know what to do next because the recommended lesson is one tap away. Review resurfaces weak concepts automatically, making forgetting feel like a normal part of learning rather than a failure.

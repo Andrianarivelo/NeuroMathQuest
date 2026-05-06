@@ -6,10 +6,10 @@ import { useTheme } from '../../src/theme/ThemeProvider';
 import { settingsRepository } from '../../src/repositories/settingsRepository';
 
 const options = [
-  { lessons: 1, label: '1 lesson', sub: 'Relaxed — 5 min/day' },
-  { lessons: 2, label: '2 lessons', sub: 'Steady — 10 min/day' },
-  { lessons: 3, label: '3 lessons', sub: 'Committed — 15 min/day' },
-  { lessons: 5, label: '5 lessons', sub: 'Intense — 25 min/day' },
+  { lessons: 1, label: '1 lesson', sub: 'Relaxed - 5 min/day' },
+  { lessons: 2, label: '2 lessons', sub: 'Steady - 10 min/day' },
+  { lessons: 3, label: '3 lessons', sub: 'Committed - 15 min/day' },
+  { lessons: 5, label: '5 lessons', sub: 'Intense - 25 min/day' },
 ];
 
 export default function DailyTarget() {

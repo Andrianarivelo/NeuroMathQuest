@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, Text, ScrollView, SafeAreaView } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -13,22 +13,24 @@ import { questsForDay, QuestDefinition } from '../../src/services/questService';
 import { questsRepository, DailyQuestRow } from '../../src/repositories/questsRepository';
 import { randomEncouragement } from '../../src/content/encouragement';
 import { isoDay } from '../../src/utils/date';
-import { useState } from 'react';
 
 export default function HomeScreen() {
   const theme = useTheme();
   const router = useRouter();
   const { progressMap, completedCount, refresh: refreshProgress } = useProgress();
-  const { currentStreak, todayLessons, todayXp, refresh: refreshStreak } = useStreak();
+  const { currentStreak, todayLessons, refresh: refreshStreak } = useStreak();
   const { wallet, levelInfo, refresh: refreshWallet } = useWallet();
-  const { settings } = useSettings();
+  const { settings, refresh: refreshSettings } = useSettings();
   const [quests, setQuests] = useState<Array<DailyQuestRow & { def: QuestDefinition }>>([]);
+  const [sessionGreeting, setSessionGreeting] = useState(() => randomEncouragement('greeting'));
 
   useFocusEffect(
     useCallback(() => {
       refreshProgress();
       refreshStreak();
       refreshWallet();
+      refreshSettings();
+      setSessionGreeting(randomEncouragement('greeting'));
       // Load daily quests.
       const day = isoDay();
       const defs = questsForDay(day);
@@ -40,19 +42,21 @@ export default function HomeScreen() {
           def: defs.find((d) => d.id === r.quest_id) ?? defs[0],
         }))
       );
-    }, [])
+    }, [refreshProgress, refreshStreak, refreshWallet, refreshSettings])
   );
 
   const nextLesson = nextRecommendedLesson(progressMap);
   const dailyGoal = settings.dailyGoalLessons;
   const goalProgress = dailyGoal > 0 ? Math.min(1, todayLessons / dailyGoal) : 0;
 
-  const heroMsg =
+  const learnerName = settings.profileName?.trim() || 'NeuroMath Explorer';
+  const heroMsg = `${sessionGreeting}, ${learnerName}.`;
+  const heroSubMsg =
     currentStreak > 0
-      ? randomEncouragement('streak_saved')
+      ? `Current streak: ${currentStreak} day${currentStreak > 1 ? 's' : ''}. Keep the rhythm gentle and steady.`
       : completedCount === 0
-      ? 'Welcome to NeuroMath Quest.'
-      : randomEncouragement('comeback');
+      ? 'Start with one short lesson. A few focused minutes are enough.'
+      : 'Pick up with one small concept. Your progress is already saved.';
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>
@@ -61,6 +65,9 @@ export default function HomeScreen() {
         <LinearGradient colors={theme.gradients.hero} style={{ paddingHorizontal: 20, paddingTop: 48, paddingBottom: 28, borderBottomLeftRadius: 28, borderBottomRightRadius: 28 }}>
           <Text style={{ ...theme.typography.title, color: '#FFF', marginBottom: 6 }}>
             {heroMsg}
+          </Text>
+          <Text style={{ ...theme.typography.body, color: '#FFF', opacity: 0.92 }}>
+            {heroSubMsg}
           </Text>
           <View style={{ flexDirection: 'row', gap: 10, marginTop: 10 }}>
             <StreakChip count={currentStreak} />
@@ -113,7 +120,7 @@ export default function HomeScreen() {
               <View style={{ flex: 1 }}>
                 <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>{q.def.title}</Text>
                 <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>
-                  {q.progress}/{q.target} — {q.def.description}
+                  {q.progress}/{q.target} - {q.def.description}
                 </Text>
               </View>
             </Card>

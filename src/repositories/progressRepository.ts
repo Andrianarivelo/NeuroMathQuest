@@ -13,9 +13,26 @@ export interface LessonProgressRow {
   completed_at: number | null;
 }
 
+export interface QuizAttemptRow {
+  id: number;
+  lesson_id: string;
+  correct: number;
+  total: number;
+  score: number;
+  xp_awarded: number;
+  coins_awarded: number;
+  attempted_at: number;
+}
+
 export const progressRepository = {
   getAll(): LessonProgressRow[] {
     return getDb().getAllSync<LessonProgressRow>('SELECT * FROM lesson_progress;');
+  },
+
+  getAttempts(): QuizAttemptRow[] {
+    return getDb().getAllSync<QuizAttemptRow>(
+      'SELECT * FROM quiz_attempts ORDER BY attempted_at DESC;'
+    );
   },
 
   getByLesson(lessonId: string): LessonProgressRow | null {

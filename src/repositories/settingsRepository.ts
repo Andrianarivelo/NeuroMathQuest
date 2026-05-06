@@ -9,6 +9,8 @@ export interface AppSettings {
   reducedMotion: boolean;
   primaryGoal: 'neuroscience' | 'math' | 'both';
   onboardingCompleted: boolean;
+  profileName: string;
+  superUserEnabled: boolean;
 }
 
 export const defaultSettings: AppSettings = {
@@ -20,6 +22,8 @@ export const defaultSettings: AppSettings = {
   reducedMotion: false,
   primaryGoal: 'both',
   onboardingCompleted: false,
+  profileName: 'NeuroMath Explorer',
+  superUserEnabled: false,
 };
 
 export const settingsRepository = {
@@ -35,7 +39,11 @@ export const settingsRepository = {
         case 'largeText':
         case 'reducedMotion':
         case 'onboardingCompleted':
+        case 'superUserEnabled':
           (result as any)[r.key] = r.value === '1';
+          break;
+        case 'profileName':
+          result.profileName = r.value || defaultSettings.profileName;
           break;
         case 'dailyGoalLessons':
           result.dailyGoalLessons = parseInt(r.value, 10) || defaultSettings.dailyGoalLessons;

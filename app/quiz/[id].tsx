@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, Text, SafeAreaView, Pressable, Platform } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import Animated, { FadeIn, FadeOut, SlideInRight } from 'react-native-reanimated';
+import Animated, { FadeIn, SlideInRight } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../../src/theme/ThemeProvider';
 import { getLesson } from '../../src/content/tracks';
 import { ProgressBar, Button } from '../../src/components';
 import { randomEncouragement } from '../../src/content/encouragement';
+import { selectQuizQuestions } from '../../src/services/quizService';
 
 export default function QuizScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -14,6 +15,14 @@ export default function QuizScreen() {
   const router = useRouter();
 
   const lesson = getLesson(id ?? '');
+  const [seed] = useState(() => `${Date.now()}-${Math.random()}`);
+  const questions = useMemo(() => (lesson ? selectQuizQuestions(lesson, seed) : []), [lesson?.id, seed]);
+  const [qi, setQi] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [answered, setAnswered] = useState(false);
+  const [correctCount, setCorrectCount] = useState(0);
+  const [missedIds, setMissedIds] = useState<string[]>([]);
+
   if (!lesson) {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg, justifyContent: 'center', alignItems: 'center' }}>
@@ -21,13 +30,6 @@ export default function QuizScreen() {
       </SafeAreaView>
     );
   }
-
-  const questions = lesson.questions;
-  const [qi, setQi] = useState(0);
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const [answered, setAnswered] = useState(false);
-  const [correctCount, setCorrectCount] = useState(0);
-  const [missedIds, setMissedIds] = useState<string[]>([]);
 
   const q = questions[qi];
   const isCorrect = selectedIndex === q.answerIndex;
@@ -44,7 +46,7 @@ export default function QuizScreen() {
         void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
       }
     } else {
-      setMissedIds((m) => [...m, `${lesson.id}_q${qi}`]);
+      setMissedIds((m) => [...m, q.id]);
       if (Platform.OS !== 'web') {
         void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => undefined);
       }
@@ -82,7 +84,7 @@ export default function QuizScreen() {
         {/* Top bar */}
         <View style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 12, gap: 12 }}>
           <Pressable onPress={() => router.back()}>
-            <Text style={{ fontSize: 28, color: theme.colors.textMuted }}>×</Text>
+            <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.textMuted }}>Close</Text>
           </Pressable>
           <ProgressBar value={progress} height={8} style={{ flex: 1 }} />
           <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>
@@ -140,7 +142,7 @@ export default function QuizScreen() {
                 marginBottom: 10,
               }}>
                 <Text style={{ ...theme.typography.bodyStrong, color: isCorrect ? theme.colors.success : theme.colors.warning, marginBottom: 4 }}>
-                  {isCorrect ? 'Correct' : 'Not quite'}
+                  {isCorrect ? 'Correct' : 'Good learning moment'}
                 </Text>
                 <Text style={{ ...theme.typography.body, color: theme.colors.text, marginBottom: 8 }}>
                   {q.explanation}

@@ -1,7 +1,7 @@
 import { Lesson } from './types';
 
 /**
- * Track D — AI Basics. 30 lessons covering theory, model families, choosing
+ * Track D - AI Basics. 30 lessons covering theory, model families, choosing
  * and building models, training, inference, and refining (fine-tuning, RAG).
  * Sequentially unlocked by completion of prior lessons.
  */
@@ -17,7 +17,7 @@ export const trackDLessons: Lesson[] = [
     difficulty: 'intro',
     prerequisites: [],
     explanation:
-      'Artificial intelligence is the field of building systems that perform tasks usually associated with human intelligence — perceiving, reasoning, learning, and deciding. In practice, today’s AI is dominated by machine learning: algorithms that improve their behaviour from data rather than being told every rule.',
+      'Artificial intelligence is the field of building systems that perform tasks usually associated with human intelligence - perceiving, reasoning, learning, and deciding. In practice, today’s AI is dominated by machine learning: algorithms that improve their behaviour from data rather than being told every rule.',
     keyTerms: ['AI', 'machine learning', 'data-driven', 'task'],
     example:
       'A spam filter that learns from millions of labelled emails which features predict junk is a classic AI system.',
@@ -34,7 +34,7 @@ export const trackDLessons: Lesson[] = [
           'Random number generators',
         ],
         answerIndex: 1,
-        explanation: 'Most modern AI is machine learning — systems that improve from data.',
+        explanation: 'Most modern AI is machine learning - systems that improve from data.',
       },
       {
         prompt: 'A spam filter trained on labelled emails is an example of...',
@@ -170,7 +170,7 @@ export const trackDLessons: Lesson[] = [
       'For predicting cancer from an image: features = pixel values, label = "tumor" or "no tumor".',
     intuition: 'Garbage in, garbage out. Most of the work is in the data.',
     whyItMatters:
-      'No model can rescue badly defined features or noisy labels — understanding the data comes first.',
+      'No model can rescue badly defined features or noisy labels - understanding the data comes first.',
     questions: [
       {
         prompt: 'In a supervised dataset, the label is...',
@@ -218,7 +218,7 @@ export const trackDLessons: Lesson[] = [
       'Predicting house prices with MSE penalises large errors more than small ones because of the square.',
     intuition: 'Loss is the dial we push down by training.',
     whyItMatters:
-      'The chosen loss silently encodes what you actually want — the wrong loss optimises the wrong thing.',
+      'The chosen loss silently encodes what you actually want - the wrong loss optimises the wrong thing.',
     questions: [
       {
         prompt: 'For multi-class classification, a standard loss is...',
@@ -261,7 +261,7 @@ export const trackDLessons: Lesson[] = [
       'A straight line fitting curved data has high bias. A 30-degree polynomial fitting 30 points has high variance.',
     intuition: 'Bias = consistently wrong. Variance = inconsistent across data.',
     whyItMatters:
-      'Almost every modelling decision — model size, regularisation, data amount — is a bias-variance trade.',
+      'Almost every modelling decision - model size, regularisation, data amount - is a bias-variance trade.',
     questions: [
       {
         prompt: 'A high-bias model typically...',
@@ -297,7 +297,7 @@ export const trackDLessons: Lesson[] = [
     difficulty: 'beginner',
     prerequisites: ['D06'],
     explanation:
-      'Overfitting happens when a model fits training data well but fails on new data. Regularisation discourages overfitting by penalising complexity — with weight decay (L2), L1 sparsity, dropout, early stopping, or data augmentation.',
+      'Overfitting happens when a model fits training data well but fails on new data. Regularisation discourages overfitting by penalising complexity - with weight decay (L2), L1 sparsity, dropout, early stopping, or data augmentation.',
     notation: 'loss + λ ‖w‖²',
     keyTerms: ['overfitting', 'regularisation', 'L1', 'L2', 'dropout'],
     example:
@@ -315,7 +315,7 @@ export const trackDLessons: Lesson[] = [
           'A small dataset',
         ],
         answerIndex: 0,
-        explanation: 'It is good on train, bad on test — the gap is the symptom.',
+        explanation: 'It is good on train, bad on test - the gap is the symptom.',
       },
       {
         prompt: 'Dropout fights overfitting by...',
@@ -440,12 +440,12 @@ export const trackDLessons: Lesson[] = [
     difficulty: 'beginner',
     prerequisites: ['D09'],
     explanation:
-      'A neural network is a chain of linear transformations and non-linear activations. With enough layers and parameters, it can approximate complicated functions. The non-linearity is the key — stacking pure linear layers reduces to a single linear layer.',
+      'A neural network is a chain of linear transformations and non-linear activations. With enough layers and parameters, it can approximate complicated functions. The non-linearity is the key - stacking pure linear layers reduces to a single linear layer.',
     notation: 'h = σ(W x + b)',
     keyTerms: ['layer', 'activation', 'ReLU', 'feedforward'],
     example:
       'A two-layer network with ReLU can already classify handwritten digits at high accuracy.',
-    intuition: 'Linear, then bend, then linear, then bend — a flexible function builder.',
+    intuition: 'Linear, then bend, then linear, then bend - a flexible function builder.',
     whyItMatters:
       'Most modern AI is some flavour of neural network, so this is the basic vocabulary.',
     questions: [
@@ -772,7 +772,7 @@ export const trackDLessons: Lesson[] = [
     keyTerms: ['scaling laws', 'compute budget', 'data budget', 'pretraining'],
     example:
       'A modest fine-tune of a pretrained foundation model often beats training a fresh huge model on the same small dataset.',
-    intuition: 'Data, parameters, and compute should be balanced — not one giant and two pebbles.',
+    intuition: 'Data, parameters, and compute should be balanced - not one giant and two pebbles.',
     whyItMatters:
       'The biggest mistakes in modelling come from imbalanced budgets across data, compute, and parameters.',
     questions: [
@@ -1291,7 +1291,7 @@ export const trackDLessons: Lesson[] = [
     keyTerms: ['prompt', 'RAG', 'retriever', 'context window'],
     example:
       'A customer-support assistant that searches your docs and feeds matching paragraphs to an LLM is a typical RAG system.',
-    intuition: 'Don’t retrain the brain — give it the right book to read.',
+    intuition: 'Don’t retrain the brain - give it the right book to read.',
     whyItMatters:
       'For many applications, prompting and retrieval are cheaper, faster, and safer than fine-tuning.',
     questions: [

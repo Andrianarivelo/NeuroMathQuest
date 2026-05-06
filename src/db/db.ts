@@ -489,6 +489,10 @@ function executeWebGetAll(source: string, params: DbParams | undefined): unknown
     return [...store.lesson_progress];
   }
 
+  if (upper === 'SELECT * FROM QUIZ_ATTEMPTS ORDER BY ATTEMPTED_AT DESC;') {
+    return [...store.quiz_attempts].sort((a, b) => b.attempted_at - a.attempted_at);
+  }
+
   if (upper === 'SELECT * FROM LESSON_PROGRESS WHERE LESSON_ID = ?;') {
     const lessonId = firstParam<string>(params, 0);
     return store.lesson_progress.filter((row) => row.lesson_id === lessonId);

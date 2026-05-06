@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, ViewStyle, ImageSourcePropType } from 'react-native';
+import React, { useState } from 'react';
+import { Modal, Pressable, Text, View, ViewStyle, ImageSourcePropType } from 'react-native';
 import { Image } from 'expo-image';
 import { Lesson } from '../content/types';
 import { useTheme } from '../theme/ThemeProvider';
@@ -204,36 +204,98 @@ const lessonArt: Partial<Record<string, ImageSourcePropType>> = {
 
 export function LessonCartoon({ lesson, style }: Props) {
   const theme = useTheme();
+  const [zoomed, setZoomed] = useState(false);
   const source = lessonArt[lesson.id];
 
   if (!source) return null;
 
   return (
-    <View
-      accessible
-      accessibilityLabel={`Illustration for ${lesson.title}`}
-      style={[
-        {
-          width: '100%',
-          maxWidth: 560,
-          aspectRatio: 16 / 9,
-          alignSelf: 'center',
-          borderRadius: theme.radius.lg,
-          overflow: 'hidden',
-          backgroundColor: theme.colors.bgMuted,
-          borderWidth: 1,
-          borderColor: theme.colors.border,
-          ...theme.shadows.sm,
-        },
-        style,
-      ]}
-    >
-      <Image
-        source={source}
-        contentFit="cover"
-        transition={180}
-        style={{ width: '100%', height: '100%' }}
-      />
-    </View>
+    <>
+      <Pressable
+        accessible
+        accessibilityRole="imagebutton"
+        accessibilityLabel={`Open larger illustration for ${lesson.title}`}
+        onPress={() => setZoomed(true)}
+        style={[
+          {
+            width: '100%',
+            maxWidth: 560,
+            aspectRatio: 16 / 9,
+            alignSelf: 'center',
+            borderRadius: theme.radius.lg,
+            overflow: 'hidden',
+            backgroundColor: theme.colors.bgMuted,
+            borderWidth: 1,
+            borderColor: theme.colors.border,
+            ...theme.shadows.sm,
+          },
+          style,
+        ]}
+      >
+        <Image
+          source={source}
+          contentFit="cover"
+          transition={180}
+          style={{ width: '100%', height: '100%' }}
+        />
+        <View
+          pointerEvents="none"
+          style={{
+            position: 'absolute',
+            right: 10,
+            bottom: 10,
+            backgroundColor: 'rgba(21, 20, 16, 0.72)',
+            borderRadius: theme.radius.pill,
+            paddingHorizontal: 10,
+            paddingVertical: 5,
+          }}
+        >
+          <Text style={{ ...theme.typography.tiny, color: theme.colors.textInverse }}>Tap to zoom</Text>
+        </View>
+      </Pressable>
+
+      <Modal visible={zoomed} transparent animationType="fade" onRequestClose={() => setZoomed(false)}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0, 0, 0, 0.92)',
+            padding: 16,
+            justifyContent: 'center',
+          }}
+        >
+          <Pressable
+            onPress={() => setZoomed(false)}
+            style={{
+              position: 'absolute',
+              top: 18,
+              right: 18,
+              zIndex: 2,
+              backgroundColor: 'rgba(255, 255, 255, 0.16)',
+              borderRadius: theme.radius.pill,
+              paddingHorizontal: 14,
+              paddingVertical: 8,
+            }}
+          >
+            <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.textInverse }}>Close</Text>
+          </Pressable>
+          <Image
+            source={source}
+            contentFit="contain"
+            transition={120}
+            style={{ width: '100%', height: '86%' }}
+          />
+          <Text
+            style={{
+              ...theme.typography.caption,
+              color: theme.colors.textInverse,
+              textAlign: 'center',
+              marginTop: 10,
+            }}
+          >
+            {lesson.title}
+          </Text>
+        </View>
+      </Modal>
+    </>
   );
 }

@@ -1,7 +1,7 @@
 import { Lesson } from './types';
 
 /**
- * Track A — Neuroscience Basics. 40 lessons. Unlocked from the start.
+ * Track A - Neuroscience Basics. 40 lessons. Unlocked from the start.
  */
 export const trackALessons: Lesson[] = [
   {
@@ -67,7 +67,7 @@ export const trackALessons: Lesson[] = [
     notation: 'V_rest \u2248 \u221265 mV',
     keyTerms: ['membrane potential', 'ion gradient', 'K+ leak', 'Na+/K+ pump'],
     example:
-      'Cortical neurons are not silent at rest \u2014 they sit negatively charged and ready, like a tiny battery waiting for a reason to fire.',
+      'Cortical neurons are not silent at rest - they sit negatively charged and ready, like a tiny battery waiting for a reason to fire.',
     intuition: 'Rest is not off. Rest is a charged silence.',
     whyItMatters:
       'Every spike begins from rest. Computational models start with a resting state and ask how inputs push it toward threshold.',
@@ -120,7 +120,7 @@ export const trackALessons: Lesson[] = [
     notation: 'I = g (V \u2212 E)',
     keyTerms: ['ion channel', 'conductance', 'reversal potential', 'gating'],
     example:
-      'Voltage-gated sodium channels are the spark plugs of the action potential \u2014 they snap open when the membrane depolarises past threshold.',
+      'Voltage-gated sodium channels are the spark plugs of the action potential - they snap open when the membrane depolarises past threshold.',
     intuition: 'Channels are tiny doors. Opening a door lets charge flow and pushes the voltage.',
     whyItMatters:
       'Every formal neuron model talks about conductances. If you can read I = g times (V \u2212 E), you can read most of them.',
@@ -210,7 +210,7 @@ export const trackALessons: Lesson[] = [
     keyTerms: ['vesicle', 'neurotransmitter', 'receptor', 'synaptic cleft'],
     example:
       'At a hippocampal synapse, a spike can release glutamate in under a millisecond, producing a tiny postsynaptic response just a few millivolts high.',
-    intuition: 'Electric becomes chemical becomes electric again \u2014 a three-step handoff.',
+    intuition: 'Electric becomes chemical becomes electric again - a three-step handoff.',
     whyItMatters:
       'Synapses are where learning happens. Most models of learning are rules that change synaptic strength.',
     questions: [
@@ -300,7 +300,7 @@ export const trackALessons: Lesson[] = [
     difficulty: 'beginner',
     prerequisites: ['A06'],
     explanation:
-      'Neurotransmitters are the chemicals neurons use to talk. A few are fast and point-to-point, like glutamate and GABA. Others act more broadly, tuning circuits \u2014 dopamine, serotonin, norepinephrine, and acetylcholine.',
+      'Neurotransmitters are the chemicals neurons use to talk. A few are fast and point-to-point, like glutamate and GABA. Others act more broadly, tuning circuits - dopamine, serotonin, norepinephrine, and acetylcholine.',
     keyTerms: ['glutamate', 'GABA', 'dopamine', 'serotonin', 'acetylcholine'],
     example:
       'Dopamine neurons in the midbrain fire briefly when a reward is better than expected, helping the brain update its predictions.',
@@ -350,7 +350,7 @@ export const trackALessons: Lesson[] = [
       'Receptors come in two main flavours. Ionotropic receptors are themselves ion channels and react in milliseconds. Metabotropic receptors trigger internal signalling cascades and act over seconds to minutes. Neuromodulators usually use the slower kind to shape how neurons respond to their inputs.',
     keyTerms: ['ionotropic', 'metabotropic', 'G-protein', 'gain control'],
     example:
-      'During focused attention, acetylcholine can boost how strongly cortical neurons respond to the same input \u2014 a gain-like effect.',
+      'During focused attention, acetylcholine can boost how strongly cortical neurons respond to the same input - a gain-like effect.',
     intuition: 'Fast gates send signals. Slow cascades change how signals are heard.',
     whyItMatters:
       'Gain and modulation are central ideas in many computational models of attention and context.',
@@ -769,7 +769,7 @@ export const trackALessons: Lesson[] = [
     keyTerms: ['amygdala', 'fear', 'salience', 'consolidation'],
     example:
       'A sudden loud sound activates the amygdala, which can speed heart rate, focus attention, and strengthen the memory of what just happened.',
-    intuition: 'The amygdala says "mark this moment \u2014 it matters".',
+    intuition: 'The amygdala says "mark this moment - it matters".',
     whyItMatters:
       'Many models of emotional learning, particularly fear conditioning, are grounded in amygdala circuits.',
     questions: [
@@ -910,7 +910,7 @@ export const trackALessons: Lesson[] = [
     keyTerms: ['ephys', 'calcium imaging', 'fMRI', 'optogenetics'],
     example:
       'In a single modern experiment, researchers may image thousands of neurons with calcium imaging while using optogenetics to briefly silence a subset to see how others respond.',
-    intuition: 'Different methods trade speed, coverage, and specificity \u2014 no single tool sees everything.',
+    intuition: 'Different methods trade speed, coverage, and specificity - no single tool sees everything.',
     whyItMatters:
       'Understanding what a method can and cannot measure is essential to interpreting a model or a paper.',
     questions: [

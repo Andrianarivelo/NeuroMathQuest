@@ -181,7 +181,7 @@ export const tracks: Track[] = [
     title: 'Math Foundations',
     tagline: 'The math that compneuro actually uses',
     description:
-      'Forty bite-sized lessons on vectors, linear algebra, calculus, probability, statistics, and information theory — framed through neurons.',
+      'Forty bite-sized lessons on vectors, linear algebra, calculus, probability, statistics, and information theory - framed through neurons.',
     color: '#0A6B4E',
     unlockedByDefault: false,
     modules: buildModules(trackBLessons),
@@ -191,7 +191,7 @@ export const tracks: Track[] = [
     title: 'Computational Neuroscience',
     tagline: 'Where math and biology meet',
     description:
-      'Fifty lessons on computational neuroscience — from LIF and Hodgkin-Huxley neurons to synapses, dynamics, decisions, spatial codes, and cortical microcircuits.',
+      'Fifty lessons on computational neuroscience - from LIF and Hodgkin-Huxley neurons to synapses, dynamics, decisions, spatial codes, and cortical microcircuits.',
     color: '#8A5A00',
     unlockedByDefault: false,
     modules: buildModules(trackCLessons),
@@ -201,7 +201,7 @@ export const tracks: Track[] = [
     title: 'AI Basics',
     tagline: 'Theory, models, training, refining',
     description:
-      'Thirty lessons on modern AI \u2014 from learning theory and model families to training, inference, and fine-tuning.',
+      'Thirty lessons on modern AI - from learning theory and model families to training, inference, and fine-tuning.',
     color: '#1F6FEB',
     unlockedByDefault: false,
     modules: buildModules(trackDLessons),
@@ -211,7 +211,7 @@ export const tracks: Track[] = [
     title: 'NeuroAI',
     tagline: 'AI for understanding the brain',
     description:
-      'Thirty lessons on AI for neuroscience \u2014 spike sorting, neural decoding, brain models, BCIs, and the NeuroAI frontier.',
+      'Thirty lessons on AI for neuroscience - spike sorting, neural decoding, brain models, BCIs, and the NeuroAI frontier.',
     color: '#B82A6E',
     unlockedByDefault: false,
     modules: buildModules(trackELessons),

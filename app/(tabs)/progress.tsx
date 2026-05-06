@@ -125,7 +125,7 @@ export default function ProgressScreen() {
               <Text style={{ ...theme.typography.h3, color: theme.colors.text, marginBottom: 8 }}>Needs work</Text>
               {weakLessons.map((w) => (
                 <Card key={w.lesson_id} style={{ marginBottom: 8 }}>
-                  <Text style={{ ...theme.typography.body, color: theme.colors.text }}>{w.lesson_id} — best {Math.round(w.best_score * 100)}%</Text>
+                  <Text style={{ ...theme.typography.body, color: theme.colors.text }}>{w.lesson_id} - best {Math.round(w.best_score * 100)}%</Text>
                 </Card>
               ))}
             </>

@@ -1,7 +1,7 @@
 import { Lesson } from './types';
 
 /**
- * Track B — Math Foundations for Computational Neuroscience. 40 lessons.
+ * Track B - Math Foundations for Computational Neuroscience. 40 lessons.
  * Sequentially unlocked by completion of prior lessons. Lessons B21-B40
  * extend the basics with the core linear algebra, multivariable calculus,
  * probability, statistics, and information theory needed for the
@@ -38,7 +38,7 @@ export const trackBLessons: Lesson[] = [
         prompt: 'A scalar alone typically does not encode...',
         options: ['A value', 'A unit', 'A magnitude', 'A list of values'],
         answerIndex: 3,
-        explanation: 'A scalar is one value \u2014 you need a vector for a list.',
+        explanation: 'A scalar is one value - you need a vector for a list.',
       },
       {
         prompt: 'Which statement is most accurate?',
@@ -80,7 +80,7 @@ export const trackBLessons: Lesson[] = [
         prompt: 'Which of these is a vector with three entries?',
         options: ['12.0', '(3, 5, 1)', 'A single matrix', 'An empty set'],
         answerIndex: 1,
-        explanation: '(3, 5, 1) is a list of three scalars \u2014 a three-dimensional vector.',
+        explanation: '(3, 5, 1) is a list of three scalars - a three-dimensional vector.',
       },
       {
         prompt: 'The length (number of entries) of a vector is also called its...',
@@ -365,7 +365,7 @@ export const trackBLessons: Lesson[] = [
     difficulty: 'beginner',
     prerequisites: ['B07'],
     explanation:
-      'A matrix is a rectangular array of numbers arranged in rows and columns. In neuroscience, matrices frequently describe how one set of variables maps to another \u2014 for example, how presynaptic neurons influence postsynaptic ones.',
+      'A matrix is a rectangular array of numbers arranged in rows and columns. In neuroscience, matrices frequently describe how one set of variables maps to another - for example, how presynaptic neurons influence postsynaptic ones.',
     notation: 'W \u2208 \u211d^{m\u00d7n}',
     keyTerms: ['matrix', 'rows', 'columns', 'shape'],
     example:
@@ -1046,7 +1046,7 @@ export const trackBLessons: Lesson[] = [
       'A neuron computing a weighted sum of its inputs is computing the dot product between the weight vector w and the input vector x.',
     intuition: 'It is the simplest measure of how aligned two lists of numbers are.',
     whyItMatters:
-      'Almost every neural computation — weighted sums, projections, similarity — is a dot product in disguise.',
+      'Almost every neural computation - weighted sums, projections, similarity - is a dot product in disguise.',
     questions: [
       {
         prompt: 'For u = (1, 2) and v = (3, 4), the dot product u · v equals...',
@@ -1086,7 +1086,7 @@ export const trackBLessons: Lesson[] = [
     notation: '‖v‖ = √(v · v)',
     keyTerms: ['norm', 'length', 'magnitude', 'unit vector'],
     example:
-      'A firing-rate vector r = (3, 4) over two neurons has norm √(9 + 16) = 5 — a single number summarising its overall magnitude.',
+      'A firing-rate vector r = (3, 4) over two neurons has norm √(9 + 16) = 5 - a single number summarising its overall magnitude.',
     intuition: 'Norm = how far the vector reaches from the origin.',
     whyItMatters:
       'Many distances, errors, and energies in neural models are vector norms.',
@@ -1576,7 +1576,7 @@ export const trackBLessons: Lesson[] = [
       'Gradient descent updates a weight vector w in the direction −∇L(w), the steepest decrease of the loss.',
     intuition: 'Climb a hill quickest by walking along the gradient; descend quickest by walking against it.',
     whyItMatters:
-      'Every gradient-based optimiser — SGD, Adam, RMSProp — relies on this object.',
+      'Every gradient-based optimiser - SGD, Adam, RMSProp - relies on this object.',
     questions: [
       {
         prompt: 'The gradient ∇f points in the direction of...',
@@ -1612,7 +1612,7 @@ export const trackBLessons: Lesson[] = [
     difficulty: 'beginner',
     prerequisites: ['B14'],
     explanation:
-      'The integral of f over an interval is the limit of sums of f times small increments — the area under the curve. Integration is the inverse of differentiation: if F′ = f, then ∫ f dx = F + C.',
+      'The integral of f over an interval is the limit of sums of f times small increments - the area under the curve. Integration is the inverse of differentiation: if F′ = f, then ∫ f dx = F + C.',
     notation: '∫ₐᵇ f(t) dt',
     keyTerms: ['integral', 'antiderivative', 'area', 'accumulation'],
     example:

@@ -1,7 +1,7 @@
 import { Lesson } from './types';
 
 /**
- * Track E — AI for Neuroscience. 30 lessons on how modern AI is used to
+ * Track E - AI for Neuroscience. 30 lessons on how modern AI is used to
  * record, decode, model, and treat the brain. Progressively unlocked by
  * prerequisites within the track plus a foothold in AI Basics and
  * Neuroscience Basics.
@@ -18,7 +18,7 @@ export const trackELessons: Lesson[] = [
     difficulty: 'beginner',
     prerequisites: [],
     explanation:
-      'Modern neuroscience produces enormous, high-dimensional data — images, spike trains, behaviour videos — that are too rich for hand-crafted analysis alone. AI provides scalable tools to find patterns, decode signals, and generate hypotheses about the brain.',
+      'Modern neuroscience produces enormous, high-dimensional data - images, spike trains, behaviour videos - that are too rich for hand-crafted analysis alone. AI provides scalable tools to find patterns, decode signals, and generate hypotheses about the brain.',
     keyTerms: ['NeuroAI', 'big data', 'pattern discovery', 'decoding'],
     example:
       'A single two-photon imaging session can yield hundreds of GB of data; ML pipelines extract neuron traces and behaviour-relevant signals at scale.',
@@ -262,7 +262,7 @@ export const trackELessons: Lesson[] = [
     keyTerms: ['BOLD', 'voxel', 'decoding', 'fMRI'],
     example:
       'Reconstructions of seen images from fMRI activity now use diffusion-based decoders aligned to learned visual features.',
-    intuition: 'fMRI is small-data, big-voxel — favour pretrained features and careful evaluation.',
+    intuition: 'fMRI is small-data, big-voxel - favour pretrained features and careful evaluation.',
     whyItMatters:
       'fMRI is one of the main windows into human cognition and clinical brain function.',
     questions: [
@@ -315,7 +315,7 @@ export const trackELessons: Lesson[] = [
     difficulty: 'beginner',
     prerequisites: ['E03'],
     explanation:
-      'A neural decoder is a model that predicts external variables — stimuli, intentions, behaviour — from neural activity. Linear decoders are the workhorse baselines; deep decoders can capture non-linear structure when enough data is available.',
+      'A neural decoder is a model that predicts external variables - stimuli, intentions, behaviour - from neural activity. Linear decoders are the workhorse baselines; deep decoders can capture non-linear structure when enough data is available.',
     notation: 'ŷ_t = f(spike counts in window)',
     keyTerms: ['decoder', 'linear', 'non-linear', 'behaviour'],
     example:
@@ -562,7 +562,7 @@ export const trackELessons: Lesson[] = [
       'Mouse paw positions tracked at 60 frames per second can be aligned to neural spikes to study motor learning.',
     intuition: 'Teach a vision model the joints; it follows the animal everywhere.',
     whyItMatters:
-      'Quantitative behaviour is the missing partner to neural recordings — without it, neural activity is half the story.',
+      'Quantitative behaviour is the missing partner to neural recordings - without it, neural activity is half the story.',
     questions: [
       {
         prompt: 'Pose estimation tools predict...',
@@ -603,7 +603,7 @@ export const trackELessons: Lesson[] = [
     difficulty: 'intermediate',
     prerequisites: ['E12'],
     explanation:
-      'Unsupervised models cluster pose time series into reusable behavioural motifs — such as grooming, rearing, or running — without explicit labels. Hidden Markov models, autoencoders, and clustering on learned embeddings are common tools.',
+      'Unsupervised models cluster pose time series into reusable behavioural motifs - such as grooming, rearing, or running - without explicit labels. Hidden Markov models, autoencoders, and clustering on learned embeddings are common tools.',
     keyTerms: ['behaviour motif', 'HMM', 'embedding', 'unsupervised'],
     example:
       'MoSeq segments mouse behaviour into syllable-like motifs from depth video, revealing structure not visible to manual scoring.',
@@ -1122,7 +1122,7 @@ export const trackELessons: Lesson[] = [
     keyTerms: ['EEG', 'seizure', 'sleep staging', 'multichannel'],
     example:
       'Deep models detect epileptiform discharges in long-term EEG recordings to assist clinicians.',
-    intuition: 'Pattern-spotting in a noisy ribbon of channels — exactly what CNNs are for.',
+    intuition: 'Pattern-spotting in a noisy ribbon of channels - exactly what CNNs are for.',
     whyItMatters:
       'Reliable detectors scale clinical care to far more patients than human review allows.',
     questions: [
@@ -1448,7 +1448,7 @@ export const trackELessons: Lesson[] = [
       'NeuroAI raises sharp ethical questions: brain data is intimate, models can leak it, and biased datasets can produce unfair clinical or BCI tools. Responsible practice means privacy-preserving training, equitable datasets, and transparent evaluation across groups.',
     keyTerms: ['privacy', 'fairness', 'consent', 'governance'],
     example:
-      'A clinical model trained mostly on one demographic may fail badly on others — fairness audits catch this before deployment.',
+      'A clinical model trained mostly on one demographic may fail badly on others - fairness audits catch this before deployment.',
     intuition: 'Brain data is unusually personal. Treat it that way.',
     whyItMatters:
       'NeuroAI is moving fast into clinics and consumer products; the ethics must move just as fast.',

@@ -16,7 +16,7 @@ export default function Welcome() {
         </Text>
         <Text style={{ ...typography.body, color: 'rgba(255,255,255,0.85)', textAlign: 'center', marginBottom: 48, lineHeight: 24 }}>
           Master the science of the brain, one lesson at a time.{'\n'}
-          Math, neuroscience, and computation — made delightful.
+          Math, neuroscience, and computation - made delightful.
         </Text>
         <Button
           label="Let's begin"

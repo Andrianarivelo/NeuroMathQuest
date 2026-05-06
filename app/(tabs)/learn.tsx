@@ -92,7 +92,7 @@ export default function LearnScreen() {
               {(idx + 1) % 5 === 0 && idx < lessons.length - 1 && (
                 <Card style={{ marginTop: 12, marginBottom: 4, paddingVertical: 10, alignItems: 'center', width: '100%' }}>
                   <Text style={{ ...theme.typography.caption, color: theme.colors.gold }}>
-                    Milestone — {idx + 1} lessons
+                    Milestone - {idx + 1} lessons
                   </Text>
                 </Card>
               )}
