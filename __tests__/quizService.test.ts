@@ -4,60 +4,55 @@ import { buildQuizPool, selectQuizQuestions } from '../src/services/quizService'
 describe('quizService', () => {
   const lesson = getLesson('A01')!;
 
-  it('builds a larger pool than the base lesson questions', () => {
+  it('uses only the three hand-authored lesson questions', () => {
     const pool = buildQuizPool(lesson);
-    expect(pool.length).toBeGreaterThan(lesson.questions.length);
+    expect(pool).toHaveLength(3);
+    expect(pool.every((question) => question.source === 'lesson')).toBe(true);
     expect(pool.every((question) => question.options.length === 4)).toBe(true);
     expect(pool.every((question) => question.answerIndex >= 0)).toBe(true);
   });
 
-  it('selects a varied five-question quiz for different seeds', () => {
+  it('selects a three-question quiz for lesson completion', () => {
     const first = selectQuizQuestions(lesson, 'attempt-1');
     const second = selectQuizQuestions(lesson, 'attempt-2');
-    expect(first).toHaveLength(5);
-    expect(second).toHaveLength(5);
-    expect(first.map((question) => question.id).join(',')).not.toBe(
-      second.map((question) => question.id).join(',')
+    expect(first).toHaveLength(3);
+    expect(second).toHaveLength(3);
+    expect(new Set(first.map((question) => question.id))).toEqual(
+      new Set(lesson.questions.map((_, index) => `${lesson.id}_q${index}`))
     );
   });
 
-  it('keeps every lesson quiz large enough for five-question attempts', () => {
+  it('keeps every lesson quiz at exactly three questions', () => {
     for (const item of allLessons) {
       const pool = buildQuizPool(item);
-      if (pool.length < 5) {
-        throw new Error(`${item.id} only has ${pool.length} quiz questions`);
-      }
+      expect(pool).toHaveLength(3);
     }
   });
 
-  it('does not generate low-value key-term recognition questions', () => {
-    const pool = buildQuizPool(lesson);
-    expect(pool.some((question) => question.id.includes('_term_'))).toBe(false);
-    expect(pool.some((question) => /key term|appears in this lesson/i.test(question.prompt))).toBe(false);
-  });
-
-  it('does not generate generic mental-model or example-matching prompts', () => {
-    const generated = allLessons.flatMap((item) =>
-      buildQuizPool(item).filter((question) => question.source === 'generated')
+  it('does not include generated template prompts', () => {
+    const prompts = allLessons.flatMap((item) =>
+      buildQuizPool(item).map((question) => ({ lessonTitle: item.title, prompt: question.prompt }))
     );
-    expect(generated.some((question) => /^best mental model/i.test(question.prompt))).toBe(false);
-    expect(generated.some((question) => /^best example/i.test(question.prompt))).toBe(false);
-    expect(generated.some((question) => /best mental model|best example of/i.test(question.prompt))).toBe(false);
-    expect(generated.some((question) => /learner chose|right idea|correction matches/i.test(question.prompt))).toBe(false);
+    expect(prompts.some(({ prompt }) => /key term|appears in this lesson/i.test(prompt))).toBe(false);
+    expect(prompts.some(({ prompt }) => /^best mental model/i.test(prompt))).toBe(false);
+    expect(prompts.some(({ prompt }) => /^best example/i.test(prompt))).toBe(false);
+    expect(prompts.some(({ prompt }) => /best mental model|best example of/i.test(prompt))).toBe(false);
+    expect(prompts.some(({ prompt }) => /learner chose|right idea|correction matches/i.test(prompt))).toBe(false);
+    expect(
+      prompts.some(({ lessonTitle, prompt }) =>
+        new RegExp(`what is .+ in ${lessonTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\?`, 'i').test(prompt)
+      )
+    ).toBe(false);
+    expect(
+      prompts.some(({ lessonTitle, prompt }) =>
+        new RegExp(`which statement about .+ matches ${lessonTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\?`, 'i').test(prompt)
+      )
+    ).toBe(false);
   });
 
-  it('adds lesson context to generated conceptual prompts', () => {
-    const generated = buildQuizPool(lesson).filter((question) => question.source === 'generated');
-    expect(generated.length).toBeGreaterThan(0);
-    expect(generated.every((question) => question.prompt.includes(lesson.title))).toBe(true);
-    expect(generated.every((question) => /what is|what does|which statement about/i.test(question.prompt))).toBe(true);
-  });
-
-  it('keeps generated answer choices short enough for mobile cards', () => {
-    const generated = allLessons.flatMap((item) =>
-      buildQuizPool(item).filter((question) => question.source === 'generated')
-    );
-    expect(generated.flatMap((question) => question.options).every((option) => option.length <= 92)).toBe(true);
-    expect(generated.every((question) => question.explanation.length <= 120)).toBe(true);
+  it('keeps answer choices short enough for mobile cards', () => {
+    const questions = allLessons.flatMap((item) => buildQuizPool(item));
+    expect(questions.flatMap((question) => question.options).every((option) => option.length <= 140)).toBe(true);
+    expect(questions.every((question) => question.explanation.length <= 180)).toBe(true);
   });
 });
