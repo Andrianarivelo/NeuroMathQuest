@@ -11,6 +11,8 @@ interface Props {
   stars: number;
   xp: number;
   onPress?: () => void;
+  allowLockedPress?: boolean;
+  lockedLabel?: string;
   style?: ViewStyle;
 }
 
@@ -22,13 +24,18 @@ const stateBg: Record<LessonState, string> = {
   mastered: '#F2AE09',
 };
 
-export function LessonNode({ title, state, stars, xp, onPress, style }: Props) {
+export function LessonNode({ title, state, stars, xp, onPress, allowLockedPress, lockedLabel, style }: Props) {
   const theme = useTheme();
   const isLocked = state === 'locked';
+  const disabled = isLocked && !allowLockedPress;
   const size = 58;
 
   return (
-    <Pressable onPress={isLocked ? undefined : onPress} disabled={isLocked} style={[{ alignItems: 'center', opacity: isLocked ? 0.45 : 1 }, style]}>
+    <Pressable
+      onPress={disabled ? undefined : onPress}
+      disabled={disabled}
+      style={[{ alignItems: 'center', opacity: isLocked ? 0.68 : 1 }, style]}
+    >
       <View
         style={{
           width: size,
@@ -66,6 +73,19 @@ export function LessonNode({ title, state, stars, xp, onPress, style }: Props) {
         {title}
       </Text>
       {stars > 0 && <StarRow filled={stars} size={14} style={{ marginTop: 2 }} />}
+      {isLocked && lockedLabel && (
+        <View
+          style={{
+            marginTop: 4,
+            backgroundColor: theme.colors.goldSoft,
+            borderRadius: theme.radius.pill,
+            paddingHorizontal: 8,
+            paddingVertical: 3,
+          }}
+        >
+          <Text style={{ ...theme.typography.tiny, color: theme.colors.gold }}>{lockedLabel}</Text>
+        </View>
+      )}
     </Pressable>
   );
 }

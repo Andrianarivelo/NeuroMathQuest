@@ -6,8 +6,12 @@ import * as Haptics from 'expo-haptics';
 import { useTheme } from '../../src/theme/ThemeProvider';
 import { getLesson } from '../../src/content/tracks';
 import { ProgressBar, Button, AnswerOption, AnswerOptionState } from '../../src/components';
+import { useProgress } from '../../src/hooks/useProgress';
+import { useWallet } from '../../src/hooks/useWallet';
+import { useLessonUnlocks } from '../../src/hooks/useLessonUnlocks';
 import { randomEncouragement } from '../../src/content/encouragement';
 import { selectQuizQuestions } from '../../src/services/quizService';
+import { lessonAccess } from '../../src/services/unlockService';
 
 const optionLabels = ['A', 'B', 'C', 'D'];
 
@@ -16,6 +20,9 @@ export default function QuizScreen() {
   const theme = useTheme();
   const router = useRouter();
   const { width } = useWindowDimensions();
+  const { progressMap } = useProgress();
+  const { wallet } = useWallet();
+  const { purchasedLessonIds } = useLessonUnlocks();
 
   const lesson = getLesson(id ?? '');
   const [seed] = useState(() => `${Date.now()}-${Math.random()}`);
@@ -31,6 +38,21 @@ export default function QuizScreen() {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg, justifyContent: 'center', alignItems: 'center' }}>
         <Text style={{ ...theme.typography.body, color: theme.colors.textMuted }}>Quiz not found.</Text>
+      </SafeAreaView>
+    );
+  }
+
+  const access = lessonAccess(lesson, progressMap, purchasedLessonIds, wallet.coinsTotal);
+  if (!access.isUnlocked) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg, justifyContent: 'center', padding: 24 }}>
+        <Text style={{ ...theme.typography.title, color: theme.colors.text, textAlign: 'center', marginBottom: 8 }}>
+          Lesson locked
+        </Text>
+        <Text style={{ ...theme.typography.body, color: theme.colors.textMuted, textAlign: 'center', marginBottom: 20 }}>
+          Unlock the lesson before starting its quiz.
+        </Text>
+        <Button label="Go to lesson" fullWidth onPress={() => router.replace(`/lesson/${lesson.id}`)} />
       </SafeAreaView>
     );
   }

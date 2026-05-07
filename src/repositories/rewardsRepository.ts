@@ -35,6 +35,14 @@ export const rewardsRepository = {
     getDb().runSync('UPDATE rewards_wallet SET coins_total = coins_total + ? WHERE id = 1;', [coins]);
   },
 
+  spendCoins(coins: number): boolean {
+    const wallet = this.get();
+    if (coins <= 0) return true;
+    if (wallet.coinsTotal < coins) return false;
+    getDb().runSync('UPDATE rewards_wallet SET coins_total = coins_total - ? WHERE id = 1;', [coins]);
+    return true;
+  },
+
   openChest(): void {
     getDb().runSync('UPDATE rewards_wallet SET chests_opened = chests_opened + 1 WHERE id = 1;');
   },

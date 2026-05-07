@@ -54,6 +54,15 @@ create table if not exists public.streak_log (
   primary key (user_id, day)
 );
 
+create table if not exists public.lesson_unlocks (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  lesson_id text not null,
+  cost_paid integer not null,
+  unlocked_at bigint not null,
+  updated_at timestamptz not null default now(),
+  primary key (user_id, lesson_id)
+);
+
 create table if not exists public.usage_events (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
@@ -80,6 +89,7 @@ alter table public.profiles enable row level security;
 alter table public.lesson_progress enable row level security;
 alter table public.quiz_attempts enable row level security;
 alter table public.streak_log enable row level security;
+alter table public.lesson_unlocks enable row level security;
 alter table public.usage_events enable row level security;
 
 drop policy if exists "profiles own select or admin" on public.profiles;
@@ -146,6 +156,22 @@ on public.streak_log for update
 using (auth.uid() = user_id)
 with check (auth.uid() = user_id);
 
+drop policy if exists "unlocks own select or admin" on public.lesson_unlocks;
+create policy "unlocks own select or admin"
+on public.lesson_unlocks for select
+using (auth.uid() = user_id or public.is_admin());
+
+drop policy if exists "unlocks own insert" on public.lesson_unlocks;
+create policy "unlocks own insert"
+on public.lesson_unlocks for insert
+with check (auth.uid() = user_id);
+
+drop policy if exists "unlocks own update" on public.lesson_unlocks;
+create policy "unlocks own update"
+on public.lesson_unlocks for update
+using (auth.uid() = user_id)
+with check (auth.uid() = user_id);
+
 drop policy if exists "usage own select or admin" on public.usage_events;
 create policy "usage own select or admin"
 on public.usage_events for select
@@ -158,6 +184,7 @@ with check (auth.uid() = user_id);
 
 create index if not exists lesson_progress_user_idx on public.lesson_progress(user_id);
 create index if not exists quiz_attempts_user_time_idx on public.quiz_attempts(user_id, attempted_at desc);
+create index if not exists lesson_unlocks_user_idx on public.lesson_unlocks(user_id);
 create index if not exists usage_events_user_time_idx on public.usage_events(user_id, created_at desc);
 
 -- To make your account a superuser after signing up, replace the email below:

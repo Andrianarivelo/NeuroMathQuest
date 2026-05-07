@@ -1,16 +1,14 @@
 /**
  * Unlocking rules.
  *
- * - Track A (neuroscience) is fully unlocked at first launch.
- * - Track B (math) unlocks linearly: lesson N unlocks when lesson N-1 is at
- *   least "practicing".
- * - Track C (compneuro) unlocks progressively using each lesson's declared
- *   prerequisites, and additionally requires that at least the first three
- *   math lessons are practicing before any Track C lesson becomes available.
- * - Track D (aibasis) unlocks linearly via prerequisites within the track.
- * - Track E (aineuro) unlocks progressively via lesson prerequisites and
- *   additionally requires a foothold in AI Basics (D01-D03) and in
- *   Neuroscience Basics (A01-A02).
+ * A small coin economy sits on top of the learning prerequisites:
+ *
+ * - The first five neuroscience lessons are free so a new learner can start
+ *   and earn coins immediately.
+ * - Later lessons must be purchased with earned coins, but only once their
+ *   learning gate is ready. This prevents skipping too far ahead.
+ * - Previously started lessons stay open, so existing learners are not locked
+ *   out by a new app version.
  */
 
 import { Lesson } from '../content/types';
@@ -24,18 +22,47 @@ export interface LessonProgressSummary {
 
 export type LessonState = 'locked' | 'unlocked' | 'in_progress' | 'completed' | 'mastered';
 
+export interface LessonAccessSummary {
+  isUnlocked: boolean;
+  isFree: boolean;
+  isPurchased: boolean;
+  canPurchase: boolean;
+  gateSatisfied: boolean;
+  cost: number;
+  missingCoins: number;
+  lockedReason: string;
+}
+
 const OK_LEVELS = new Set(['practicing', 'strong', 'mastered']);
+const FREE_NEUROSCIENCE_LESSONS = 5;
 
 export function isLessonCleared(progress?: LessonProgressSummary): boolean {
   return !!progress && OK_LEVELS.has(progress.mastery);
 }
 
-export function isLessonUnlocked(
+function isLessonStarted(progress?: LessonProgressSummary): boolean {
+  return !!progress && (progress.mastery !== 'not_started' || progress.bestScore > 0);
+}
+
+export function isFreeStarterLesson(lesson: Lesson): boolean {
+  return lesson.trackId === 'neuroscience' && lesson.order <= FREE_NEUROSCIENCE_LESSONS;
+}
+
+function previousLesson(lesson: Lesson): Lesson | null {
+  const lessons = getTrackLessons(lesson.trackId);
+  const index = lessons.findIndex((item) => item.id === lesson.id);
+  return index > 0 ? lessons[index - 1] : null;
+}
+
+export function isLearningGateSatisfied(
   lesson: Lesson,
   progressByLesson: Map<string, LessonProgressSummary>
 ): boolean {
-  // Track A is always unlocked.
-  if (lesson.trackId === 'neuroscience') return true;
+  if (lesson.trackId === 'neuroscience') {
+    if (isFreeStarterLesson(lesson)) return true;
+    const prev = previousLesson(lesson);
+    return prev ? isLessonCleared(progressByLesson.get(prev.id)) : true;
+  }
 
   // Track B: linear unlock. Respect explicit prerequisites which are the
   // previous Bxx lesson by default.
@@ -77,12 +104,67 @@ export function isLessonUnlocked(
   return false;
 }
 
+export function lessonUnlockCost(lesson: Lesson): number {
+  if (isFreeStarterLesson(lesson)) return 0;
+
+  const baseCost = {
+    neuroscience: 5,
+    math: 8,
+    compneuro: 12,
+    aibasis: 10,
+    aineuro: 12,
+  }[lesson.trackId];
+  const tier = Math.floor(Math.max(0, lesson.order - 1) / 10);
+  return baseCost + tier * 2;
+}
+
+export function lessonAccess(
+  lesson: Lesson,
+  progressByLesson: Map<string, LessonProgressSummary>,
+  purchasedLessonIds: ReadonlySet<string> = new Set<string>(),
+  coinBalance = 0
+): LessonAccessSummary {
+  const progress = progressByLesson.get(lesson.id);
+  const isFree = isFreeStarterLesson(lesson);
+  const isPurchased = purchasedLessonIds.has(lesson.id);
+  const gateSatisfied = isLearningGateSatisfied(lesson, progressByLesson);
+  const cost = lessonUnlockCost(lesson);
+  const isUnlocked = isFree || isPurchased || isLessonStarted(progress);
+  const missingCoins = Math.max(0, cost - coinBalance);
+  const canPurchase = !isUnlocked && cost > 0 && gateSatisfied;
+  const lockedReason = !gateSatisfied
+    ? 'Complete the previous required lesson first.'
+    : missingCoins > 0
+    ? `Earn ${missingCoins} more coin${missingCoins === 1 ? '' : 's'} to unlock this lesson.`
+    : `Unlock this lesson for ${cost} coins.`;
+
+  return {
+    isUnlocked,
+    isFree,
+    isPurchased,
+    canPurchase,
+    gateSatisfied,
+    cost,
+    missingCoins,
+    lockedReason,
+  };
+}
+
+export function isLessonUnlocked(
+  lesson: Lesson,
+  progressByLesson: Map<string, LessonProgressSummary>,
+  purchasedLessonIds: ReadonlySet<string> = new Set<string>()
+): boolean {
+  return lessonAccess(lesson, progressByLesson, purchasedLessonIds).isUnlocked;
+}
+
 export function lessonState(
   lesson: Lesson,
-  progressByLesson: Map<string, LessonProgressSummary>
+  progressByLesson: Map<string, LessonProgressSummary>,
+  purchasedLessonIds: ReadonlySet<string> = new Set<string>()
 ): LessonState {
   const p = progressByLesson.get(lesson.id);
-  if (!isLessonUnlocked(lesson, progressByLesson) && !p) return 'locked';
+  if (!isLessonUnlocked(lesson, progressByLesson, purchasedLessonIds) && !p) return 'locked';
   if (!p || p.mastery === 'not_started') return 'unlocked';
   if (p.mastery === 'mastered') return 'mastered';
   if (OK_LEVELS.has(p.mastery)) return 'completed';
@@ -90,7 +172,8 @@ export function lessonState(
 }
 
 export function nextRecommendedLesson(
-  progressByLesson: Map<string, LessonProgressSummary>
+  progressByLesson: Map<string, LessonProgressSummary>,
+  purchasedLessonIds: ReadonlySet<string> = new Set<string>()
 ): Lesson | null {
   // Recommend the first unlocked lesson that is not yet cleared. Mastery is
   // still valuable, but it should not block the learner from moving on after
@@ -105,7 +188,7 @@ export function nextRecommendedLesson(
   for (const trackId of tracksOrder) {
     const lessons = getTrackLessons(trackId);
     for (const lesson of lessons) {
-      if (!isLessonUnlocked(lesson, progressByLesson)) continue;
+      if (!isLessonUnlocked(lesson, progressByLesson, purchasedLessonIds)) continue;
       const p = progressByLesson.get(lesson.id);
       if (!isLessonCleared(p)) return lesson;
     }
@@ -114,7 +197,10 @@ export function nextRecommendedLesson(
 }
 
 export function unlockedLessonIds(
-  progressByLesson: Map<string, LessonProgressSummary>
+  progressByLesson: Map<string, LessonProgressSummary>,
+  purchasedLessonIds: ReadonlySet<string> = new Set<string>()
 ): string[] {
-  return allLessons.filter((l) => isLessonUnlocked(l, progressByLesson)).map((l) => l.id);
+  return allLessons
+    .filter((l) => isLessonUnlocked(l, progressByLesson, purchasedLessonIds))
+    .map((l) => l.id);
 }

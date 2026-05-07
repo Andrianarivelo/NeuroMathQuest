@@ -49,6 +49,12 @@ export const CREATE_STATEMENTS: string[] = [
      level INTEGER NOT NULL DEFAULT 1
    );`,
 
+  `CREATE TABLE IF NOT EXISTS lesson_unlocks (
+     lesson_id TEXT PRIMARY KEY NOT NULL,
+     cost_paid INTEGER NOT NULL,
+     unlocked_at INTEGER NOT NULL
+   );`,
+
   `CREATE TABLE IF NOT EXISTS achievements_unlocked (
      achievement_id TEXT PRIMARY KEY NOT NULL,
      unlocked_at INTEGER NOT NULL

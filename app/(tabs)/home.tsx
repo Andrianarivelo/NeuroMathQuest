@@ -8,7 +8,9 @@ import { useProgress } from '../../src/hooks/useProgress';
 import { useStreak } from '../../src/hooks/useStreak';
 import { useWallet } from '../../src/hooks/useWallet';
 import { useSettings } from '../../src/hooks/useSettings';
-import { nextRecommendedLesson } from '../../src/services/unlockService';
+import { useLessonUnlocks } from '../../src/hooks/useLessonUnlocks';
+import { lessonAccess, nextRecommendedLesson } from '../../src/services/unlockService';
+import { allLessons } from '../../src/content/tracks';
 import { questsForDay, QuestDefinition } from '../../src/services/questService';
 import { questsRepository, DailyQuestRow } from '../../src/repositories/questsRepository';
 import { randomEncouragement } from '../../src/content/encouragement';
@@ -23,6 +25,7 @@ export default function HomeScreen() {
   const { currentStreak, todayLessons, refresh: refreshStreak } = useStreak();
   const { wallet, levelInfo, refresh: refreshWallet } = useWallet();
   const { settings, refresh: refreshSettings } = useSettings();
+  const { purchasedLessonIds, refresh: refreshUnlocks } = useLessonUnlocks();
   const [quests, setQuests] = useState<Array<DailyQuestRow & { def: QuestDefinition }>>([]);
   const [sessionGreeting, setSessionGreeting] = useState(() => randomEncouragement('greeting'));
 
@@ -32,6 +35,7 @@ export default function HomeScreen() {
       refreshStreak();
       refreshWallet();
       refreshSettings();
+      refreshUnlocks();
       setSessionGreeting(randomEncouragement('greeting'));
       void recordUsageEvent('home_opened');
       // Load daily quests.
@@ -45,10 +49,23 @@ export default function HomeScreen() {
           def: defs.find((d) => d.id === r.quest_id) ?? defs[0],
         }))
       );
-    }, [refreshProgress, refreshStreak, refreshWallet, refreshSettings])
+    }, [refreshProgress, refreshStreak, refreshWallet, refreshSettings, refreshUnlocks])
   );
 
-  const nextLesson = nextRecommendedLesson(progressMap);
+  const nextLesson = nextRecommendedLesson(progressMap, purchasedLessonIds);
+  const nextPurchasableLesson = useMemo(() => {
+    const purchasable = allLessons
+      .map((lesson) => ({
+        lesson,
+        access: lessonAccess(lesson, progressMap, purchasedLessonIds, wallet.coinsTotal),
+      }))
+      .filter((item) => item.access.canPurchase);
+    return (
+      purchasable.find((item) => item.access.missingCoins === 0) ??
+      purchasable[0] ??
+      null
+    );
+  }, [progressMap, purchasedLessonIds, wallet.coinsTotal]);
   const examCandidates: ReviewCandidate[] = rows.map((row) => ({
     lessonId: row.lesson_id,
     mastery: row.mastery as any,
@@ -99,6 +116,8 @@ export default function HomeScreen() {
               <Text style={{ ...theme.typography.body, color: theme.colors.textMuted }}>
                 {nextLesson
                   ? 'Learn one concept, then test yourself when you feel ready.'
+                  : nextPurchasableLesson
+                  ? 'Spend earned coins to open your next ready lesson.'
                   : examSet.length > 0
                   ? 'You are ready for a quick mixed exam.'
                   : 'Explore any unlocked lesson and build your first streak.'}
@@ -111,6 +130,19 @@ export default function HomeScreen() {
                 size="md"
                 fullWidth
                 onPress={() => router.push(`/lesson/${nextLesson.id}`)}
+              />
+            )}
+            {!nextLesson && nextPurchasableLesson && (
+              <Button
+                label={
+                  nextPurchasableLesson.access.missingCoins > 0
+                    ? `Earn ${nextPurchasableLesson.access.missingCoins} coins`
+                    : `Unlock: ${nextPurchasableLesson.lesson.title}`
+                }
+                size="md"
+                fullWidth
+                variant={nextPurchasableLesson.access.missingCoins > 0 ? 'outline' : 'primary'}
+                onPress={() => router.push(`/lesson/${nextPurchasableLesson.lesson.id}`)}
               />
             )}
             {examSet.length > 1 && (

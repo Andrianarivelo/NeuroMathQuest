@@ -6,21 +6,28 @@ import { getLesson } from '../../src/content/tracks';
 import { getNotationTerms } from '../../src/content/notationTerms';
 import { Button, Card, StarRow, LessonCartoon } from '../../src/components';
 import { useProgress } from '../../src/hooks/useProgress';
-import { isLessonUnlocked } from '../../src/services/unlockService';
+import { useWallet } from '../../src/hooks/useWallet';
+import { useLessonUnlocks } from '../../src/hooks/useLessonUnlocks';
+import { lessonAccess } from '../../src/services/unlockService';
 import { buildCourseDetails } from '../../src/services/lessonContentService';
+import { purchaseLessonUnlock } from '../../src/services/purchaseService';
 
 export default function LessonScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const theme = useTheme();
   const router = useRouter();
-  const { progressMap } = useProgress();
+  const { progressMap, refresh: refreshProgress } = useProgress();
+  const { wallet, refresh: refreshWallet } = useWallet();
+  const { purchasedLessonIds, refresh: refreshUnlocks } = useLessonUnlocks();
   const [courseDetailIndex, setCourseDetailIndex] = useState(0);
   const [memoryHookOpen, setMemoryHookOpen] = useState(false);
+  const [purchaseMessage, setPurchaseMessage] = useState('');
 
   const lesson = getLesson(id ?? '');
   useEffect(() => {
     setCourseDetailIndex(0);
     setMemoryHookOpen(false);
+    setPurchaseMessage('');
   }, [lesson?.id]);
 
   if (!lesson) {
@@ -31,7 +38,8 @@ export default function LessonScreen() {
     );
   }
 
-  const locked = !isLessonUnlocked(lesson, progressMap);
+  const access = lessonAccess(lesson, progressMap, purchasedLessonIds, wallet.coinsTotal);
+  const locked = !access.isUnlocked;
   const p = progressMap.get(lesson.id);
   const stars = p ? (p.mastery === 'mastered' ? 3 : p.mastery === 'strong' ? 2 : p.mastery === 'practicing' ? 1 : 0) : 0;
   const notationTerms = getNotationTerms(lesson);
@@ -42,6 +50,13 @@ export default function LessonScreen() {
   };
   const goToNextDetail = () => {
     setCourseDetailIndex((current) => Math.min(courseDetails.length - 1, current + 1));
+  };
+  const handlePurchase = () => {
+    const result = purchaseLessonUnlock(lesson, progressMap, purchasedLessonIds);
+    setPurchaseMessage(result.message);
+    refreshWallet();
+    refreshUnlocks();
+    refreshProgress();
   };
 
   return (
@@ -58,6 +73,56 @@ export default function LessonScreen() {
         <View style={{ paddingHorizontal: 16, gap: 14, marginTop: 14 }}>
           <LessonCartoon lesson={lesson} />
 
+          {locked ? (
+            <>
+              <Card style={{ backgroundColor: theme.colors.goldSoft, gap: 12 }}>
+                <Text style={{ ...theme.typography.h3, color: theme.colors.gold }}>
+                  Unlock this lesson
+                </Text>
+                <Text style={{ ...theme.typography.body, color: theme.colors.text, lineHeight: 24 }}>
+                  {access.lockedReason}
+                </Text>
+                <View style={{ flexDirection: 'row', gap: 10 }}>
+                  <View style={{ flex: 1, backgroundColor: theme.colors.surface, borderRadius: theme.radius.md, padding: 12 }}>
+                    <Text style={{ ...theme.typography.tiny, color: theme.colors.textMuted }}>YOUR COINS</Text>
+                    <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>{wallet.coinsTotal}</Text>
+                  </View>
+                  <View style={{ flex: 1, backgroundColor: theme.colors.surface, borderRadius: theme.radius.md, padding: 12 }}>
+                    <Text style={{ ...theme.typography.tiny, color: theme.colors.textMuted }}>COST</Text>
+                    <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>{access.cost}</Text>
+                  </View>
+                </View>
+                <Button
+                  label={
+                    !access.gateSatisfied
+                      ? 'Complete prerequisite first'
+                      : access.missingCoins > 0
+                      ? `Need ${access.missingCoins} more coins`
+                      : `Unlock for ${access.cost} coins`
+                  }
+                  size="lg"
+                  fullWidth
+                  disabled={!access.canPurchase || access.missingCoins > 0}
+                  onPress={handlePurchase}
+                />
+                {purchaseMessage.length > 0 && (
+                  <Text style={{ ...theme.typography.caption, color: theme.colors.text }}>
+                    {purchaseMessage}
+                  </Text>
+                )}
+              </Card>
+
+              <Card>
+                <Text style={{ ...theme.typography.h3, color: theme.colors.text, marginBottom: 6 }}>
+                  How coins work
+                </Text>
+                <Text style={{ ...theme.typography.body, color: theme.colors.textMuted, lineHeight: 24 }}>
+                  Finish the free starter lessons to earn coins. Spend them to open the next ready lessons, then earn more coins by completing those quizzes.
+                </Text>
+              </Card>
+            </>
+          ) : (
+            <>
           {/* Concept card */}
           <Card>
             <Text style={{ ...theme.typography.h3, color: theme.colors.primary, marginBottom: 6 }}>Concept</Text>
@@ -199,13 +264,14 @@ export default function LessonScreen() {
 
           {/* Quiz CTA */}
           <Button
-            label={locked ? 'Locked' : 'Start quiz'}
+            label="Start quiz"
             size="lg"
             fullWidth
-            disabled={locked}
             onPress={() => router.push(`/quiz/${lesson.id}`)}
             style={{ marginTop: 8 }}
           />
+            </>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>

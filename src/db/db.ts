@@ -53,6 +53,12 @@ interface WalletRow {
   level: number;
 }
 
+interface LessonUnlockRow {
+  lesson_id: string;
+  cost_paid: number;
+  unlocked_at: number;
+}
+
 interface AchievementRow {
   achievement_id: string;
   unlocked_at: number;
@@ -79,6 +85,7 @@ interface WebStore {
   quiz_attempts: QuizAttemptRow[];
   streak_log: StreakDayRow[];
   rewards_wallet: WalletRow;
+  lesson_unlocks: LessonUnlockRow[];
   achievements_unlocked: AchievementRow[];
   daily_quests: DailyQuestRow[];
   review_state: ReviewRow[];
@@ -120,6 +127,7 @@ export function resetDb(): void {
   db.execSync('DELETE FROM quiz_attempts;');
   db.execSync('DELETE FROM streak_log;');
   db.execSync('UPDATE rewards_wallet SET xp_total = 0, coins_total = 0, chests_opened = 0, level = 1 WHERE id = 1;');
+  db.execSync('DELETE FROM lesson_unlocks;');
   db.execSync('DELETE FROM achievements_unlocked;');
   db.execSync('DELETE FROM daily_quests;');
   db.execSync('DELETE FROM review_state;');
@@ -139,6 +147,7 @@ function createEmptyStore(): WebStore {
       chests_opened: 0,
       level: 1,
     },
+    lesson_unlocks: [],
     achievements_unlocked: [],
     daily_quests: [],
     review_state: [],
@@ -279,6 +288,13 @@ function executeWebStatement(source: string): void {
     return;
   }
 
+  if (upper === 'DELETE FROM LESSON_UNLOCKS;') {
+    mutateWebStore((store) => {
+      store.lesson_unlocks = [];
+    });
+    return;
+  }
+
   if (upper === 'DELETE FROM ACHIEVEMENTS_UNLOCKED;') {
     mutateWebStore((store) => {
       store.achievements_unlocked = [];
@@ -406,6 +422,16 @@ function executeWebRun(source: string, params: DbParams | undefined): void {
     return;
   }
 
+  if (upper === 'UPDATE REWARDS_WALLET SET COINS_TOTAL = COINS_TOTAL - ? WHERE ID = 1;') {
+    mutateWebStore((store) => {
+      store.rewards_wallet.coins_total = Math.max(
+        0,
+        store.rewards_wallet.coins_total - firstParam<number>(params, 0)
+      );
+    });
+    return;
+  }
+
   if (upper === 'UPDATE REWARDS_WALLET SET CHESTS_OPENED = CHESTS_OPENED + 1 WHERE ID = 1;') {
     mutateWebStore((store) => {
       store.rewards_wallet.chests_opened += 1;
@@ -426,6 +452,18 @@ function executeWebRun(source: string, params: DbParams | undefined): void {
       store.rewards_wallet.coins_total = firstParam<number>(params, 1);
       store.rewards_wallet.chests_opened = firstParam<number>(params, 2);
       store.rewards_wallet.level = firstParam<number>(params, 3);
+    });
+    return;
+  }
+
+  if (upper.startsWith('INSERT OR IGNORE INTO LESSON_UNLOCKS')) {
+    const lesson_id = firstParam<string>(params, 0);
+    const cost_paid = firstParam<number>(params, 1);
+    const unlocked_at = firstParam<number>(params, 2);
+    mutateWebStore((store) => {
+      if (!store.lesson_unlocks.some((row) => row.lesson_id === lesson_id)) {
+        store.lesson_unlocks.push({ lesson_id, cost_paid, unlocked_at });
+      }
     });
     return;
   }
@@ -531,6 +569,21 @@ function executeWebGetAll(source: string, params: DbParams | undefined): unknown
   if (upper === 'SELECT XP_TOTAL, COINS_TOTAL, CHESTS_OPENED, LEVEL FROM REWARDS_WALLET WHERE ID = 1;') {
     const { xp_total, coins_total, chests_opened, level } = store.rewards_wallet;
     return [{ xp_total, coins_total, chests_opened, level }];
+  }
+
+  if (upper === 'SELECT * FROM LESSON_UNLOCKS;') {
+    return [...store.lesson_unlocks];
+  }
+
+  if (upper === 'SELECT LESSON_ID FROM LESSON_UNLOCKS;') {
+    return store.lesson_unlocks.map((row) => ({ lesson_id: row.lesson_id }));
+  }
+
+  if (upper === 'SELECT LESSON_ID FROM LESSON_UNLOCKS WHERE LESSON_ID = ?;') {
+    const lessonId = firstParam<string>(params, 0);
+    return store.lesson_unlocks
+      .filter((row) => row.lesson_id === lessonId)
+      .map((row) => ({ lesson_id: row.lesson_id }));
   }
 
   if (upper === 'SELECT ACHIEVEMENT_ID FROM ACHIEVEMENTS_UNLOCKED WHERE ACHIEVEMENT_ID = ?;') {

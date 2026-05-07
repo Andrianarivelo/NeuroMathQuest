@@ -1,4 +1,5 @@
 import { LessonProgressRow, QuizAttemptRow, progressRepository } from '../../repositories/progressRepository';
+import { LessonUnlockRow, lessonUnlocksRepository } from '../../repositories/lessonUnlocksRepository';
 import { rewardsRepository, Wallet } from '../../repositories/rewardsRepository';
 import { settingsRepository } from '../../repositories/settingsRepository';
 import { StreakDay, streakRepository } from '../../repositories/streakRepository';
@@ -16,6 +17,7 @@ export interface SyncResult {
     progress: number;
     attempts: number;
     streakDays: number;
+    unlocks: number;
   };
 }
 
@@ -28,6 +30,10 @@ interface CloudStreakRow {
   day: string;
   lessons_completed: number;
   xp_earned: number;
+}
+
+interface CloudLessonUnlockRow extends LessonUnlockRow {
+  user_id: string;
 }
 
 export interface CloudAdminStats {
@@ -77,12 +83,17 @@ export async function syncLocalProgressToCloud(): Promise<SyncResult> {
     mergeRemoteStreak(remoteStreak);
     const mergedStreak = streakRepository.recent(365);
 
+    const remoteUnlocks = await fetchCloudLessonUnlocks();
+    mergeRemoteUnlocks(remoteUnlocks);
+    const mergedUnlocks = lessonUnlocksRepository.getAll();
+
     const attempts = progressRepository.getAttempts();
     const installId = ensureInstallId();
 
     await uploadProgress(mergedProgress);
     await uploadAttempts(attempts, installId);
     await uploadStreak(mergedStreak);
+    await uploadLessonUnlocks(mergedUnlocks);
 
     settingsRepository.set('cloudSyncLastAt', Date.now());
     await recordUsageEvent('sync_completed');
@@ -94,6 +105,7 @@ export async function syncLocalProgressToCloud(): Promise<SyncResult> {
         progress: mergedProgress.length,
         attempts: attempts.length,
         streakDays: mergedStreak.length,
+        unlocks: mergedUnlocks.length,
       },
     };
   } catch (error) {
@@ -184,7 +196,9 @@ async function upsertCloudWallet(wallet: Wallet): Promise<void> {
   const remote = await getCloudProfile();
   const merged = {
     xp_total: Math.max(wallet.xpTotal, remote?.xp_total ?? 0),
-    coins_total: Math.max(wallet.coinsTotal, remote?.coins_total ?? 0),
+    // Coin balance can decrease when a learner buys lesson unlocks, so local
+    // balance is authoritative here. XP and chest counts only increase.
+    coins_total: wallet.coinsTotal,
     chests_opened: Math.max(wallet.chestsOpened, remote?.chests_opened ?? 0),
     level: Math.max(wallet.level, remote?.level ?? 1),
   };
@@ -229,6 +243,19 @@ async function fetchCloudStreak(): Promise<CloudStreakRow[]> {
   return (data ?? []) as CloudStreakRow[];
 }
 
+async function fetchCloudLessonUnlocks(): Promise<CloudLessonUnlockRow[]> {
+  const supabase = getSupabaseClient();
+  const user = await getCloudUser();
+  if (!supabase || !user) return [];
+
+  const { data, error } = await supabase
+    .from('lesson_unlocks')
+    .select('user_id, lesson_id, cost_paid, unlocked_at')
+    .eq('user_id', user.id);
+  if (error) throw error;
+  return (data ?? []) as CloudLessonUnlockRow[];
+}
+
 function mergeRemoteProgress(remoteRows: CloudProgressRow[]): void {
   for (const remote of remoteRows) {
     const local = progressRepository.getByLesson(remote.lesson_id);
@@ -258,6 +285,13 @@ function mergeRemoteProgress(remoteRows: CloudProgressRow[]): void {
 function mergeRemoteStreak(remoteRows: CloudStreakRow[]): void {
   for (const remote of remoteRows) {
     streakRepository.upsertDay(remote.day, remote.lessons_completed, remote.xp_earned);
+  }
+}
+
+function mergeRemoteUnlocks(remoteRows: CloudLessonUnlockRow[]): void {
+  for (const remote of remoteRows) {
+    if (lessonUnlocksRepository.isPurchased(remote.lesson_id)) continue;
+    lessonUnlocksRepository.add(remote.lesson_id, remote.cost_paid, remote.unlocked_at);
   }
 }
 
@@ -321,6 +355,24 @@ async function uploadStreak(rows: StreakDay[]): Promise<void> {
       updated_at: new Date().toISOString(),
     })),
     { onConflict: 'user_id,day' }
+  );
+  if (error) throw error;
+}
+
+async function uploadLessonUnlocks(rows: LessonUnlockRow[]): Promise<void> {
+  const supabase = getSupabaseClient();
+  const user = await getCloudUser();
+  if (!supabase || !user || rows.length === 0) return;
+
+  const { error } = await supabase.from('lesson_unlocks').upsert(
+    rows.map((row) => ({
+      user_id: user.id,
+      lesson_id: row.lesson_id,
+      cost_paid: row.cost_paid,
+      unlocked_at: row.unlocked_at,
+      updated_at: new Date().toISOString(),
+    })),
+    { onConflict: 'user_id,lesson_id' }
   );
   if (error) throw error;
 }
