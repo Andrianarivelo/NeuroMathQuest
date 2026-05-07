@@ -123,17 +123,17 @@ The backend is optional. Without these variables, the app runs in guest/offline 
 2. Open the SQL Editor.
 3. Run `supabase/migrations/001_initial_backend.sql`.
 4. Open **Project Settings > API**.
-5. Copy the Project URL and the public anon key.
+5. Copy either the Project URL or the Data API URL, and copy the publishable key.
 
 ### 2. Configure the published web app
 
 1. Open https://andrianarivelo.github.io/NeuroMathQuest/
 2. Go to **Profile > Cloud account**.
-3. Paste the Supabase Project URL and public anon key.
+3. Paste the Supabase Project URL or Data API URL, and paste the publishable key.
 4. Click **Save cloud setup**.
 5. Create an account or sign in, then click **Sync now**.
 
-The public anon key is safe to use in the web app. Do not paste service-role secrets.
+The Data API URL may end with `/rest/v1`; the app will remove that automatically. The publishable key starts with `sb_publishable_` and is safe to use in the web app. Do not paste secret keys or service-role secrets.
 
 ### 3. Optional local env setup
 

@@ -31,6 +31,22 @@ import {
 } from '../../src/services/backend/supabaseClient';
 import { useTheme } from '../../src/theme/ThemeProvider';
 
+function normalizeSupabaseUrl(value: string): string {
+  return value
+    .trim()
+    .replace(/\/rest\/v1\/?$/i, '')
+    .replace(/\/+$/, '');
+}
+
+function isValidSupabaseKey(value: string): boolean {
+  const key = value.trim();
+  return (
+    key.startsWith('sb_publishable_') ||
+    key.startsWith('eyJ') ||
+    key.length >= 40
+  );
+}
+
 export default function ProfileScreen() {
   const theme = useTheme();
   const { settings, update, refresh } = useSettings();
@@ -132,16 +148,16 @@ export default function ProfileScreen() {
   };
 
   const handleSaveCloudSetup = () => {
-    const supabaseUrl = supabaseUrlInput.trim().replace(/\/+$/, '');
+    const supabaseUrl = normalizeSupabaseUrl(supabaseUrlInput);
     const supabaseAnonKey = supabaseAnonKeyInput.trim();
 
     if (!/^https:\/\/.+\.supabase\.co$/i.test(supabaseUrl)) {
-      setCloudNotice('Enter a Supabase Project URL like https://your-project.supabase.co.');
+      setCloudNotice('Enter the Project URL or Data API URL from Supabase.');
       return;
     }
 
-    if (supabaseAnonKey.length < 80) {
-      setCloudNotice('Paste the public anon key from Supabase Project Settings > API.');
+    if (!isValidSupabaseKey(supabaseAnonKey)) {
+      setCloudNotice('Paste the publishable key from Supabase Project Settings > API Keys.');
       return;
     }
 
@@ -355,12 +371,12 @@ export default function ProfileScreen() {
                 Supabase setup
               </Text>
               <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>
-                In Supabase, run `supabase/migrations/001_initial_backend.sql`, then paste the Project URL and public anon key here. This keeps GitHub Pages easy to configure after deployment.
+                In Supabase, run `supabase/migrations/001_initial_backend.sql`, then paste the Project URL or Data API URL and the publishable key here. This keeps GitHub Pages easy to configure after deployment.
               </Text>
               <TextInput
                 value={supabaseUrlInput}
                 onChangeText={setSupabaseUrlInput}
-                placeholder="https://your-project.supabase.co"
+                placeholder="https://your-project.supabase.co or /rest/v1 URL"
                 placeholderTextColor={theme.colors.textMuted}
                 autoCapitalize="none"
                 keyboardType="url"
@@ -369,7 +385,7 @@ export default function ProfileScreen() {
               <TextInput
                 value={supabaseAnonKeyInput}
                 onChangeText={setSupabaseAnonKeyInput}
-                placeholder="Supabase public anon key"
+                placeholder="Supabase publishable key"
                 placeholderTextColor={theme.colors.textMuted}
                 autoCapitalize="none"
                 style={inputStyle}
