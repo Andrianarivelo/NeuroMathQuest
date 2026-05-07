@@ -70,6 +70,23 @@ create table if not exists public.usage_events (
   created_at timestamptz not null default now()
 );
 
+create table if not exists public.admin_claim_codes (
+  id text primary key,
+  code_hash text not null,
+  salt text not null,
+  used_by uuid references auth.users(id) on delete set null,
+  used_at timestamptz,
+  created_at timestamptz not null default now()
+);
+
+insert into public.admin_claim_codes (id, code_hash, salt)
+values (
+  'primary',
+  'ff01c0846f160e0360f98e9ddf43c6748a5b700dadb17bf45c36f6f1f3296d80',
+  'neuromathquest-admin-v1'
+)
+on conflict (id) do nothing;
+
 create or replace function public.is_admin()
 returns boolean
 language sql
@@ -85,12 +102,66 @@ as $$
   );
 $$;
 
+create or replace function public.claim_admin_with_code(claim_code text)
+returns text
+language plpgsql
+security definer
+set search_path = public, extensions
+as $$
+declare
+  code_row public.admin_claim_codes%rowtype;
+begin
+  if auth.uid() is null then
+    raise exception 'Sign in first, then enter the superuser code.';
+  end if;
+
+  select *
+  into code_row
+  from public.admin_claim_codes
+  where id = 'primary'
+  for update;
+
+  if not found then
+    raise exception 'No superuser code is configured on this Supabase project.';
+  end if;
+
+  if code_row.used_at is not null and code_row.used_by is distinct from auth.uid() then
+    raise exception 'This superuser code has already been used.';
+  end if;
+
+  if encode(digest(coalesce(trim(claim_code), '') || code_row.salt, 'sha256'), 'hex') <> code_row.code_hash then
+    raise exception 'Superuser code not recognized.';
+  end if;
+
+  insert into public.profiles (user_id, display_name, role, updated_at)
+  values (
+    auth.uid(),
+    coalesce(nullif(auth.jwt() -> 'user_metadata' ->> 'display_name', ''), 'NeuroMath Explorer'),
+    'admin',
+    now()
+  )
+  on conflict (user_id) do update
+    set role = 'admin',
+        updated_at = now();
+
+  update public.admin_claim_codes
+  set used_by = auth.uid(),
+      used_at = coalesce(used_at, now())
+  where id = 'primary';
+
+  return 'Superuser role enabled for this cloud account.';
+end;
+$$;
+
+grant execute on function public.claim_admin_with_code(text) to authenticated;
+
 alter table public.profiles enable row level security;
 alter table public.lesson_progress enable row level security;
 alter table public.quiz_attempts enable row level security;
 alter table public.streak_log enable row level security;
 alter table public.lesson_unlocks enable row level security;
 alter table public.usage_events enable row level security;
+alter table public.admin_claim_codes enable row level security;
 
 drop policy if exists "profiles own select or admin" on public.profiles;
 create policy "profiles own select or admin"
@@ -187,7 +258,6 @@ create index if not exists quiz_attempts_user_time_idx on public.quiz_attempts(u
 create index if not exists lesson_unlocks_user_idx on public.lesson_unlocks(user_id);
 create index if not exists usage_events_user_time_idx on public.usage_events(user_id, created_at desc);
 
--- To make your account a superuser after signing up, replace the email below:
--- update public.profiles
--- set role = 'admin'
--- where user_id = (select id from auth.users where email = 'you@example.com');
+-- One-time superuser claim is handled by public.claim_admin_with_code().
+-- Keep the plaintext owner code outside the public repository. To rotate it,
+-- replace admin_claim_codes.code_hash with a SHA-256 hash of new_code || salt.

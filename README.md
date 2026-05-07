@@ -20,11 +20,7 @@ Progress is saved in the browser on the same device. No account, install, or App
 
 Accounts are optional. Students can use the app as guests forever. If Supabase is configured, signing in adds cloud backup and cross-device sync.
 
-Superuser access for this offline web app is local to the current browser/device. In **Profile**, enter:
-
-```text
-NEUROMATH-ADMIN
-```
+Superuser access is now cloud-backed. After Supabase is configured and you sign in, enter the one-time owner code in **Profile > Superuser** to promote your account to admin.
 
 ## Features
 
@@ -46,6 +42,7 @@ NEUROMATH-ADMIN
 - **Local learner profiles** with rotating greetings and device-saved progress
 - **Local superuser dashboard** for progress, quiz attempts, average score, active days, and weak lessons on the current installation
 - **Optional Supabase backend** for email accounts, cloud sync, cross-device progress, and real admin stats
+- **Runtime cloud setup** from the Profile tab, so GitHub Pages can be configured after deployment without rebuilding
 - **Offline-first**: no backend, no sign-in, no network required
 - **SQLite persistence** for all user progress
 - **Polished UI** with Reanimated animations, haptic feedback, and a custom design system
@@ -125,8 +122,22 @@ The backend is optional. Without these variables, the app runs in guest/offline 
 1. Create a Supabase project.
 2. Open the SQL Editor.
 3. Run `supabase/migrations/001_initial_backend.sql`.
-4. Copy `.env.example` to `.env`.
-5. Fill in:
+4. Open **Project Settings > API**.
+5. Copy the Project URL and the public anon key.
+
+### 2. Configure the published web app
+
+1. Open https://andrianarivelo.github.io/NeuroMathQuest/
+2. Go to **Profile > Cloud account**.
+3. Paste the Supabase Project URL and public anon key.
+4. Click **Save cloud setup**.
+5. Create an account or sign in, then click **Sync now**.
+
+The public anon key is safe to use in the web app. Do not paste service-role secrets.
+
+### 3. Optional local env setup
+
+For local development, you can still copy `.env.example` to `.env` and fill in:
 
 ```bash
 EXPO_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
@@ -135,7 +146,7 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 
 Expo exposes `EXPO_PUBLIC_*` variables to the web bundle, so do not put service-role secrets in the app.
 
-### 2. Run locally
+### 4. Run locally
 
 ```bash
 npm install
@@ -144,19 +155,11 @@ npm run web
 
 Students can still skip registration. In **Profile**, they can create an account later and click **Sync now** to attach their local progress to the cloud account.
 
-### 3. Make yourself a cloud admin
+### 5. Make yourself a cloud admin
 
-After signing up in the app, run this in Supabase SQL Editor with your email:
+After signing up or signing in, enter the one-time owner code in **Profile > Superuser**. The backend function `claim_admin_with_code` validates the code and promotes the signed-in account to `admin`. The code can only be claimed once unless you rotate `public.admin_claim_codes` in Supabase.
 
-```sql
-update public.profiles
-set role = 'admin'
-where user_id = (
-  select id from auth.users where email = 'you@example.com'
-);
-```
-
-Cloud admins see classroom-wide stats in **Profile** after signing in. Local superuser mode still exists for offline/demo use.
+Cloud admins see classroom-wide stats in **Profile** after signing in.
 
 ### Run tests
 

@@ -16,6 +16,7 @@ import {
   syncLocalProgressToCloud,
 } from '../../src/services/backend/syncService';
 import {
+  claimCloudAdminWithCode,
   getCloudProfile,
   getCloudSession,
   signInWithEmail,
@@ -23,10 +24,12 @@ import {
   signUpWithEmail,
   upsertCloudProfile,
 } from '../../src/services/backend/authService';
-import { isBackendConfigured } from '../../src/services/backend/supabaseClient';
+import {
+  getBackendConfig,
+  isBackendConfigured,
+  resetSupabaseClient,
+} from '../../src/services/backend/supabaseClient';
 import { useTheme } from '../../src/theme/ThemeProvider';
-
-const SUPERUSER_CODE = 'NEUROMATH-ADMIN';
 
 export default function ProfileScreen() {
   const theme = useTheme();
@@ -35,6 +38,8 @@ export default function ProfileScreen() {
   const [nameInput, setNameInput] = useState(settings.profileName);
   const [superCode, setSuperCode] = useState('');
   const [notice, setNotice] = useState('');
+  const [supabaseUrlInput, setSupabaseUrlInput] = useState(settings.supabaseUrl);
+  const [supabaseAnonKeyInput, setSupabaseAnonKeyInput] = useState(settings.supabaseAnonKey);
   const [cloudEmail, setCloudEmail] = useState<string | null>(null);
   const [cloudRole, setCloudRole] = useState<'student' | 'admin' | null>(null);
   const [cloudNotice, setCloudNotice] = useState('');
@@ -42,6 +47,7 @@ export default function ProfileScreen() {
   const [authEmail, setAuthEmail] = useState('');
   const [authPassword, setAuthPassword] = useState('');
   const [cloudStats, setCloudStats] = useState<CloudAdminStats | null>(null);
+  const backendConfig = getBackendConfig();
   const backendConfigured = isBackendConfigured();
 
   const loadCloudStatus = useCallback(() => {
@@ -69,6 +75,11 @@ export default function ProfileScreen() {
   useEffect(() => {
     setNameInput(settings.profileName);
   }, [settings.profileName]);
+
+  useEffect(() => {
+    setSupabaseUrlInput(settings.supabaseUrl);
+    setSupabaseAnonKeyInput(settings.supabaseAnonKey);
+  }, [settings.supabaseUrl, settings.supabaseAnonKey]);
 
   const progressRows = progressRepository.getAll();
   const attempts = progressRepository.getAttempts();
@@ -120,6 +131,39 @@ export default function ProfileScreen() {
     setCloudBusy(false);
   };
 
+  const handleSaveCloudSetup = () => {
+    const supabaseUrl = supabaseUrlInput.trim().replace(/\/+$/, '');
+    const supabaseAnonKey = supabaseAnonKeyInput.trim();
+
+    if (!/^https:\/\/.+\.supabase\.co$/i.test(supabaseUrl)) {
+      setCloudNotice('Enter a Supabase Project URL like https://your-project.supabase.co.');
+      return;
+    }
+
+    if (supabaseAnonKey.length < 80) {
+      setCloudNotice('Paste the public anon key from Supabase Project Settings > API.');
+      return;
+    }
+
+    update('supabaseUrl', supabaseUrl);
+    update('supabaseAnonKey', supabaseAnonKey);
+    resetSupabaseClient();
+    setCloudNotice('Cloud setup saved on this device. You can now create an account or sign in.');
+    loadCloudStatus();
+  };
+
+  const handleClearCloudSetup = () => {
+    update('supabaseUrl', '');
+    update('supabaseAnonKey', '');
+    resetSupabaseClient();
+    setCloudEmail(null);
+    setCloudRole(null);
+    setCloudStats(null);
+    setSupabaseUrlInput('');
+    setSupabaseAnonKeyInput('');
+    setCloudNotice('Local cloud setup removed. Guest mode still works.');
+  };
+
   const handleCloudSync = async () => {
     setCloudBusy(true);
     const result = await syncLocalProgressToCloud();
@@ -140,14 +184,30 @@ export default function ProfileScreen() {
     setCloudBusy(false);
   };
 
-  const handleSuperUser = () => {
-    if (superCode.trim().toUpperCase() !== SUPERUSER_CODE) {
-      setNotice('Superuser code not recognized. Your learner profile is still safe.');
+  const handleSuperUser = async () => {
+    if (!backendConfigured) {
+      setNotice('Save Supabase setup first, then sign in and claim superuser.');
       return;
     }
-    update('superUserEnabled', true);
-    setSuperCode('');
-    setNotice('Superuser dashboard unlocked for this device.');
+    if (!cloudEmail) {
+      setNotice('Sign in to your cloud account before claiming superuser.');
+      return;
+    }
+    if (superCode.trim().length === 0) {
+      setNotice('Enter the one-time superuser code.');
+      return;
+    }
+
+    setCloudBusy(true);
+    const result = await claimCloudAdminWithCode(superCode);
+    setCloudBusy(false);
+    setNotice(result.message);
+    setCloudNotice(result.message);
+    if (result.ok) {
+      update('superUserEnabled', true);
+      setSuperCode('');
+      loadCloudStatus();
+    }
   };
 
   const handleExport = async () => {
@@ -290,11 +350,51 @@ export default function ProfileScreen() {
               Registration is optional. You can keep learning as a guest; an account only adds cloud backup,
               cross-device sync, and real admin stats.
             </Text>
-            {!backendConfigured && (
-              <Text style={{ ...theme.typography.caption, color: theme.colors.warning }}>
-                Cloud sync is not configured yet. Add Supabase env vars to enable accounts.
+            <View style={{ gap: 10 }}>
+              <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>
+                Supabase setup
               </Text>
-            )}
+              <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>
+                In Supabase, run `supabase/migrations/001_initial_backend.sql`, then paste the Project URL and public anon key here. This keeps GitHub Pages easy to configure after deployment.
+              </Text>
+              <TextInput
+                value={supabaseUrlInput}
+                onChangeText={setSupabaseUrlInput}
+                placeholder="https://your-project.supabase.co"
+                placeholderTextColor={theme.colors.textMuted}
+                autoCapitalize="none"
+                keyboardType="url"
+                style={inputStyle}
+              />
+              <TextInput
+                value={supabaseAnonKeyInput}
+                onChangeText={setSupabaseAnonKeyInput}
+                placeholder="Supabase public anon key"
+                placeholderTextColor={theme.colors.textMuted}
+                autoCapitalize="none"
+                style={inputStyle}
+              />
+              <Button
+                label="Save cloud setup"
+                fullWidth
+                disabled={cloudBusy}
+                onPress={handleSaveCloudSetup}
+              />
+              {backendConfig.source === 'runtime' && (
+                <Button
+                  label="Remove local cloud setup"
+                  variant="ghost"
+                  fullWidth
+                  disabled={cloudBusy}
+                  onPress={handleClearCloudSetup}
+                />
+              )}
+              <Text style={{ ...theme.typography.caption, color: backendConfigured ? theme.colors.primary : theme.colors.warning }}>
+                {backendConfigured
+                  ? `Cloud backend configured from ${backendConfig.source === 'env' ? 'build env vars' : 'this device'}.`
+                  : 'Cloud backend is not configured yet. Guest mode still works.'}
+              </Text>
+            </View>
             {backendConfigured && !cloudEmail && (
               <>
                 <TextInput
@@ -430,7 +530,7 @@ export default function ProfileScreen() {
           </Text>
           <Card style={{ marginBottom: 16, gap: 10 }}>
             <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>
-              Superuser stats are local to this device in the current offline web app.
+              Cloud superuser gives access to classroom stats across signed-in learners. Sign in, then enter the one-time owner code.
             </Text>
             {!settings.superUserEnabled && cloudRole !== 'admin' && (
               <>
@@ -442,7 +542,13 @@ export default function ProfileScreen() {
                   autoCapitalize="characters"
                   style={inputStyle}
                 />
-                <Button label="Register as superuser" variant="outline" fullWidth onPress={handleSuperUser} />
+                <Button
+                  label="Claim cloud superuser"
+                  variant="outline"
+                  fullWidth
+                  disabled={!backendConfigured || !cloudEmail || cloudBusy}
+                  onPress={() => void handleSuperUser()}
+                />
               </>
             )}
             {(settings.superUserEnabled || cloudRole === 'admin') && (

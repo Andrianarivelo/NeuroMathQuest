@@ -13,6 +13,8 @@ export interface AppSettings {
   superUserEnabled: boolean;
   installId: string;
   cloudSyncLastAt: number;
+  supabaseUrl: string;
+  supabaseAnonKey: string;
 }
 
 export const defaultSettings: AppSettings = {
@@ -28,6 +30,8 @@ export const defaultSettings: AppSettings = {
   superUserEnabled: false,
   installId: '',
   cloudSyncLastAt: 0,
+  supabaseUrl: '',
+  supabaseAnonKey: '',
 };
 
 export const settingsRepository = {
@@ -51,6 +55,12 @@ export const settingsRepository = {
           break;
         case 'installId':
           result.installId = r.value;
+          break;
+        case 'supabaseUrl':
+          result.supabaseUrl = r.value;
+          break;
+        case 'supabaseAnonKey':
+          result.supabaseAnonKey = r.value;
           break;
         case 'dailyGoalLessons':
           result.dailyGoalLessons = parseInt(r.value, 10) || defaultSettings.dailyGoalLessons;

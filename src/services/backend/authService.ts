@@ -110,6 +110,30 @@ export async function upsertCloudProfile(displayName: string): Promise<void> {
   if (error) throw error;
 }
 
+export async function claimCloudAdminWithCode(code: string): Promise<AuthResult> {
+  const supabase = getSupabaseClient();
+  if (!supabase || !isBackendConfigured()) {
+    return { ok: false, message: 'Cloud sync is not configured yet. Save Supabase setup first.' };
+  }
+
+  const user = await getCloudUser();
+  if (!user) {
+    return { ok: false, message: 'Sign in first, then enter the superuser code.' };
+  }
+
+  await upsertCloudProfile(settingsRepository.getAll().profileName);
+  const { data, error } = await supabase.rpc('claim_admin_with_code', {
+    claim_code: code.trim(),
+  });
+  if (error) return { ok: false, message: error.message };
+
+  return {
+    ok: true,
+    message: typeof data === 'string' ? data : 'Superuser role enabled for this cloud account.',
+    user,
+  };
+}
+
 export async function isCloudAdmin(): Promise<boolean> {
   const profile = await getCloudProfile();
   return profile?.role === 'admin';
