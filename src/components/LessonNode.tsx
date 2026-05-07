@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ViewStyle, Pressable } from 'react-native';
+import { View, Text, ViewStyle, Pressable, useWindowDimensions } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import { useTheme } from '../theme/ThemeProvider';
 import { LessonState } from '../services/unlockService';
@@ -26,15 +26,18 @@ const stateBg: Record<LessonState, string> = {
 
 export function LessonNode({ title, state, stars, xp, onPress, allowLockedPress, lockedLabel, style }: Props) {
   const theme = useTheme();
+  const { width } = useWindowDimensions();
   const isLocked = state === 'locked';
   const disabled = isLocked && !allowLockedPress;
   const size = 58;
+  const safeWidth = Math.max(320, width || 320);
+  const titleWidth = Math.min(safeWidth - 48, safeWidth < 520 ? 188 : 240);
 
   return (
     <Pressable
       onPress={disabled ? undefined : onPress}
       disabled={disabled}
-      style={[{ alignItems: 'center', opacity: isLocked ? 0.68 : 1 }, style]}
+      style={[{ alignItems: 'center', opacity: isLocked ? 0.68 : 1, width: titleWidth }, style]}
     >
       <View
         style={{
@@ -66,9 +69,8 @@ export function LessonNode({ title, state, stars, xp, onPress, allowLockedPress,
           color: theme.colors.text,
           textAlign: 'center',
           marginTop: 6,
-          maxWidth: 100,
+          width: titleWidth,
         }}
-        numberOfLines={2}
       >
         {title}
       </Text>

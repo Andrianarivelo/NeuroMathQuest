@@ -12,11 +12,19 @@ import { TrackId } from '../../src/content/types';
 import { trackTints } from '../../src/theme';
 
 const trackTabLabels: Record<TrackId, string> = {
-  neuroscience: 'Neuro',
-  math: 'Math',
-  compneuro: 'Comp',
-  aibasis: 'AI',
+  neuroscience: 'Neuroscience',
+  math: 'Math Foundations',
+  compneuro: 'Computational Neuro',
+  aibasis: 'AI Basics',
   aineuro: 'NeuroAI',
+};
+
+const trackTabWidths: Record<TrackId, number> = {
+  neuroscience: 136,
+  math: 160,
+  compneuro: 184,
+  aibasis: 112,
+  aineuro: 108,
 };
 
 export default function LearnScreen() {
@@ -45,12 +53,13 @@ export default function LearnScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>
       {/* Track picker */}
-      <View
-        style={{
-          flexDirection: 'row',
-          flexWrap: 'wrap',
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{
           paddingHorizontal: 16,
           paddingTop: 16,
+          paddingBottom: 2,
           gap: 8,
         }}
       >
@@ -62,11 +71,10 @@ export default function LearnScreen() {
               key={t.id}
               onPress={() => setActiveTrack(t.id)}
               style={{
-                flexGrow: 1,
-                flexBasis: '30%',
-                minWidth: 96,
+                width: trackTabWidths[t.id],
+                minHeight: 44,
                 paddingVertical: 10,
-                paddingHorizontal: 10,
+                paddingHorizontal: 12,
                 borderRadius: theme.radius.md,
                 backgroundColor: active ? tint.bg : theme.colors.surface,
                 borderWidth: 2,
@@ -78,7 +86,7 @@ export default function LearnScreen() {
               <Text
                 numberOfLines={1}
                 adjustsFontSizeToFit
-                minimumFontScale={0.78}
+                minimumFontScale={0.86}
                 style={{
                   ...theme.typography.caption,
                   color: active ? tint.fg : theme.colors.textMuted,
@@ -91,7 +99,7 @@ export default function LearnScreen() {
             </Pressable>
           );
         })}
-      </View>
+      </ScrollView>
 
       {/* Track header */}
       <View style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 }}>
@@ -113,7 +121,15 @@ export default function LearnScreen() {
       </View>
 
       {/* Lesson path */}
-      <ScrollView contentContainerStyle={{ paddingBottom: 40, paddingHorizontal: 16, paddingTop: 12 }} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={{
+          paddingBottom: 40,
+          paddingHorizontal: 16,
+          paddingTop: 12,
+          alignItems: 'center',
+        }}
+        showsVerticalScrollIndicator={false}
+      >
         {lessons.map((lesson, idx) => {
           const state = states.get(lesson.id) ?? 'locked';
           const p = progressMap.get(lesson.id);
@@ -134,7 +150,7 @@ export default function LearnScreen() {
               />
               {/* Milestone markers every 5 */}
               {(idx + 1) % 5 === 0 && idx < lessons.length - 1 && (
-                <Card style={{ marginTop: 12, marginBottom: 4, paddingVertical: 10, alignItems: 'center', width: '100%' }}>
+                <Card style={{ marginTop: 12, marginBottom: 4, paddingVertical: 10, alignItems: 'center', width: '100%', maxWidth: 520 }}>
                   <Text style={{ ...theme.typography.caption, color: theme.colors.gold }}>
                     Milestone - {idx + 1} lessons
                   </Text>
