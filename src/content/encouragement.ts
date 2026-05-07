@@ -46,7 +46,7 @@ export const encouragementCopy: Record<EncouragementContext, string[]> = {
     'This is useful practice. Keep going with the next one.',
     'Missed answers are part of learning. You are still moving.',
     'A little off, and that is okay. You just learned something.',
-    'Every attempt makes the right idea easier to remember.',
+    'Every attempt makes the concept easier to remember.',
   ],
   first_lesson: [
     'First lesson in the books. That is the hardest one.',

@@ -1,5 +1,6 @@
 import { getNotationTerms } from '../content/notationTerms';
 import { allLessons } from '../content/tracks';
+import { buildCourseDetails } from './lessonContentService';
 import { Lesson, QuizQuestion } from '../content/types';
 
 export interface QuizQuestionWithId extends QuizQuestion {
@@ -70,31 +71,73 @@ function compactChoice(value: string, maxLength = 92): string {
   return `${compact.replace(/[.,;:\s-]+$/, '')}.`;
 }
 
-function explanationDistractors(lesson: Lesson, currentExplanation: string): string[] {
-  return uniqueStrings([
-    ...lesson.questions
-      .map((question) => question.explanation)
-      .filter((explanation) => explanation !== currentExplanation),
-    ...allLessons
-      .filter((item) => item.trackId === lesson.trackId && item.id !== lesson.id)
-      .flatMap((item) => item.questions.map((question) => question.explanation)),
-    ...allLessons
-      .filter((item) => item.id !== lesson.id)
-      .flatMap((item) => item.questions.map((question) => question.explanation)),
-  ]).filter((value) => value.length <= 160);
+function splitSentences(value: string): string[] {
+  return (value.match(/[^.!?]+[.!?]+|[^.!?]+$/g) ?? [])
+    .map((sentence) => sentence.trim())
+    .filter((sentence) => sentence.length >= 32);
 }
 
-function optionDistractors(lesson: Lesson, question: QuizQuestion): string[] {
-  const correctAnswer = question.options[question.answerIndex];
+const lessonStatementCache = new Map<string, string[]>();
+
+function lessonStatements(lesson: Lesson): string[] {
+  const cached = lessonStatementCache.get(lesson.id);
+  if (cached) return cached;
+  const statements = uniqueStrings([
+    ...splitSentences(lesson.explanation),
+    ...buildCourseDetails(lesson),
+    ...lesson.questions.map((question) => question.explanation),
+    lesson.example,
+    lesson.whyItMatters,
+  ]).filter((value) => value.length <= 180);
+  lessonStatementCache.set(lesson.id, statements);
+  return statements;
+}
+
+function statementForTerm(lesson: Lesson, term: string): string | null {
+  const normalizedTerm = normalizeText(term);
+  const termWords = normalizedTerm.split(' ').filter((word) => word.length >= 4);
+  return (
+    lessonStatements(lesson).find((statement) => {
+      const normalizedStatement = normalizeText(statement);
+      return (
+        normalizedStatement.includes(normalizedTerm) ||
+        termWords.some((word) => normalizedStatement.includes(word))
+      );
+    }) ?? null
+  );
+}
+
+function conceptDistractors(lesson: Lesson, answer: string): string[] {
   return uniqueStrings([
-    ...question.options.filter((option) => option !== correctAnswer),
+    ...lessonStatements(lesson).filter((statement) => statement !== answer),
     ...allLessons
       .filter((item) => item.trackId === lesson.trackId && item.id !== lesson.id)
-      .flatMap((item) => item.questions.map((candidate) => candidate.options[candidate.answerIndex])),
+      .flatMap((item) => lessonStatements(item)),
     ...allLessons
       .filter((item) => item.id !== lesson.id)
-      .flatMap((item) => item.questions.map((candidate) => candidate.options[candidate.answerIndex])),
-  ]).filter((value) => value.length <= 140);
+      .flatMap((item) => lessonStatements(item)),
+  ]).filter((value) => value.length <= 180);
+}
+
+function cleanTerm(term: string): string {
+  return term.replace(/\s+/g, ' ').trim();
+}
+
+function normalizeText(value: string): string {
+  return value.toLocaleLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function conceptQuestionPrompt(lesson: Lesson, term: string, index: number): string {
+  const compactTerm = cleanTerm(term);
+  if (index % 2 === 0) {
+    return `What is ${compactTerm} in ${lesson.title}?`;
+  }
+  return `Which statement about ${compactTerm} matches ${lesson.title}?`;
+}
+
+function directQuestionPrompt(lesson: Lesson, question: QuizQuestion): string {
+  const prompt = `${lesson.title}: ${question.prompt}`;
+  return prompt.length <= 132 ? prompt : question.prompt;
 }
 
 function createQuestion(params: {
@@ -127,30 +170,21 @@ export function buildQuizPool(lesson: Lesson): QuizQuestionWithId[] {
 
   const generated: Array<QuizQuestionWithId | null> = [];
 
-  lesson.questions.forEach((question, index) => {
-    const correctAnswer = question.options[question.answerIndex];
-    const wrongAnswer = question.options.find((option) => option !== correctAnswer) ?? question.options[0];
-
-    generated.push(
-      createQuestion({
-        id: `${lesson.id}_repair_${index}`,
-        prompt: `In "${lesson.title}", a learner chose "${compactChoice(wrongAnswer, 54)}". Which correction matches the lesson?`,
-        answer: correctAnswer,
-        distractors: optionDistractors(lesson, question),
-        explanation: question.explanation,
-      })
-    );
-
-    generated.push(
-      createQuestion({
-        id: `${lesson.id}_reason_${index}`,
-        prompt: `In "${lesson.title}", why is "${compactChoice(correctAnswer, 46)}" the right idea?`,
-        answer: question.explanation,
-        distractors: explanationDistractors(lesson, question.explanation),
-        explanation: question.explanation,
-      })
-    );
-  });
+  uniqueStrings(lesson.keyTerms)
+    .slice(0, 4)
+    .forEach((term, index) => {
+      const answer = statementForTerm(lesson, term);
+      if (!answer) return;
+      generated.push(
+        createQuestion({
+          id: `${lesson.id}_concept_${index}`,
+          prompt: conceptQuestionPrompt(lesson, term, index),
+          answer,
+          distractors: conceptDistractors(lesson, answer),
+          explanation: answer,
+        })
+      );
+    });
 
   getNotationTerms(lesson)
     .slice(0, 3)
@@ -165,13 +199,27 @@ export function buildQuizPool(lesson: Lesson): QuizQuestionWithId[] {
       generated.push(
         createQuestion({
           id: `${lesson.id}_notation_${index}`,
-          prompt: `In "${lesson.title}", what does ${term.symbol} mean?`,
+          prompt: `What does ${term.symbol} mean in ${lesson.title}?`,
           answer: term.meaning,
           distractors,
           explanation: `${term.symbol}: ${term.meaning}`,
         })
       );
     });
+
+  for (let index = 0; generated.filter((item) => item != null).length < 2 && index < lesson.questions.length; index++) {
+    const question = lesson.questions[index];
+    const answer = question.options[question.answerIndex];
+    generated.push(
+      createQuestion({
+        id: `${lesson.id}_direct_${index}`,
+        prompt: directQuestionPrompt(lesson, question),
+        answer,
+        distractors: question.options.filter((option) => option !== answer),
+        explanation: question.explanation,
+      })
+    );
+  }
 
   return [...original, ...generated.filter((item): item is QuizQuestionWithId => item != null)];
 }

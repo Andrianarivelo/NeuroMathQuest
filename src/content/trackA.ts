@@ -1,7 +1,7 @@
 import { Lesson } from './types';
 
 /**
- * Track A - Neuroscience Basics. 40 lessons. Unlocked from the start.
+ * Track A - Neuroscience Basics. 42 lessons. Unlocked from the start.
  */
 export const trackALessons: Lesson[] = [
   {
@@ -300,8 +300,8 @@ export const trackALessons: Lesson[] = [
     difficulty: 'beginner',
     prerequisites: ['A06'],
     explanation:
-      'Neurotransmitters are the chemicals neurons use to talk. A few are fast and point-to-point, like glutamate and GABA. Others act more broadly, tuning circuits - dopamine, serotonin, norepinephrine, and acetylcholine.',
-    keyTerms: ['glutamate', 'GABA', 'dopamine', 'serotonin', 'acetylcholine'],
+      'Neurotransmitters are the chemicals neurons use to talk. Glutamate is the dominant fast excitatory transmitter in the central nervous system, and GABA is the dominant fast inhibitory transmitter in the mature brain. Other transmitters act more broadly, tuning circuits: dopamine, serotonin, norepinephrine, acetylcholine, and many neuropeptides. A single neuron can also co-release more than one transmitter, so a synapse can send a fast signal and a slower modulatory signal together.',
+    keyTerms: ['glutamate', 'GABA', 'dopamine', 'co-release', 'neuropeptide'],
     example:
       'Dopamine neurons in the midbrain fire briefly when a reward is better than expected, helping the brain update its predictions.',
     intuition: 'Some transmitters send a message. Others set the mood.',
@@ -309,31 +309,137 @@ export const trackALessons: Lesson[] = [
       'Models of reward learning, attention, and motivation depend on these neuromodulators.',
     questions: [
       {
-        prompt: 'Which transmitter is most associated with reward prediction error?',
+        prompt: 'What is the dominant fast excitatory neurotransmitter in the CNS?',
         options: ['GABA', 'Glutamate', 'Dopamine', 'Histamine'],
-        answerIndex: 2,
-        explanation: 'Midbrain dopamine neurons carry signals closely related to reward prediction error.',
-      },
-      {
-        prompt: 'Fast point-to-point excitation in cortex uses mostly...',
-        options: ['Serotonin', 'Glutamate', 'Noradrenaline', 'Oxytocin'],
         answerIndex: 1,
-        explanation: 'Glutamate mediates the majority of fast excitatory transmission.',
+        explanation: 'Glutamate mediates most fast excitatory transmission in the vertebrate central nervous system.',
       },
       {
-        prompt: 'Neuromodulators like serotonin or noradrenaline typically...',
+        prompt: 'What is the dominant fast inhibitory neurotransmitter in the mature brain?',
+        options: ['Glutamate', 'GABA', 'Dopamine', 'Acetylcholine'],
+        answerIndex: 1,
+        explanation: 'GABA is the major fast inhibitory transmitter in most mature CNS circuits.',
+      },
+      {
+        prompt: 'What does neurotransmitter co-release mean?',
         options: [
-          'Act instantly and point-to-point',
-          'Change circuit-wide excitability on slower timescales',
-          'Produce action potentials directly',
-          'Ignore postsynaptic receptors',
+          'One neuron can release more than one transmitter',
+          'Every synapse releases only dopamine',
+          'Transmitters cross the membrane without vesicles',
+          'A receptor becomes an axon terminal',
         ],
-        answerIndex: 1,
-        explanation: 'Neuromodulators adjust how circuits respond on slower, broader timescales.',
+        answerIndex: 0,
+        explanation: 'Many neurons can release a classical transmitter plus a peptide or another modulator.',
       },
     ],
     xpReward: 20,
     coinReward: 7,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'A41',
+    trackId: 'neuroscience',
+    moduleId: 'A-synapses',
+    order: 7.1,
+    title: 'Synaptic vesicles',
+    subtitle: 'Tiny packets that make synapses reliable',
+    estimatedMinutes: 5,
+    difficulty: 'beginner',
+    prerequisites: ['A05'],
+    explanation:
+      'Synaptic vesicles are small membrane spheres packed with neurotransmitter. At an axon terminal, vesicles are filled by transporter proteins, held near active zones, primed for release, and triggered by calcium entry when a spike arrives. After fusion, vesicle membrane is recovered and recycled so the terminal can keep signalling. Vesicle release is probabilistic: a spike raises the chance of release, but it does not guarantee that every vesicle fuses.',
+    keyTerms: ['synaptic vesicle', 'active zone', 'priming', 'endocytosis', 'release probability'],
+    example:
+      'At many cortical synapses, one action potential releases transmitter from only a fraction of available vesicles, which makes synaptic strength variable from spike to spike.',
+    intuition:
+      'A vesicle is a prepared packet: fill it, dock it, release it, recycle it.',
+    whyItMatters:
+      'Vesicle pools and release probability explain short-term synaptic dynamics, synaptic reliability, and why repeated spikes can depress or facilitate a connection.',
+    questions: [
+      {
+        prompt: 'What is stored inside a synaptic vesicle?',
+        options: ['Neurotransmitter', 'DNA', 'Myelin', 'Blood plasma'],
+        answerIndex: 0,
+        explanation: 'Synaptic vesicles store neurotransmitter before release at the presynaptic terminal.',
+      },
+      {
+        prompt: 'What triggers vesicle fusion at most chemical synapses?',
+        options: ['Calcium entry near the active zone', 'A drop in skull pressure', 'Myelin wrapping', 'DNA replication'],
+        answerIndex: 0,
+        explanation: 'An arriving spike opens Ca2+ channels, and local calcium helps trigger vesicle fusion.',
+      },
+      {
+        prompt: 'Why is vesicle recycling important?',
+        options: [
+          'It lets terminals keep releasing transmitter',
+          'It prevents all receptors from existing',
+          'It turns axons into dendrites',
+          'It removes the need for calcium',
+        ],
+        answerIndex: 0,
+        explanation: 'After fusion, vesicle membrane is retrieved and reused to sustain transmission.',
+      },
+    ],
+    xpReward: 22,
+    coinReward: 8,
+    masteryThreshold: 0.8,
+  },
+  {
+    id: 'A42',
+    trackId: 'neuroscience',
+    moduleId: 'A-synapses',
+    order: 7.2,
+    title: 'Neurotransmitter co-release',
+    subtitle: 'One terminal, more than one message',
+    estimatedMinutes: 5,
+    difficulty: 'beginner',
+    prerequisites: ['A07', 'A41'],
+    explanation:
+      'Some neurons release more than one chemical messenger. A terminal may release a fast classical transmitter such as glutamate, GABA, or acetylcholine, and also release a peptide or another modulator when activity is strong or sustained. Co-release lets the same neuron speak on multiple time scales: a fast postsynaptic potential can carry the immediate signal, while a slower transmitter changes excitability, plasticity, or network state.',
+    keyTerms: ['co-release', 'classical transmitter', 'neuropeptide', 'modulation', 'time scale'],
+    example:
+      'A hypothalamic neuron can use a small molecule transmitter for fast synaptic effects and release a neuropeptide during bursts to influence broader circuit state.',
+    intuition:
+      'Co-release is like sending a quick text plus a slower instruction that changes how future texts are read.',
+    whyItMatters:
+      'Co-release prevents an oversimplified one-neuron-one-transmitter view and helps explain why the same circuit can behave differently during bursts, stress, hunger, or attention.',
+    questions: [
+      {
+        prompt: 'What does co-release allow a neuron to do?',
+        options: [
+          'Release more than one messenger from its terminals',
+          'Avoid using receptors',
+          'Fire without ion channels',
+          'Turn every synapse electrical',
+        ],
+        answerIndex: 0,
+        explanation: 'Co-release means one neuron can release multiple chemical messengers.',
+      },
+      {
+        prompt: 'Which pairing is a common co-release pattern?',
+        options: [
+          'A fast classical transmitter plus a slower peptide',
+          'Myelin plus DNA',
+          'Blood oxygen plus skull bone',
+          'Only sodium plus potassium pumps',
+        ],
+        answerIndex: 0,
+        explanation: 'Many co-releasing neurons combine a fast transmitter with a slower neuromodulatory signal.',
+      },
+      {
+        prompt: 'Why does co-release matter for circuit function?',
+        options: [
+          'It lets one neuron influence targets on multiple time scales',
+          'It makes synapses impossible to study',
+          'It removes excitation and inhibition',
+          'It means transmitters never bind receptors',
+        ],
+        answerIndex: 0,
+        explanation: 'Fast and slow messengers can shape immediate voltage and longer-lasting circuit state together.',
+      },
+    ],
+    xpReward: 22,
+    coinReward: 8,
     masteryThreshold: 0.8,
   },
   {

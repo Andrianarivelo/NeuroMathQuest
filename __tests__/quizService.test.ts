@@ -21,6 +21,15 @@ describe('quizService', () => {
     );
   });
 
+  it('keeps every lesson quiz large enough for five-question attempts', () => {
+    for (const item of allLessons) {
+      const pool = buildQuizPool(item);
+      if (pool.length < 5) {
+        throw new Error(`${item.id} only has ${pool.length} quiz questions`);
+      }
+    }
+  });
+
   it('does not generate low-value key-term recognition questions', () => {
     const pool = buildQuizPool(lesson);
     expect(pool.some((question) => question.id.includes('_term_'))).toBe(false);
@@ -34,12 +43,14 @@ describe('quizService', () => {
     expect(generated.some((question) => /^best mental model/i.test(question.prompt))).toBe(false);
     expect(generated.some((question) => /^best example/i.test(question.prompt))).toBe(false);
     expect(generated.some((question) => /best mental model|best example of/i.test(question.prompt))).toBe(false);
+    expect(generated.some((question) => /learner chose|right idea|correction matches/i.test(question.prompt))).toBe(false);
   });
 
   it('adds lesson context to generated conceptual prompts', () => {
     const generated = buildQuizPool(lesson).filter((question) => question.source === 'generated');
     expect(generated.length).toBeGreaterThan(0);
     expect(generated.every((question) => question.prompt.includes(lesson.title))).toBe(true);
+    expect(generated.every((question) => /what is|what does|which statement about/i.test(question.prompt))).toBe(true);
   });
 
   it('keeps generated answer choices short enough for mobile cards', () => {

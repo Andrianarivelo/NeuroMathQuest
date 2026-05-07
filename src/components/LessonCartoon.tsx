@@ -50,6 +50,8 @@ const lessonArt: Partial<Record<string, ImageSourcePropType>> = {
   A38: require('../../assets/lesson-art/A38.png'),
   A39: require('../../assets/lesson-art/A39.png'),
   A40: require('../../assets/lesson-art/A40.png'),
+  A41: require('../../assets/lesson-art/A41.png'),
+  A42: require('../../assets/lesson-art/A42.png'),
   B01: require('../../assets/lesson-art/B01.png'),
   B02: require('../../assets/lesson-art/B02.png'),
   B03: require('../../assets/lesson-art/B03.png'),

@@ -40,6 +40,21 @@ export const neuroscienceLessonDetails: Record<string, string[]> = {
     'Glutamate is the main fast excitatory transmitter in much of the brain, while GABA is the main fast inhibitory transmitter.',
     'Acetylcholine, dopamine, serotonin, norepinephrine, and neuropeptides often tune circuit state rather than simply turning neurons on or off.',
     'The same transmitter can have different effects depending on receptor type and target cell.',
+    'Co-release means one neuron can release more than one transmitter, often combining a fast small molecule with a slower modulator or peptide.',
+  ],
+  A41: [
+    'Small clear synaptic vesicles usually contain classical transmitters such as glutamate, GABA, or acetylcholine.',
+    'Vesicle filling depends on transporter proteins that use ion gradients across the vesicle membrane.',
+    'Docking and priming prepare vesicles at active zones so calcium can trigger fusion quickly when a spike arrives.',
+    'Endocytosis retrieves vesicle membrane after fusion, allowing terminals to recycle vesicles during ongoing activity.',
+    'Release probability and the size of the readily releasable vesicle pool strongly shape synaptic strength.',
+  ],
+  A42: [
+    'The older one-neuron-one-transmitter rule is too simple: many neurons can release multiple chemical messengers.',
+    'Fast transmitters usually act within milliseconds, while peptides and many modulators can act over seconds or longer.',
+    'Co-release can depend on firing pattern because bursts and sustained activity often recruit release mechanisms differently from single spikes.',
+    'The postsynaptic effect depends on which receptors are present, so the same released chemical mix can affect targets differently.',
+    'For modelling, co-release is a reminder that a synapse may carry fast signalling, slow modulation, and state-dependent plasticity together.',
   ],
   A08: [
     'Ionotropic receptors are receptor-channels, so they can change membrane conductance quickly.',

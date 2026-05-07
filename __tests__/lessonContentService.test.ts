@@ -7,7 +7,7 @@ describe('lessonContentService', () => {
   it('adds richer neuroscience details to every Track A lesson', () => {
     for (const lesson of trackALessons) {
       expect(neuroscienceLessonDetails[lesson.id]).toBeDefined();
-      expect(neuroscienceLessonDetails[lesson.id]).toHaveLength(4);
+      expect(neuroscienceLessonDetails[lesson.id].length).toBeGreaterThanOrEqual(4);
     }
   });
 

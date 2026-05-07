@@ -28,8 +28,8 @@ NEUROMATH-ADMIN
 
 ## Features
 
-- **190 hand-written lessons** across 5 learning tracks
-- **Track A - Neuroscience Basics** (40 lessons, fully unlocked from day one)
+- **192 hand-written lessons** across 5 learning tracks
+- **Track A - Neuroscience Basics** (42 lessons, fully unlocked from day one)
 - **Track B - Math Foundations** (40 lessons, sequential unlock)
 - **Track C - Computational Neuroscience** (50 lessons, prerequisite-based unlock)
 - **Track D - AI Basics** (30 lessons, prerequisite-based unlock)
@@ -261,7 +261,7 @@ NeuroMathQuest/
 │   └── quiz/[id].tsx       # Quiz screen
 ├── src/
 │   ├── components/         # Reusable UI components
-│   ├── content/            # 190 lessons + encouragement + achievements
+│   ├── content/            # 192 lessons + encouragement + achievements
 │   ├── db/                 # SQLite schema and initialization
 │   ├── hooks/              # React hooks (useProgress, useSettings, etc.)
 │   ├── repositories/       # Data access layer
@@ -281,8 +281,8 @@ NeuroMathQuest/
 
 ## Content
 
-### Track A: Neuroscience Basics (40 lessons)
-Neuron anatomy, resting potential, ion channels, action potentials, chemical synapses, excitatory/inhibitory transmission, neurotransmitters, receptors, glia, sensory systems, motor systems, cortex, thalamus, basal ganglia, cerebellum, hippocampus, amygdala, attention, sleep/rhythms, modern methods, dendritic spines, myelin, axonal transport, plasticity, homeostasis, brain energy, blood-brain barrier, development, critical periods, connectomes, resting-state networks, arousal, pain, interoception, autonomic regulation, stress, inflammation, degeneration, psychiatric circuits, and reading neuroscience evidence.
+### Track A: Neuroscience Basics (42 lessons)
+Neuron anatomy, resting potential, ion channels, action potentials, chemical synapses, excitatory/inhibitory transmission, neurotransmitters, synaptic vesicles, neurotransmitter co-release, receptors, glia, sensory systems, motor systems, cortex, thalamus, basal ganglia, cerebellum, hippocampus, amygdala, attention, sleep/rhythms, modern methods, dendritic spines, myelin, axonal transport, plasticity, homeostasis, brain energy, blood-brain barrier, development, critical periods, connectomes, resting-state networks, arousal, pain, interoception, autonomic regulation, stress, inflammation, degeneration, psychiatric circuits, and reading neuroscience evidence.
 
 ### Track B: Math Foundations (40 lessons)
 Scalars, vectors, components, dimension, subscript notation, time notation, R^n, matrices, rows/columns, matrix-vector product, weighted sums, connectivity matrices, functions, derivatives, differential equations, system state, state space, random variables, Bernoulli/spikes, Poisson/spike counts, distributions, expectation, variance, covariance, Bayes, optimisation, gradients, eigenvectors, PCA, entropy, mutual information, and model-fitting basics.

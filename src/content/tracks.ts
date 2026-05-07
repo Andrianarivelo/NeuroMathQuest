@@ -171,7 +171,7 @@ export const tracks: Track[] = [
     title: 'Neuroscience Basics',
     tagline: 'The brain, clearly and kindly',
     description:
-      'Forty short lessons on how real brains are built, how they work, and how to read the evidence. Unlocked from day one.',
+      'Forty-two short lessons on how real brains are built, how they work, and how to read the evidence. Unlocked from day one.',
     color: '#4530B8',
     unlockedByDefault: true,
     modules: buildModules(trackALessons),

@@ -37,11 +37,14 @@ export default function LearnScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>
       {/* Track picker */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 16, gap: 6 }}
-        style={{ flexGrow: 0 }}
+      <View
+        style={{
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          paddingHorizontal: 16,
+          paddingTop: 16,
+          gap: 8,
+        }}
       >
         {tracks.map((t) => {
           const tint = trackTints[t.id as keyof typeof trackTints];
@@ -51,9 +54,11 @@ export default function LearnScreen() {
               key={t.id}
               onPress={() => setActiveTrack(t.id)}
               style={{
-                minWidth: 70,
+                flexGrow: 1,
+                flexBasis: '30%',
+                minWidth: 96,
                 paddingVertical: 10,
-                paddingHorizontal: 8,
+                paddingHorizontal: 10,
                 borderRadius: theme.radius.md,
                 backgroundColor: active ? tint.bg : theme.colors.surface,
                 borderWidth: 2,
@@ -70,6 +75,7 @@ export default function LearnScreen() {
                   ...theme.typography.caption,
                   color: active ? tint.fg : theme.colors.textMuted,
                   textAlign: 'center',
+                  width: '100%',
                 }}
               >
                 {trackTabLabels[t.id]}
@@ -77,7 +83,7 @@ export default function LearnScreen() {
             </Pressable>
           );
         })}
-      </ScrollView>
+      </View>
 
       {/* Track header */}
       <View style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 }}>
