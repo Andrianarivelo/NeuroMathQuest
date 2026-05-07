@@ -4,13 +4,26 @@ import { settingsRepository } from '../../repositories/settingsRepository';
 export interface BackendConfig {
   supabaseUrl: string;
   supabaseAnonKey: string;
-  source: 'runtime' | 'env' | 'none';
+  source: 'runtime' | 'env' | 'global' | 'none';
 }
+
+const GLOBAL_SUPABASE_URL = 'https://owggyopbuftjtfgqinto.supabase.co';
+const GLOBAL_SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_BbW0CqfCcdFXswTVgizCIg_I8t0iQ0R';
 
 let client: SupabaseClient | null = null;
 let clientSignature = '';
 
 export function getBackendConfig(): BackendConfig {
+  const envUrl = process.env.EXPO_PUBLIC_SUPABASE_URL ?? '';
+  const envAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? '';
+  if (envUrl.length > 0 && envAnonKey.length > 0) {
+    return {
+      supabaseUrl: envUrl,
+      supabaseAnonKey: envAnonKey,
+      source: 'env',
+    };
+  }
+
   const settings = settingsRepository.getAll();
   const runtimeUrl = settings.supabaseUrl.trim();
   const runtimeAnonKey = settings.supabaseAnonKey.trim();
@@ -22,13 +35,11 @@ export function getBackendConfig(): BackendConfig {
     };
   }
 
-  const envUrl = process.env.EXPO_PUBLIC_SUPABASE_URL ?? '';
-  const envAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ?? '';
-  if (envUrl.length > 0 && envAnonKey.length > 0) {
+  if (GLOBAL_SUPABASE_URL.length > 0 && GLOBAL_SUPABASE_PUBLISHABLE_KEY.length > 0) {
     return {
-      supabaseUrl: envUrl,
-      supabaseAnonKey: envAnonKey,
-      source: 'env',
+      supabaseUrl: GLOBAL_SUPABASE_URL,
+      supabaseAnonKey: GLOBAL_SUPABASE_PUBLISHABLE_KEY,
+      source: 'global',
     };
   }
 

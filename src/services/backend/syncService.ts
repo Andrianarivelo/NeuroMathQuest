@@ -61,7 +61,7 @@ const masteryRank: Record<MasteryLevel, number> = {
 export async function syncLocalProgressToCloud(): Promise<SyncResult> {
   const supabase = getSupabaseClient();
   if (!supabase || !isBackendConfigured()) {
-    return { status: 'disabled', message: 'Cloud sync is not configured. Guest mode is active.' };
+    return { status: 'disabled', message: 'Cloud accounts are not ready yet. Guest mode is active.' };
   }
 
   const user = await getCloudUser();

@@ -1,11 +1,16 @@
 import { syncLocalProgressToCloud } from '../src/services/backend/syncService';
-import { isBackendConfigured } from '../src/services/backend/supabaseClient';
+import { getBackendConfig, isBackendConfigured } from '../src/services/backend/supabaseClient';
 
 describe('cloud sync service', () => {
-  it('keeps guest/offline mode available when Supabase is not configured', async () => {
-    expect(isBackendConfigured()).toBe(false);
+  it('uses the global Supabase setup while keeping guest mode available', async () => {
+    expect(isBackendConfigured()).toBe(true);
+    expect(getBackendConfig()).toMatchObject({
+      source: 'global',
+      supabaseUrl: 'https://owggyopbuftjtfgqinto.supabase.co',
+    });
+
     await expect(syncLocalProgressToCloud()).resolves.toMatchObject({
-      status: 'disabled',
+      status: 'guest',
     });
   });
 });

@@ -14,13 +14,13 @@ A gamified web and mobile learning app that teaches neuroscience, math foundatio
 4. Click **Start learning**.
 5. Use **Continue** on the home screen to open the next lesson.
 6. Read the short lesson, then click **Start quiz**.
-7. Open **Profile** to set a learner name, export a progress backup, or unlock the local superuser dashboard.
+7. Open **Profile** to set a learner name, create an optional account, sync progress, or export a backup.
 
 Progress is saved in the browser on the same device. No account, install, or App Store download is required.
 
-Accounts are optional. Students can use the app as guests forever. If Supabase is configured, signing in adds cloud backup and cross-device sync.
+Accounts are optional. Students can use the app as guests forever. The published web app is already connected to the class Supabase project, so students anywhere can create an account or sign in without pasting any setup keys.
 
-Superuser access is now cloud-backed. After Supabase is configured and you sign in, enter the one-time owner code in **Profile > Superuser** to promote your account to admin.
+Superuser access is cloud-backed. Sign in, then enter the one-time owner code in **Profile > Superuser** to promote your account to admin. Only cloud admins can see the advanced Supabase setup panel.
 
 ## Features
 
@@ -40,9 +40,9 @@ Superuser access is now cloud-backed. After Supabase is configured and you sign 
 - **Expanded quiz pools**: each lesson now mixes original and generated concept checks so retries are not always identical
 - **Reference-informed neuroscience details** integrated into Track A so important facts are taught before quizzes
 - **Local learner profiles** with rotating greetings and device-saved progress
-- **Local superuser dashboard** for progress, quiz attempts, average score, active days, and weak lessons on the current installation
-- **Optional Supabase backend** for email accounts, cloud sync, cross-device progress, and real admin stats
-- **Runtime cloud setup** from the Profile tab, so GitHub Pages can be configured after deployment without rebuilding
+- **Local progress dashboard** for progress, quiz attempts, average score, active days, and weak lessons on the current installation
+- **Globally preconfigured Supabase backend** for email accounts, cloud sync, cross-device progress, and real admin stats
+- **Admin-only cloud setup override** for the signed-in superuser if the Supabase project ever needs to be rotated
 - **Offline-first**: no backend, no sign-in, no network required
 - **SQLite persistence** for all user progress
 - **Polished UI** with Reanimated animations, haptic feedback, and a custom design system
@@ -113,29 +113,28 @@ The local production preview opens at:
 
 http://localhost:8082/NeuroMathQuest/
 
-## Optional Backend Setup
+## Backend Setup
 
-The backend is optional. Without these variables, the app runs in guest/offline mode and keeps local progress exactly as before.
+The backend is optional for learners because guest/offline mode always works. The published GitHub Pages app is already configured with the public Supabase project URL and publishable key, so students do not need to configure anything on their devices.
 
-### 1. Create a Supabase project
+### Current published cloud project
+
+- Project URL: `https://owggyopbuftjtfgqinto.supabase.co`
+- Public browser key type: Supabase publishable key
+- SQL schema: `supabase/migrations/001_initial_backend.sql`
+
+The publishable key is safe to include in the web bundle. Supabase Row Level Security protects user data. Do not commit or paste secret keys or service-role secrets into the app.
+
+### Create or rotate a Supabase project
 
 1. Create a Supabase project.
 2. Open the SQL Editor.
 3. Run `supabase/migrations/001_initial_backend.sql`.
 4. Open **Project Settings > API**.
-5. Copy either the Project URL or the Data API URL, and copy the publishable key.
+5. Copy the Project URL and publishable key.
+6. Update the global constants in `src/services/backend/supabaseClient.ts`, or use the local environment variables below for development builds.
 
-### 2. Configure the published web app
-
-1. Open https://andrianarivelo.github.io/NeuroMathQuest/
-2. Go to **Profile > Cloud account**.
-3. Paste the Supabase Project URL or Data API URL, and paste the publishable key.
-4. Click **Save cloud setup**.
-5. Create an account or sign in, then click **Sync now**.
-
-The Data API URL may end with `/rest/v1`; the app will remove that automatically. The publishable key starts with `sb_publishable_` and is safe to use in the web app. Do not paste secret keys or service-role secrets.
-
-### 3. Optional local env setup
+### Optional local env setup
 
 For local development, you can still copy `.env.example` to `.env` and fill in:
 
@@ -146,7 +145,7 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 
 Expo exposes `EXPO_PUBLIC_*` variables to the web bundle, so do not put service-role secrets in the app.
 
-### 4. Run locally
+### Run locally
 
 ```bash
 npm install
@@ -155,11 +154,11 @@ npm run web
 
 Students can still skip registration. In **Profile**, they can create an account later and click **Sync now** to attach their local progress to the cloud account.
 
-### 5. Make yourself a cloud admin
+### Make yourself a cloud admin
 
 After signing up or signing in, enter the one-time owner code in **Profile > Superuser**. The backend function `claim_admin_with_code` validates the code and promotes the signed-in account to `admin`. The code can only be claimed once unless you rotate `public.admin_claim_codes` in Supabase.
 
-Cloud admins see classroom-wide stats in **Profile** after signing in.
+Cloud admins see classroom-wide stats in **Profile** after signing in. They are the only users who can see the advanced cloud setup override.
 
 ### Run tests
 

@@ -49,7 +49,7 @@ export async function getCloudProfile(): Promise<CloudProfile | null> {
 export async function signUpWithEmail(email: string, password: string, displayName: string): Promise<AuthResult> {
   const supabase = getSupabaseClient();
   if (!supabase || !isBackendConfigured()) {
-    return { ok: false, message: 'Cloud sync is not configured yet. Guest mode still works.' };
+    return { ok: false, message: 'Cloud accounts are not ready yet. Guest mode still works.' };
   }
 
   const { data, error } = await supabase.auth.signUp({
@@ -77,7 +77,7 @@ export async function signUpWithEmail(email: string, password: string, displayNa
 export async function signInWithEmail(email: string, password: string): Promise<AuthResult> {
   const supabase = getSupabaseClient();
   if (!supabase || !isBackendConfigured()) {
-    return { ok: false, message: 'Cloud sync is not configured yet. Guest mode still works.' };
+    return { ok: false, message: 'Cloud accounts are not ready yet. Guest mode still works.' };
   }
 
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
@@ -113,7 +113,7 @@ export async function upsertCloudProfile(displayName: string): Promise<void> {
 export async function claimCloudAdminWithCode(code: string): Promise<AuthResult> {
   const supabase = getSupabaseClient();
   if (!supabase || !isBackendConfigured()) {
-    return { ok: false, message: 'Cloud sync is not configured yet. Save Supabase setup first.' };
+    return { ok: false, message: 'Cloud accounts are not ready yet. Guest mode still works.' };
   }
 
   const user = await getCloudUser();

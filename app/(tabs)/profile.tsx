@@ -29,6 +29,7 @@ import {
   isBackendConfigured,
   resetSupabaseClient,
 } from '../../src/services/backend/supabaseClient';
+import type { BackendConfig } from '../../src/services/backend/supabaseClient';
 import { useTheme } from '../../src/theme/ThemeProvider';
 
 function normalizeSupabaseUrl(value: string): string {
@@ -45,6 +46,19 @@ function isValidSupabaseKey(value: string): boolean {
     key.startsWith('eyJ') ||
     key.length >= 40
   );
+}
+
+function backendSourceLabel(source: BackendConfig['source']): string {
+  switch (source) {
+    case 'env':
+      return 'build environment';
+    case 'global':
+      return 'global app setup';
+    case 'runtime':
+      return 'admin override on this device';
+    default:
+      return 'not configured';
+  }
 }
 
 export default function ProfileScreen() {
@@ -65,6 +79,7 @@ export default function ProfileScreen() {
   const [cloudStats, setCloudStats] = useState<CloudAdminStats | null>(null);
   const backendConfig = getBackendConfig();
   const backendConfigured = isBackendConfigured();
+  const canManageCloudSetup = cloudRole === 'admin' || settings.superUserEnabled;
 
   const loadCloudStatus = useCallback(() => {
     void (async () => {
@@ -93,9 +108,23 @@ export default function ProfileScreen() {
   }, [settings.profileName]);
 
   useEffect(() => {
-    setSupabaseUrlInput(settings.supabaseUrl);
-    setSupabaseAnonKeyInput(settings.supabaseAnonKey);
-  }, [settings.supabaseUrl, settings.supabaseAnonKey]);
+    const fallbackUrl =
+      backendConfig.source === 'env' || backendConfig.source === 'global'
+        ? backendConfig.supabaseUrl
+        : '';
+    const fallbackAnonKey =
+      backendConfig.source === 'env' || backendConfig.source === 'global'
+        ? backendConfig.supabaseAnonKey
+        : '';
+    setSupabaseUrlInput(settings.supabaseUrl || fallbackUrl);
+    setSupabaseAnonKeyInput(settings.supabaseAnonKey || fallbackAnonKey);
+  }, [
+    backendConfig.source,
+    backendConfig.supabaseAnonKey,
+    backendConfig.supabaseUrl,
+    settings.supabaseAnonKey,
+    settings.supabaseUrl,
+  ]);
 
   const progressRows = progressRepository.getAll();
   const attempts = progressRepository.getAttempts();
@@ -148,6 +177,11 @@ export default function ProfileScreen() {
   };
 
   const handleSaveCloudSetup = () => {
+    if (!canManageCloudSetup) {
+      setCloudNotice('Cloud setup is only available to the signed-in superuser.');
+      return;
+    }
+
     const supabaseUrl = normalizeSupabaseUrl(supabaseUrlInput);
     const supabaseAnonKey = supabaseAnonKeyInput.trim();
 
@@ -164,11 +198,16 @@ export default function ProfileScreen() {
     update('supabaseUrl', supabaseUrl);
     update('supabaseAnonKey', supabaseAnonKey);
     resetSupabaseClient();
-    setCloudNotice('Cloud setup saved on this device. You can now create an account or sign in.');
+    setCloudNotice('Admin cloud override saved on this device.');
     loadCloudStatus();
   };
 
   const handleClearCloudSetup = () => {
+    if (!canManageCloudSetup) {
+      setCloudNotice('Cloud setup is only available to the signed-in superuser.');
+      return;
+    }
+
     update('supabaseUrl', '');
     update('supabaseAnonKey', '');
     resetSupabaseClient();
@@ -177,7 +216,7 @@ export default function ProfileScreen() {
     setCloudStats(null);
     setSupabaseUrlInput('');
     setSupabaseAnonKeyInput('');
-    setCloudNotice('Local cloud setup removed. Guest mode still works.');
+    setCloudNotice('Admin cloud override removed. The app will use the global cloud setup.');
   };
 
   const handleCloudSync = async () => {
@@ -202,7 +241,7 @@ export default function ProfileScreen() {
 
   const handleSuperUser = async () => {
     if (!backendConfigured) {
-      setNotice('Save Supabase setup first, then sign in and claim superuser.');
+      setNotice('Cloud accounts are not ready yet. Guest mode still works.');
       return;
     }
     if (!cloudEmail) {
@@ -366,51 +405,53 @@ export default function ProfileScreen() {
               Registration is optional. You can keep learning as a guest; an account only adds cloud backup,
               cross-device sync, and real admin stats.
             </Text>
-            <View style={{ gap: 10 }}>
-              <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>
-                Supabase setup
-              </Text>
-              <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>
-                In Supabase, run `supabase/migrations/001_initial_backend.sql`, then paste the Project URL or Data API URL and the publishable key here. This keeps GitHub Pages easy to configure after deployment.
-              </Text>
-              <TextInput
-                value={supabaseUrlInput}
-                onChangeText={setSupabaseUrlInput}
-                placeholder="https://your-project.supabase.co or /rest/v1 URL"
-                placeholderTextColor={theme.colors.textMuted}
-                autoCapitalize="none"
-                keyboardType="url"
-                style={inputStyle}
-              />
-              <TextInput
-                value={supabaseAnonKeyInput}
-                onChangeText={setSupabaseAnonKeyInput}
-                placeholder="Supabase publishable key"
-                placeholderTextColor={theme.colors.textMuted}
-                autoCapitalize="none"
-                style={inputStyle}
-              />
-              <Button
-                label="Save cloud setup"
-                fullWidth
-                disabled={cloudBusy}
-                onPress={handleSaveCloudSetup}
-              />
-              {backendConfig.source === 'runtime' && (
+            <Text style={{ ...theme.typography.caption, color: backendConfigured ? theme.colors.primary : theme.colors.warning }}>
+              {backendConfigured
+                ? `Cloud accounts are ready from ${backendSourceLabel(backendConfig.source)}.`
+                : 'Cloud accounts are not ready yet. Guest mode still works.'}
+            </Text>
+            {canManageCloudSetup && (
+              <View style={{ gap: 10 }}>
+                <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>
+                  Advanced cloud setup
+                </Text>
+                <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>
+                  Admin-only fallback. The published app already has one global Supabase setup, so students never need these fields.
+                </Text>
+                <TextInput
+                  value={supabaseUrlInput}
+                  onChangeText={setSupabaseUrlInput}
+                  placeholder="https://your-project.supabase.co or /rest/v1 URL"
+                  placeholderTextColor={theme.colors.textMuted}
+                  autoCapitalize="none"
+                  keyboardType="url"
+                  style={inputStyle}
+                />
+                <TextInput
+                  value={supabaseAnonKeyInput}
+                  onChangeText={setSupabaseAnonKeyInput}
+                  placeholder="Supabase publishable key"
+                  placeholderTextColor={theme.colors.textMuted}
+                  autoCapitalize="none"
+                  style={inputStyle}
+                />
                 <Button
-                  label="Remove local cloud setup"
-                  variant="ghost"
+                  label="Save admin cloud override"
                   fullWidth
                   disabled={cloudBusy}
-                  onPress={handleClearCloudSetup}
+                  onPress={handleSaveCloudSetup}
                 />
-              )}
-              <Text style={{ ...theme.typography.caption, color: backendConfigured ? theme.colors.primary : theme.colors.warning }}>
-                {backendConfigured
-                  ? `Cloud backend configured from ${backendConfig.source === 'env' ? 'build env vars' : 'this device'}.`
-                  : 'Cloud backend is not configured yet. Guest mode still works.'}
-              </Text>
-            </View>
+                {backendConfig.source === 'runtime' && (
+                  <Button
+                    label="Remove admin cloud override"
+                    variant="ghost"
+                    fullWidth
+                    disabled={cloudBusy}
+                    onPress={handleClearCloudSetup}
+                  />
+                )}
+              </View>
+            )}
             {backendConfigured && !cloudEmail && (
               <>
                 <TextInput
