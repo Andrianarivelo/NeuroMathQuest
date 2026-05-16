@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from 'react';
-import { View, Text, ScrollView, SafeAreaView, Pressable } from 'react-native';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { View, Text, ScrollView, SafeAreaView, Pressable, useWindowDimensions } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useTheme } from '../../src/theme/ThemeProvider';
 import { useProgress } from '../../src/hooks/useProgress';
@@ -13,27 +13,23 @@ import { trackTints } from '../../src/theme';
 
 const trackTabLabels: Record<TrackId, string> = {
   neuroscience: 'Neuroscience',
-  math: 'Math Foundations',
-  compneuro: 'Computational Neuro',
+  math: 'Math',
+  compneuro: 'Comp Neuro',
   aibasis: 'AI Basics',
   aineuro: 'NeuroAI',
 };
 
-const trackTabWidths: Record<TrackId, number> = {
-  neuroscience: 136,
-  math: 160,
-  compneuro: 184,
-  aibasis: 112,
-  aineuro: 108,
-};
+const ALL_CATEGORIES = 'all';
 
 export default function LearnScreen() {
   const theme = useTheme();
   const router = useRouter();
+  const { width } = useWindowDimensions();
   const { progressMap, refresh } = useProgress();
   const { wallet, refresh: refreshWallet } = useWallet();
   const { purchasedLessonIds, refresh: refreshUnlocks } = useLessonUnlocks();
   const [activeTrack, setActiveTrack] = useState<TrackId>('neuroscience');
+  const [activeCategoryId, setActiveCategoryId] = useState<string>(ALL_CATEGORIES);
 
   useFocusEffect(useCallback(() => {
     refresh();
@@ -41,14 +37,31 @@ export default function LearnScreen() {
     refreshUnlocks();
   }, [refresh, refreshWallet, refreshUnlocks]));
 
+  useEffect(() => {
+    setActiveCategoryId(ALL_CATEGORIES);
+  }, [activeTrack]);
+
   const currentTrack = tracks.find((t) => t.id === activeTrack)!;
-  const lessons = getTrackLessons(activeTrack);
+  const lessons = useMemo(() => getTrackLessons(activeTrack), [activeTrack]);
+  const visibleLessons = useMemo(
+    () => activeCategoryId === ALL_CATEGORIES
+      ? lessons
+      : lessons.filter((lesson) => lesson.moduleId === activeCategoryId),
+    [activeCategoryId, lessons]
+  );
   const states = new Map<string, LessonState>(
     lessons.map((l) => [l.id, lessonState(l, progressMap, purchasedLessonIds)])
   );
   const completedInTrack = lessons.filter(
     (l) => states.get(l.id) === 'completed' || states.get(l.id) === 'mastered'
   ).length;
+  const completedInCategory = visibleLessons.filter(
+    (l) => states.get(l.id) === 'completed' || states.get(l.id) === 'mastered'
+  ).length;
+  const activeCategory = currentTrack.modules.find((module) => module.id === activeCategoryId);
+  const safeWidth = Math.max(320, width || 320);
+  const trackTabWidth = Math.min(Math.max(Math.floor(safeWidth * 0.34), 112), 156);
+  const categoryChipWidth = Math.min(Math.max(Math.floor(safeWidth * 0.58), 176), 260);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>
@@ -69,11 +82,14 @@ export default function LearnScreen() {
           return (
             <Pressable
               key={t.id}
-              onPress={() => setActiveTrack(t.id)}
+              onPress={() => {
+                setActiveTrack(t.id);
+                setActiveCategoryId(ALL_CATEGORIES);
+              }}
               style={{
-                width: trackTabWidths[t.id],
-                minHeight: 44,
-                paddingVertical: 10,
+                width: trackTabWidth,
+                minHeight: 48,
+                paddingVertical: 8,
                 paddingHorizontal: 12,
                 borderRadius: theme.radius.md,
                 backgroundColor: active ? tint.bg : theme.colors.surface,
@@ -84,14 +100,15 @@ export default function LearnScreen() {
               }}
             >
               <Text
-                numberOfLines={1}
+                numberOfLines={2}
                 adjustsFontSizeToFit
-                minimumFontScale={0.86}
+                minimumFontScale={0.78}
                 style={{
                   ...theme.typography.caption,
                   color: active ? tint.fg : theme.colors.textMuted,
                   textAlign: 'center',
                   width: '100%',
+                  lineHeight: 16,
                 }}
               >
                 {trackTabLabels[t.id]}
@@ -103,9 +120,19 @@ export default function LearnScreen() {
 
       {/* Track header */}
       <View style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 }}>
-        <Text style={{ ...theme.typography.title, color: theme.colors.text }}>{currentTrack.title}</Text>
+        <Text
+          numberOfLines={2}
+          adjustsFontSizeToFit
+          minimumFontScale={0.82}
+          style={{ ...theme.typography.title, color: theme.colors.text }}
+        >
+          {currentTrack.title}
+        </Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-          <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted, marginTop: 2, flex: 1 }}>
+          <Text
+            numberOfLines={2}
+            style={{ ...theme.typography.caption, color: theme.colors.textMuted, marginTop: 2, flex: 1, flexShrink: 1 }}
+          >
             {currentTrack.tagline}
           </Text>
           <CoinChip amount={wallet.coinsTotal} />
@@ -120,6 +147,81 @@ export default function LearnScreen() {
         </Text>
       </View>
 
+      {/* Category picker */}
+      <View style={{ paddingTop: 4, paddingBottom: 8 }}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingHorizontal: 16,
+            gap: 8,
+          }}
+        >
+          {[
+            {
+              id: ALL_CATEGORIES,
+              title: 'All categories',
+              description: `${lessons.length} lessons`,
+              lessonIds: lessons.map((lesson) => lesson.id),
+            },
+            ...currentTrack.modules,
+          ].map((category) => {
+            const active = category.id === activeCategoryId;
+            const tint = trackTints[currentTrack.id as keyof typeof trackTints];
+            const done = category.lessonIds.filter(
+              (lessonId) => {
+                const state = states.get(lessonId);
+                return state === 'completed' || state === 'mastered';
+              }
+            ).length;
+            const total = category.lessonIds.length;
+            return (
+              <Pressable
+                key={category.id}
+                onPress={() => setActiveCategoryId(category.id)}
+                style={{
+                  width: categoryChipWidth,
+                  minHeight: 76,
+                  paddingVertical: 10,
+                  paddingHorizontal: 12,
+                  borderRadius: theme.radius.md,
+                  backgroundColor: active ? tint.bg : theme.colors.surface,
+                  borderWidth: 2,
+                  borderColor: active ? tint.fg : theme.colors.border,
+                  justifyContent: 'space-between',
+                  ...theme.shadows.sm,
+                }}
+              >
+                <Text
+                  numberOfLines={2}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.78}
+                  style={{
+                    ...theme.typography.caption,
+                    color: active ? tint.fg : theme.colors.text,
+                    lineHeight: 17,
+                  }}
+                >
+                  {category.title}
+                </Text>
+                <Text
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.82}
+                  style={{
+                    ...theme.typography.tiny,
+                    color: active ? tint.fg : theme.colors.textMuted,
+                    marginTop: 6,
+                  }}
+                >
+                  {done}/{total} completed
+                </Text>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
+      </View>
+
       {/* Lesson path */}
       <ScrollView
         contentContainerStyle={{
@@ -130,12 +232,26 @@ export default function LearnScreen() {
         }}
         showsVerticalScrollIndicator={false}
       >
-        {lessons.map((lesson, idx) => {
+        {activeCategory && (
+          <View style={{ width: '100%', maxWidth: 520, marginBottom: 10 }}>
+            <Text style={{ ...theme.typography.h3, color: theme.colors.text }}>
+              {activeCategory.title}
+            </Text>
+            <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted, marginTop: 2 }}>
+              {activeCategory.description}
+            </Text>
+            <Text style={{ ...theme.typography.tiny, color: theme.colors.textMuted, marginTop: 6 }}>
+              {completedInCategory}/{visibleLessons.length} completed in this category
+            </Text>
+          </View>
+        )}
+
+        {visibleLessons.map((lesson, idx) => {
           const state = states.get(lesson.id) ?? 'locked';
           const p = progressMap.get(lesson.id);
           const access = lessonAccess(lesson, progressMap, purchasedLessonIds, wallet.coinsTotal);
           return (
-            <View key={lesson.id} style={{ alignItems: 'center', marginBottom: 8 }}>
+            <View key={lesson.id} style={{ alignItems: 'center', marginBottom: 8, width: '100%' }}>
               {idx > 0 && (
                 <View style={{ width: 3, height: 24, backgroundColor: theme.colors.border, borderRadius: 2, marginBottom: 4 }} />
               )}

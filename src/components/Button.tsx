@@ -92,12 +92,20 @@ export function Button({
       {...rest}
     >
       <Text
+        numberOfLines={2}
+        adjustsFontSizeToFit
+        minimumFontScale={0.72}
         style={[
           {
             color: textColor,
             fontSize,
+            lineHeight: Math.round(fontSize * 1.18),
             fontWeight: '700',
-            letterSpacing: 0.2,
+            letterSpacing: 0,
+            textAlign: 'center',
+            flexShrink: 1,
+            maxWidth: '100%',
+            includeFontPadding: false,
           },
           labelStyle,
         ]}
