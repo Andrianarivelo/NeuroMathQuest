@@ -35,118 +35,123 @@ export default function LearnScreen() {
     (l) => states.get(l.id) === 'completed' || states.get(l.id) === 'mastered'
   ).length;
   const safeWidth = Math.max(320, width || 320);
-  const categoryCardWidth = Math.min(Math.max(Math.floor(safeWidth * 0.68), 212), 320);
+  const categoryGridWidth = Math.min(safeWidth - 32, 1120);
+  const categoryColumns = safeWidth < 520 ? 1 : safeWidth < 780 ? 2 : safeWidth < 1080 ? 3 : 5;
+  const categoryGap = 8;
+  const categoryCardWidth = Math.floor(
+    (categoryGridWidth - categoryGap * (categoryColumns - 1)) / categoryColumns
+  );
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg }}>
-      {/* Lesson category picker */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingHorizontal: 16,
-          paddingTop: 16,
-          paddingBottom: 2,
-          gap: 8,
-        }}
-      >
-        {tracks.map((t) => {
-          const tint = trackTints[t.id as keyof typeof trackTints];
-          const active = t.id === activeTrack;
-          const trackLessons = getTrackLessons(t.id);
-          const completed = trackLessons.filter((lesson) => {
-            const state = lessonState(lesson, progressMap, purchasedLessonIds);
-            return state === 'completed' || state === 'mastered';
-          }).length;
-          return (
-            <Pressable
-              key={t.id}
-              onPress={() => setActiveTrack(t.id)}
-              style={{
-                width: categoryCardWidth,
-                minHeight: 82,
-                paddingVertical: 10,
-                paddingHorizontal: 12,
-                borderRadius: theme.radius.md,
-                backgroundColor: active ? tint.bg : theme.colors.surface,
-                borderWidth: 2,
-                borderColor: active ? tint.fg : theme.colors.border,
-                justifyContent: 'space-between',
-                ...theme.shadows.sm,
-              }}
-            >
-              <Text
-                numberOfLines={2}
-                adjustsFontSizeToFit
-                minimumFontScale={0.78}
-                style={{
-                  ...theme.typography.caption,
-                  color: active ? tint.fg : theme.colors.textMuted,
-                  textAlign: 'center',
-                  width: '100%',
-                  lineHeight: 17,
-                }}
-              >
-                {t.title}
-              </Text>
-              <Text
-                numberOfLines={1}
-                adjustsFontSizeToFit
-                minimumFontScale={0.82}
-                style={{
-                  ...theme.typography.tiny,
-                  color: active ? tint.fg : theme.colors.textMuted,
-                  textAlign: 'center',
-                  marginTop: 6,
-                  width: '100%',
-                }}
-              >
-                {completed}/{trackLessons.length} completed
-              </Text>
-            </Pressable>
-          );
-        })}
-      </ScrollView>
-
-      {/* Track header */}
-      <View style={{ paddingHorizontal: 16, paddingTop: 16, paddingBottom: 8 }}>
-        <Text
-          numberOfLines={2}
-          adjustsFontSizeToFit
-          minimumFontScale={0.82}
-          style={{ ...theme.typography.title, color: theme.colors.text }}
-        >
-          {currentTrack.title}
-        </Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-          <Text
-            numberOfLines={2}
-            style={{ ...theme.typography.caption, color: theme.colors.textMuted, marginTop: 2, flex: 1, flexShrink: 1 }}
-          >
-            {currentTrack.tagline}
-          </Text>
-          <CoinChip amount={wallet.coinsTotal} />
-        </View>
-        <ProgressBar
-          value={lessons.length > 0 ? completedInTrack / lessons.length : 0}
-          height={8}
-          style={{ marginTop: 12 }}
-        />
-        <Text style={{ ...theme.typography.tiny, color: theme.colors.textMuted, marginTop: 4 }}>
-          {completedInTrack}/{lessons.length} completed
-        </Text>
-      </View>
-
-      {/* Lesson path */}
       <ScrollView
         contentContainerStyle={{
           paddingBottom: 40,
           paddingHorizontal: 16,
-          paddingTop: 12,
+          paddingTop: 16,
           alignItems: 'center',
         }}
         showsVerticalScrollIndicator={false}
       >
+        {/* Track header */}
+        <View style={{ width: '100%', maxWidth: 1120, paddingBottom: 12 }}>
+          <Text
+            numberOfLines={2}
+            adjustsFontSizeToFit
+            minimumFontScale={0.82}
+            style={{ ...theme.typography.title, color: theme.colors.text }}
+          >
+            {currentTrack.title}
+          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+            <Text
+              numberOfLines={2}
+              style={{ ...theme.typography.caption, color: theme.colors.textMuted, marginTop: 2, flex: 1, flexShrink: 1 }}
+            >
+              {currentTrack.tagline}
+            </Text>
+            <CoinChip amount={wallet.coinsTotal} />
+          </View>
+          <ProgressBar
+            value={lessons.length > 0 ? completedInTrack / lessons.length : 0}
+            height={8}
+            style={{ marginTop: 12 }}
+          />
+          <Text style={{ ...theme.typography.tiny, color: theme.colors.textMuted, marginTop: 4 }}>
+            {completedInTrack}/{lessons.length} completed
+          </Text>
+        </View>
+
+        {/* Lesson category picker */}
+        <View
+          style={{
+            width: '100%',
+            maxWidth: 1120,
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            gap: categoryGap,
+            marginBottom: 16,
+          }}
+        >
+          {tracks.map((t) => {
+            const tint = trackTints[t.id as keyof typeof trackTints];
+            const active = t.id === activeTrack;
+            const trackLessons = getTrackLessons(t.id);
+            const completed = trackLessons.filter((lesson) => {
+              const state = lessonState(lesson, progressMap, purchasedLessonIds);
+              return state === 'completed' || state === 'mastered';
+            }).length;
+            return (
+              <Pressable
+                key={t.id}
+                onPress={() => setActiveTrack(t.id)}
+                style={{
+                  width: categoryCardWidth,
+                  minHeight: 82,
+                  paddingVertical: 10,
+                  paddingHorizontal: 12,
+                  borderRadius: theme.radius.md,
+                  backgroundColor: active ? tint.bg : theme.colors.surface,
+                  borderWidth: 2,
+                  borderColor: active ? tint.fg : theme.colors.border,
+                  justifyContent: 'space-between',
+                  ...theme.shadows.sm,
+                }}
+              >
+                <Text
+                  numberOfLines={2}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.72}
+                  style={{
+                    ...theme.typography.caption,
+                    color: active ? tint.fg : theme.colors.textMuted,
+                    textAlign: 'center',
+                    width: '100%',
+                    lineHeight: 17,
+                  }}
+                >
+                  {t.title}
+                </Text>
+                <Text
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.78}
+                  style={{
+                    ...theme.typography.tiny,
+                    color: active ? tint.fg : theme.colors.textMuted,
+                    textAlign: 'center',
+                    marginTop: 6,
+                    width: '100%',
+                  }}
+                >
+                  {completed}/{trackLessons.length} completed
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+
+        {/* Lesson path */}
         {lessons.map((lesson, idx) => {
           const state = states.get(lesson.id) ?? 'locked';
           const p = progressMap.get(lesson.id);
