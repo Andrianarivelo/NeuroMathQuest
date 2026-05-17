@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Alert, SafeAreaView, ScrollView, Switch, Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, SafeAreaView, ScrollView, Switch, Text, TextInput, View } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
@@ -31,6 +31,8 @@ import {
 } from '../../src/services/backend/supabaseClient';
 import type { BackendConfig } from '../../src/services/backend/supabaseClient';
 import { useTheme } from '../../src/theme/ThemeProvider';
+
+type AdminView = 'overview' | 'students' | 'lessons';
 
 function normalizeSupabaseUrl(value: string): string {
   return value
@@ -77,6 +79,8 @@ export default function ProfileScreen() {
   const [authEmail, setAuthEmail] = useState('');
   const [authPassword, setAuthPassword] = useState('');
   const [cloudStats, setCloudStats] = useState<CloudAdminStats | null>(null);
+  const [adminView, setAdminView] = useState<AdminView>('overview');
+  const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
   const backendConfig = getBackendConfig();
   const backendConfigured = isBackendConfigured();
   const canManageCloudSetup = cloudRole === 'admin' || settings.superUserEnabled;
@@ -106,6 +110,19 @@ export default function ProfileScreen() {
   useEffect(() => {
     setNameInput(settings.profileName);
   }, [settings.profileName]);
+
+  useEffect(() => {
+    if (!cloudStats?.studentsList.length) {
+      setSelectedStudentId(null);
+      return;
+    }
+    const stillExists = selectedStudentId
+      ? cloudStats.studentsList.some((student) => student.userId === selectedStudentId)
+      : false;
+    if (!stillExists) {
+      setSelectedStudentId(cloudStats.studentsList[0].userId);
+    }
+  }, [cloudStats, selectedStudentId]);
 
   useEffect(() => {
     const fallbackUrl =
@@ -140,6 +157,20 @@ export default function ProfileScreen() {
     .filter((row) => row.mastery === 'beginner' || row.mastery === 'practicing')
     .sort((a, b) => a.best_score - b.best_score)
     .slice(0, 8);
+  const selectedCloudStudent =
+    cloudStats?.studentsList.find((student) => student.userId === selectedStudentId) ??
+    cloudStats?.studentsList[0] ??
+    null;
+  const cloudWeakLessonRows =
+    cloudStats?.lessonStats
+      .filter((lesson) => lesson.weakLearners > 0 || lesson.averageBestScore < 0.7)
+      .sort((a, b) => b.weakLearners - a.weakLearners || a.averageBestScore - b.averageBestScore)
+      .slice(0, 10) ?? [];
+  const cloudStrongLessonRows =
+    cloudStats?.lessonStats
+      .filter((lesson) => lesson.startedLearners > 0)
+      .sort((a, b) => b.completionRate - a.completionRate || b.averageBestScore - a.averageBestScore)
+      .slice(0, 10) ?? [];
 
   const handleSaveProfile = () => {
     const cleanName = nameInput.trim().slice(0, 32) || 'NeuroMath Explorer';
@@ -346,6 +377,76 @@ export default function ProfileScreen() {
     >
       <Text style={{ ...theme.typography.h2, color }}>{value}</Text>
       <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>{label}</Text>
+    </View>
+  );
+
+  const pct = (value: number) => `${Math.round(value * 100)}%`;
+
+  const shortDate = (value: string | number | null | undefined) => {
+    if (!value) return 'Never';
+    const date = typeof value === 'number' ? new Date(value) : new Date(value);
+    if (Number.isNaN(date.getTime())) return 'Never';
+    return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  };
+
+  const connectionColor = (status: string) => {
+    if (status === 'active_today') return theme.colors.primary;
+    if (status === 'active_7d') return theme.colors.gold;
+    if (status === 'inactive') return theme.colors.textMuted;
+    return theme.colors.warning;
+  };
+
+  const trackTitle = (trackId: string) =>
+    tracks.find((track) => track.id === trackId)?.title ?? trackId;
+
+  const adminTab = (label: string, view: AdminView) => {
+    const active = adminView === view;
+    return (
+      <Pressable
+        onPress={() => setAdminView(view)}
+        style={{
+          flex: 1,
+          minWidth: 92,
+          minHeight: 40,
+          borderRadius: theme.radius.sm,
+          borderWidth: 1,
+          borderColor: active ? theme.colors.primary : theme.colors.border,
+          backgroundColor: active ? theme.colors.primarySoft : theme.colors.surface,
+          alignItems: 'center',
+          justifyContent: 'center',
+          paddingHorizontal: 10,
+        }}
+      >
+        <Text
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          minimumFontScale={0.8}
+          style={{
+            ...theme.typography.caption,
+            color: active ? theme.colors.primaryInk : theme.colors.textMuted,
+            textAlign: 'center',
+          }}
+        >
+          {label}
+        </Text>
+      </Pressable>
+    );
+  };
+
+  const compactMetric = (label: string, value: string | number, color = theme.colors.text) => (
+    <View
+      style={{
+        minWidth: 96,
+        flex: 1,
+        backgroundColor: theme.colors.bgMuted,
+        borderRadius: theme.radius.sm,
+        padding: 10,
+      }}
+    >
+      <Text style={{ ...theme.typography.bodyStrong, color }}>{value}</Text>
+      <Text style={{ ...theme.typography.tiny, color: theme.colors.textMuted, letterSpacing: 0 }}>
+        {label}
+      </Text>
     </View>
   );
 
@@ -679,33 +780,295 @@ export default function ProfileScreen() {
             {cloudRole === 'admin' && cloudStats && (
               <View style={{ gap: 12, marginTop: 8 }}>
                 <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>
-                  Cloud classroom stats
+                  Cloud classroom dashboard
                 </Text>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
-                  {statPanel(cloudStats.students, 'cloud students', theme.colors.primary)}
-                  {statPanel(cloudStats.quizAttempts, 'cloud quiz attempts', theme.colors.secondary)}
+
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                  {adminTab('Overview', 'overview')}
+                  {adminTab('Students', 'students')}
+                  {adminTab('Lessons', 'lessons')}
                 </View>
-                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
-                  {statPanel(`${Math.round(cloudStats.averageScore * 100)}%`, 'cloud average score', theme.colors.gold)}
-                  {statPanel(cloudStats.activeUsers7d, 'active users in 7 days', theme.colors.primary)}
-                </View>
-                <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>
-                  Cloud lessons to support
-                </Text>
-                {cloudStats.weakLessons.length === 0 ? (
-                  <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>
-                    No cloud weak-lesson data yet.
-                  </Text>
-                ) : (
-                  cloudStats.weakLessons.map((lesson) => (
-                    <Text key={lesson.lessonId} style={{ ...theme.typography.caption, color: theme.colors.text }}>
-                      {lesson.lessonId}: {lesson.learners} learner(s), average best {Math.round(lesson.averageBestScore * 100)}%
+
+                {adminView === 'overview' && (
+                  <View style={{ gap: 12 }}>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+                      {statPanel(cloudStats.students, 'cloud students', theme.colors.primary)}
+                      {statPanel(cloudStats.activeUsersToday, 'active today', theme.colors.primary)}
+                    </View>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+                      {statPanel(cloudStats.activeUsers7d, 'active in 7 days', theme.colors.secondary)}
+                      {statPanel(cloudStats.quizAttempts, 'quiz attempts', theme.colors.secondary)}
+                    </View>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+                      {statPanel(pct(cloudStats.averageScore), 'average quiz score', theme.colors.gold)}
+                      {statPanel(pct(cloudStats.averageCompletionRate), 'average completion', theme.colors.primary)}
+                    </View>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+                      {statPanel(pct(cloudStats.averageMasteryRate), 'average mastery', theme.colors.gold)}
+                      {statPanel(cloudStats.usageEvents, 'usage events', theme.colors.textMuted)}
+                    </View>
+
+                    <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>
+                      Lessons needing support
                     </Text>
-                  ))
+                    {cloudWeakLessonRows.length === 0 ? (
+                      <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>
+                        No cloud weak-lesson data yet.
+                      </Text>
+                    ) : (
+                      cloudWeakLessonRows.map((lesson) => (
+                        <View
+                          key={lesson.lessonId}
+                          style={{
+                            borderBottomWidth: 1,
+                            borderBottomColor: theme.colors.border,
+                            paddingBottom: 8,
+                            gap: 2,
+                          }}
+                        >
+                          <Text style={{ ...theme.typography.caption, color: theme.colors.text }}>
+                            {lesson.lessonId} · {lesson.title}
+                          </Text>
+                          <Text style={{ ...theme.typography.tiny, color: theme.colors.textMuted, letterSpacing: 0 }}>
+                            {lesson.weakLearners} need support · avg best {pct(lesson.averageBestScore)} · success {pct(lesson.completionRate)}
+                          </Text>
+                        </View>
+                      ))
+                    )}
+                  </View>
                 )}
-                <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>
-                  Cloud usage events: {cloudStats.usageEvents}
-                </Text>
+
+                {adminView === 'students' && (
+                  <View style={{ gap: 12 }}>
+                    {cloudStats.studentsList.length === 0 ? (
+                      <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>
+                        No signed-in student profiles have synced yet.
+                      </Text>
+                    ) : (
+                      <>
+                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                          {cloudStats.studentsList.map((student) => {
+                            const active = selectedCloudStudent?.userId === student.userId;
+                            return (
+                              <Pressable
+                                key={student.userId}
+                                onPress={() => setSelectedStudentId(student.userId)}
+                                style={{
+                                  minWidth: 150,
+                                  flexGrow: 1,
+                                  flexBasis: 150,
+                                  borderRadius: theme.radius.md,
+                                  borderWidth: 1,
+                                  borderColor: active ? theme.colors.primary : theme.colors.border,
+                                  backgroundColor: active ? theme.colors.primarySoft : theme.colors.surface,
+                                  padding: 10,
+                                  gap: 4,
+                                }}
+                              >
+                                <Text
+                                  numberOfLines={1}
+                                  style={{
+                                    ...theme.typography.bodyStrong,
+                                    color: active ? theme.colors.primaryInk : theme.colors.text,
+                                  }}
+                                >
+                                  {student.displayName}
+                                </Text>
+                                <Text
+                                  style={{
+                                    ...theme.typography.tiny,
+                                    color: connectionColor(student.connectionStatus),
+                                    letterSpacing: 0,
+                                  }}
+                                >
+                                  {student.connectionLabel}
+                                </Text>
+                                <Text style={{ ...theme.typography.tiny, color: theme.colors.textMuted, letterSpacing: 0 }}>
+                                  {student.completedLessons}/{allLessons.length} · avg {pct(student.averageQuizScore)}
+                                </Text>
+                              </Pressable>
+                            );
+                          })}
+                        </View>
+
+                        {selectedCloudStudent && (
+                          <View style={{ gap: 12 }}>
+                            <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>
+                              {selectedCloudStudent.displayName}
+                            </Text>
+                            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                              {compactMetric('completed', `${selectedCloudStudent.completedLessons}/${allLessons.length}`, theme.colors.primary)}
+                              {compactMetric('mastered', selectedCloudStudent.masteredLessons, theme.colors.gold)}
+                              {compactMetric('attempts', selectedCloudStudent.quizAttempts, theme.colors.secondary)}
+                              {compactMetric('avg quiz', pct(selectedCloudStudent.averageQuizScore), theme.colors.gold)}
+                              {compactMetric('active days', selectedCloudStudent.activeDays, theme.colors.primary)}
+                              {compactMetric('level', selectedCloudStudent.level, theme.colors.secondary)}
+                            </View>
+                            <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>
+                              Connection: {selectedCloudStudent.connectionLabel} · last seen {shortDate(selectedCloudStudent.lastSeenAt)} · last sync {shortDate(selectedCloudStudent.lastSyncAt)}
+                            </Text>
+
+                            <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>
+                              Track progress
+                            </Text>
+                            {selectedCloudStudent.trackProgress.map((track) => (
+                              <View key={track.trackId} style={{ gap: 4 }}>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 10 }}>
+                                  <Text style={{ ...theme.typography.caption, color: theme.colors.text, flex: 1 }}>
+                                    {track.title}
+                                  </Text>
+                                  <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>
+                                    {track.completed}/{track.total}
+                                  </Text>
+                                </View>
+                                <View
+                                  style={{
+                                    height: 7,
+                                    borderRadius: 4,
+                                    backgroundColor: theme.colors.bgMuted,
+                                    overflow: 'hidden',
+                                  }}
+                                >
+                                  <View
+                                    style={{
+                                      height: 7,
+                                      width: `${track.total > 0 ? (track.completed / track.total) * 100 : 0}%`,
+                                      backgroundColor: tracks.find((item) => item.id === track.trackId)?.color ?? theme.colors.primary,
+                                    }}
+                                  />
+                                </View>
+                              </View>
+                            ))}
+
+                            <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>
+                              Student lessons needing support
+                            </Text>
+                            {selectedCloudStudent.weakLessons.length === 0 ? (
+                              <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>
+                                No weak lessons for this student yet.
+                              </Text>
+                            ) : (
+                              selectedCloudStudent.weakLessons.map((lesson) => (
+                                <Text key={lesson.lessonId} style={{ ...theme.typography.caption, color: theme.colors.text }}>
+                                  {lesson.lessonId} · {lesson.title}: best {pct(lesson.bestScore)}, attempts {lesson.attempts}
+                                </Text>
+                              ))
+                            )}
+
+                            <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>
+                              Recent attempts
+                            </Text>
+                            {selectedCloudStudent.recentAttempts.length === 0 ? (
+                              <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>
+                                No quiz attempts synced yet.
+                              </Text>
+                            ) : (
+                              selectedCloudStudent.recentAttempts.map((attempt, index) => (
+                                <Text
+                                  key={`${attempt.lessonId}-${attempt.attemptedAt}-${index}`}
+                                  style={{ ...theme.typography.caption, color: theme.colors.text }}
+                                >
+                                  {shortDate(attempt.attemptedAt)} · {attempt.lessonId} · {attempt.title}: {pct(attempt.score)} ({attempt.correct}/{attempt.total})
+                                </Text>
+                              ))
+                            )}
+
+                            <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>
+                              Started lesson progress
+                            </Text>
+                            {selectedCloudStudent.lessonProgress.length === 0 ? (
+                              <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>
+                                This student has not synced lesson progress yet.
+                              </Text>
+                            ) : (
+                              selectedCloudStudent.lessonProgress.map((lesson) => (
+                                <View
+                                  key={lesson.lessonId}
+                                  style={{
+                                    borderBottomWidth: 1,
+                                    borderBottomColor: theme.colors.border,
+                                    paddingBottom: 6,
+                                    gap: 2,
+                                  }}
+                                >
+                                  <Text style={{ ...theme.typography.caption, color: theme.colors.text }}>
+                                    {lesson.lessonId} · {lesson.title}
+                                  </Text>
+                                  <Text style={{ ...theme.typography.tiny, color: theme.colors.textMuted, letterSpacing: 0 }}>
+                                    {trackTitle(lesson.trackId)} · {lesson.mastery} · best {pct(lesson.bestScore)} · attempts {lesson.attempts}
+                                  </Text>
+                                </View>
+                              ))
+                            )}
+                          </View>
+                        )}
+                      </>
+                    )}
+                  </View>
+                )}
+
+                {adminView === 'lessons' && (
+                  <View style={{ gap: 12 }}>
+                    <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>
+                      Overall student success by lesson
+                    </Text>
+                    <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>
+                      Success means a student reached practicing, strong, or mastered on that lesson.
+                    </Text>
+
+                    <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>
+                      Strongest lessons
+                    </Text>
+                    {cloudStrongLessonRows.length === 0 ? (
+                      <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>
+                        No lesson attempts have synced yet.
+                      </Text>
+                    ) : (
+                      cloudStrongLessonRows.map((lesson) => (
+                        <Text key={`strong-${lesson.lessonId}`} style={{ ...theme.typography.caption, color: theme.colors.text }}>
+                          {lesson.lessonId} · {lesson.title}: success {pct(lesson.completionRate)}, avg best {pct(lesson.averageBestScore)}
+                        </Text>
+                      ))
+                    )}
+
+                    <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>
+                      Hardest lessons
+                    </Text>
+                    {cloudWeakLessonRows.length === 0 ? (
+                      <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>
+                        No weak-lesson data yet.
+                      </Text>
+                    ) : (
+                      cloudWeakLessonRows.map((lesson) => (
+                        <Text key={`weak-${lesson.lessonId}`} style={{ ...theme.typography.caption, color: theme.colors.text }}>
+                          {lesson.lessonId} · {lesson.title}: {lesson.weakLearners} need support, avg best {pct(lesson.averageBestScore)}
+                        </Text>
+                      ))
+                    )}
+
+                    <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>
+                      All lessons
+                    </Text>
+                    {cloudStats.lessonStats.map((lesson) => (
+                      <View
+                        key={lesson.lessonId}
+                        style={{
+                          borderBottomWidth: 1,
+                          borderBottomColor: theme.colors.border,
+                          paddingBottom: 8,
+                          gap: 2,
+                        }}
+                      >
+                        <Text style={{ ...theme.typography.caption, color: theme.colors.text }}>
+                          {lesson.lessonId} · {lesson.title}
+                        </Text>
+                        <Text style={{ ...theme.typography.tiny, color: theme.colors.textMuted, letterSpacing: 0 }}>
+                          {trackTitle(lesson.trackId)} · success {pct(lesson.completionRate)} · completed {lesson.completedLearners}/{cloudStats.students} · mastered {lesson.masteredLearners} · attempts {lesson.quizAttempts} · avg best {pct(lesson.averageBestScore)}
+                        </Text>
+                      </View>
+                    ))}
+                  </View>
+                )}
               </View>
             )}
           </Card>
