@@ -3,6 +3,7 @@ node_modules/
 dist/
 npm-debug.*
 web-preview.log
+scripts/.translation-cache-fr.json
 *.jks
 *.p8
 *.p12

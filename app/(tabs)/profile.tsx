@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Alert, Pressable, SafeAreaView, ScrollView, Switch, Text, TextInput, View } from 'react-native';
+import { Alert, Pressable, SafeAreaView, ScrollView, Switch, TextInput, View } from 'react-native';
+import { TranslatedText as Text } from '../../src/i18n/TranslatedText';
 import { useFocusEffect } from 'expo-router';
 import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
@@ -31,6 +32,7 @@ import {
 } from '../../src/services/backend/supabaseClient';
 import type { BackendConfig } from '../../src/services/backend/supabaseClient';
 import { useTheme } from '../../src/theme/ThemeProvider';
+import { useI18n } from '../../src/i18n';
 
 type AdminView = 'overview' | 'students' | 'lessons';
 
@@ -65,6 +67,7 @@ function backendSourceLabel(source: BackendConfig['source']): string {
 
 export default function ProfileScreen() {
   const theme = useTheme();
+  const { language, setLanguage, t } = useI18n();
   const { settings, update, refresh } = useSettings();
   const { wallet, levelInfo, refresh: refreshWallet } = useWallet();
   const [nameInput, setNameInput] = useState(settings.profileName);
@@ -320,12 +323,12 @@ export default function ProfileScreen() {
 
   const handleReset = () => {
     Alert.alert(
-      'Reset all progress?',
-      'This cannot be undone. Export a backup first if you want to keep a copy.',
+      t('Reset all progress?'),
+      t('This cannot be undone. Export a backup first if you want to keep a copy.'),
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: t('Cancel'), style: 'cancel' },
         {
-          text: 'Reset',
+          text: t('Reset'),
           style: 'destructive',
           onPress: () => {
             resetDb();
@@ -386,7 +389,12 @@ export default function ProfileScreen() {
     if (!value) return 'Never';
     const date = typeof value === 'number' ? new Date(value) : new Date(value);
     if (Number.isNaN(date.getTime())) return 'Never';
-    return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    return date.toLocaleDateString(language === 'fr' ? 'fr-FR' : undefined, { month: 'short', day: 'numeric' });
+  };
+
+  const changeLanguage = (nextLanguage: 'en' | 'fr') => {
+    setLanguage(nextLanguage);
+    update('language', nextLanguage);
   };
 
   const connectionColor = (status: string) => {
@@ -488,7 +496,7 @@ export default function ProfileScreen() {
             <TextInput
               value={nameInput}
               onChangeText={setNameInput}
-              placeholder="Your name"
+              placeholder={t('Your name')}
               placeholderTextColor={theme.colors.textMuted}
               style={inputStyle}
             />
@@ -531,7 +539,7 @@ export default function ProfileScreen() {
                 <TextInput
                   value={supabaseAnonKeyInput}
                   onChangeText={setSupabaseAnonKeyInput}
-                  placeholder="Supabase publishable key"
+                  placeholder={t('Supabase publishable key')}
                   placeholderTextColor={theme.colors.textMuted}
                   autoCapitalize="none"
                   style={inputStyle}
@@ -558,7 +566,7 @@ export default function ProfileScreen() {
                 <TextInput
                   value={authEmail}
                   onChangeText={setAuthEmail}
-                  placeholder="Email"
+                  placeholder={t('Email')}
                   placeholderTextColor={theme.colors.textMuted}
                   autoCapitalize="none"
                   keyboardType="email-address"
@@ -567,7 +575,7 @@ export default function ProfileScreen() {
                 <TextInput
                   value={authPassword}
                   onChangeText={setAuthPassword}
-                  placeholder="Password"
+                  placeholder={t('Password')}
                   placeholderTextColor={theme.colors.textMuted}
                   secureTextEntry
                   style={inputStyle}
@@ -626,6 +634,54 @@ export default function ProfileScreen() {
             Settings
           </Text>
           <Card style={{ marginBottom: 16 }}>
+            <View
+              style={{
+                paddingVertical: 14,
+                borderBottomWidth: 1,
+                borderBottomColor: theme.colors.border,
+                gap: 10,
+              }}
+            >
+              <Text style={{ ...theme.typography.body, color: theme.colors.text }}>App language</Text>
+              <View style={{ flexDirection: 'row', gap: 8 }}>
+                {([
+                  { value: 'en', label: 'English' },
+                  { value: 'fr', label: 'French' },
+                ] as const).map((option) => {
+                  const active = language === option.value;
+                  return (
+                    <Pressable
+                      key={option.value}
+                      onPress={() => changeLanguage(option.value)}
+                      style={{
+                        flex: 1,
+                        minHeight: 40,
+                        borderRadius: theme.radius.sm,
+                        borderWidth: 1,
+                        borderColor: active ? theme.colors.primary : theme.colors.border,
+                        backgroundColor: active ? theme.colors.primarySoft : theme.colors.surface,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        paddingHorizontal: 10,
+                      }}
+                    >
+                      <Text
+                        numberOfLines={1}
+                        adjustsFontSizeToFit
+                        minimumFontScale={0.76}
+                        style={{
+                          ...theme.typography.caption,
+                          color: active ? theme.colors.primaryInk : theme.colors.text,
+                          textAlign: 'center',
+                        }}
+                      >
+                        {option.label}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            </View>
             {row(
               'Haptics',
               <Switch
@@ -695,7 +751,7 @@ export default function ProfileScreen() {
                 <TextInput
                   value={superCode}
                   onChangeText={setSuperCode}
-                  placeholder="Enter superuser code"
+                  placeholder={t('Enter superuser code')}
                   placeholderTextColor={theme.colors.textMuted}
                   autoCapitalize="characters"
                   style={inputStyle}

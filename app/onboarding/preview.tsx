@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, SafeAreaView } from 'react-native';
+import { View, SafeAreaView } from 'react-native';
+import { TranslatedText as Text } from '../../src/i18n/TranslatedText';
 import { useRouter } from 'expo-router';
 import { Button, ProgressRing, StarRow, StreakChip, XPChip } from '../../src/components';
 import { useTheme } from '../../src/theme/ThemeProvider';

@@ -2,6 +2,7 @@ import React from 'react';
 import { Tabs } from 'expo-router';
 import Svg, { Path, Circle } from 'react-native-svg';
 import { useTheme } from '../../src/theme/ThemeProvider';
+import { useI18n } from '../../src/i18n';
 
 function TabIcon({ name, color, size }: { name: string; color: string; size: number }) {
   switch (name) {
@@ -46,6 +47,7 @@ function TabIcon({ name, color, size }: { name: string; color: string; size: num
 
 export default function TabsLayout() {
   const theme = useTheme();
+  const { t } = useI18n();
   return (
     <Tabs
       screenOptions={{
@@ -64,35 +66,35 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="home"
         options={{
-          title: 'Home',
+          title: t('Home'),
           tabBarIcon: ({ color, size }) => <TabIcon name="home" color={color} size={size} />,
         }}
       />
       <Tabs.Screen
         name="learn"
         options={{
-          title: 'Learn',
+          title: t('Learn'),
           tabBarIcon: ({ color, size }) => <TabIcon name="learn" color={color} size={size} />,
         }}
       />
       <Tabs.Screen
         name="review"
         options={{
-          title: 'Exam',
+          title: t('Exam'),
           tabBarIcon: ({ color, size }) => <TabIcon name="review" color={color} size={size} />,
         }}
       />
       <Tabs.Screen
         name="progress"
         options={{
-          title: 'Progress',
+          title: t('Progress'),
           tabBarIcon: ({ color, size }) => <TabIcon name="progress" color={color} size={size} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: 'Profile',
+          title: t('Profile'),
           tabBarIcon: ({ color, size }) => <TabIcon name="profile" color={color} size={size} />,
         }}
       />

@@ -15,6 +15,7 @@ export interface AppSettings {
   cloudSyncLastAt: number;
   supabaseUrl: string;
   supabaseAnonKey: string;
+  language: 'en' | 'fr';
 }
 
 export const defaultSettings: AppSettings = {
@@ -32,6 +33,7 @@ export const defaultSettings: AppSettings = {
   cloudSyncLastAt: 0,
   supabaseUrl: '',
   supabaseAnonKey: '',
+  language: 'en',
 };
 
 export const settingsRepository = {
@@ -73,6 +75,9 @@ export const settingsRepository = {
           break;
         case 'primaryGoal':
           result.primaryGoal = (r.value as AppSettings['primaryGoal']) ?? defaultSettings.primaryGoal;
+          break;
+        case 'language':
+          result.language = r.value === 'fr' ? 'fr' : 'en';
           break;
       }
     }

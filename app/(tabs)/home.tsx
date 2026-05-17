@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { View, Text, ScrollView, SafeAreaView } from 'react-native';
+import { View, ScrollView, SafeAreaView } from 'react-native';
+import { TranslatedText as Text } from '../../src/i18n/TranslatedText';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Button, Card, ProgressBar, ProgressRing, StreakChip, XPChip, CoinChip } from '../../src/components';
@@ -17,10 +18,12 @@ import { randomEncouragement } from '../../src/content/encouragement';
 import { isoDay } from '../../src/utils/date';
 import { recordUsageEvent } from '../../src/services/backend/syncService';
 import { pickReviewSet, ReviewCandidate } from '../../src/services/reviewService';
+import { useI18n } from '../../src/i18n';
 
 export default function HomeScreen() {
   const theme = useTheme();
   const router = useRouter();
+  const { t } = useI18n();
   const { rows, progressMap, completedCount, masteredCount, refresh: refreshProgress } = useProgress();
   const { currentStreak, todayLessons, refresh: refreshStreak } = useStreak();
   const { wallet, levelInfo, refresh: refreshWallet } = useWallet();
@@ -80,7 +83,7 @@ export default function HomeScreen() {
   const completedQuestCount = quests.filter((quest) => quest.completed).length;
 
   const learnerName = settings.profileName?.trim() || 'NeuroMath Explorer';
-  const heroMsg = `${sessionGreeting}, ${learnerName}.`;
+  const heroMsg = `${t(sessionGreeting)}, ${learnerName}.`;
   const heroSubMsg =
     currentStreak > 0
       ? `Current streak: ${currentStreak} day${currentStreak > 1 ? 's' : ''}. Keep the rhythm gentle and steady.`

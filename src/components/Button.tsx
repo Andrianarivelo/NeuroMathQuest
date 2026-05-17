@@ -1,5 +1,6 @@
 import React from 'react';
-import { Pressable, PressableProps, Text, ViewStyle, TextStyle, Platform } from 'react-native';
+import { Pressable, PressableProps, ViewStyle, TextStyle, Platform } from 'react-native';
+import { TranslatedText as Text } from '../i18n/TranslatedText';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import { useTheme } from '../theme/ThemeProvider';

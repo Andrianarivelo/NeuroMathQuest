@@ -1,6 +1,7 @@
 import React from 'react';
 import Svg, { Circle } from 'react-native-svg';
-import { View, Text, ViewStyle } from 'react-native';
+import { View, ViewStyle } from 'react-native';
+import { TranslatedText as Text } from '../i18n/TranslatedText';
 import Animated, { useAnimatedProps, withTiming, useSharedValue, runOnJS } from 'react-native-reanimated';
 import { useTheme } from '../theme/ThemeProvider';
 import { useEffect } from 'react';

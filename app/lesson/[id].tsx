@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, SafeAreaView, Pressable } from 'react-native';
+import { View, ScrollView, SafeAreaView, Pressable } from 'react-native';
+import { TranslatedText as Text } from '../../src/i18n/TranslatedText';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme } from '../../src/theme/ThemeProvider';
 import { getLesson } from '../../src/content/tracks';

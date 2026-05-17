@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { View, Text, SafeAreaView, Pressable, Platform, ScrollView, useWindowDimensions } from 'react-native';
+import { View, SafeAreaView, Pressable, Platform, ScrollView, useWindowDimensions } from 'react-native';
+import { TranslatedText as Text } from '../../src/i18n/TranslatedText';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Animated, { FadeIn, SlideInRight } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';

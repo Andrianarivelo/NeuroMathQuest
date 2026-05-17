@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, ViewStyle, Pressable, useWindowDimensions } from 'react-native';
+import { View, ViewStyle, Pressable, useWindowDimensions } from 'react-native';
+import { TranslatedText as Text } from '../i18n/TranslatedText';
 import Svg, { Circle } from 'react-native-svg';
 import { useTheme } from '../theme/ThemeProvider';
 import { LessonState } from '../services/unlockService';

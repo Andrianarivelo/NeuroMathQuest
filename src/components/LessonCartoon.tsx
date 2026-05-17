@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Modal, Pressable, Text, View, ViewStyle, ImageSourcePropType } from 'react-native';
+import { Modal, Pressable, View, ViewStyle, ImageSourcePropType } from 'react-native';
+import { TranslatedText as Text } from '../i18n/TranslatedText';
 import { Image } from 'expo-image';
 import { Lesson } from '../content/types';
 import { useTheme } from '../theme/ThemeProvider';

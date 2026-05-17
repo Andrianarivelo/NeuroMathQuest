@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { ThemeProvider } from '../src/theme/ThemeProvider';
+import { I18nProvider } from '../src/i18n';
 import { initDb } from '../src/db/db';
 import { settingsRepository, AppSettings, defaultSettings } from '../src/repositories/settingsRepository';
 import { View, ActivityIndicator } from 'react-native';
@@ -25,17 +26,19 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider mode={settings.themeMode}>
-      <StatusBar style="auto" />
-      <Stack screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
-        <Stack.Screen name="index" />
-        <Stack.Screen name="onboarding" />
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="lesson/[id]" options={{ animation: 'slide_from_bottom' }} />
-        <Stack.Screen name="quiz/[id]" options={{ animation: 'slide_from_bottom' }} />
-        <Stack.Screen name="exam" options={{ animation: 'slide_from_bottom' }} />
-        <Stack.Screen name="quiz-summary" options={{ animation: 'fade' }} />
-      </Stack>
-    </ThemeProvider>
+    <I18nProvider initialLanguage={settings.language}>
+      <ThemeProvider mode={settings.themeMode}>
+        <StatusBar style="auto" />
+        <Stack screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
+          <Stack.Screen name="index" />
+          <Stack.Screen name="onboarding" />
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="lesson/[id]" options={{ animation: 'slide_from_bottom' }} />
+          <Stack.Screen name="quiz/[id]" options={{ animation: 'slide_from_bottom' }} />
+          <Stack.Screen name="exam" options={{ animation: 'slide_from_bottom' }} />
+          <Stack.Screen name="quiz-summary" options={{ animation: 'fade' }} />
+        </Stack>
+      </ThemeProvider>
+    </I18nProvider>
   );
 }

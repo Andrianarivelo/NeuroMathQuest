@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, SafeAreaView, Platform } from 'react-native';
+import { View, SafeAreaView, Platform } from 'react-native';
+import { TranslatedText as Text } from '../src/i18n/TranslatedText';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Animated, { FadeIn, ZoomIn } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';

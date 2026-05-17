@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, SafeAreaView, Pressable } from 'react-native';
+import { View, SafeAreaView, Pressable } from 'react-native';
+import { TranslatedText as Text } from '../../src/i18n/TranslatedText';
 import { useRouter } from 'expo-router';
 import { Button } from '../../src/components';
 import { useTheme } from '../../src/theme/ThemeProvider';
