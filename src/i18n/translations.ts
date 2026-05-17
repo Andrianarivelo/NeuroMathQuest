@@ -52,11 +52,18 @@ const manualFrench: Record<string, string> = {
   'Students': 'Étudiants',
   'Lessons': 'Leçons',
   'Open larger illustration for': "Ouvrir l'illustration agrandie pour",
+  'A vector of one-hots': 'Un vecteur binaire à position unique',
+  'Without comfortable indexing, sums like Σ wᵢ rᵢ are hard to read. With it, they are just "weighted sums".':
+    'Sans une lecture confortable des indices, les sommes comme Σ wᵢ rᵢ sont difficiles à lire. Avec les indices, ce sont simplement des « sommes pondérées ».',
 };
 
-function translateFrenchCore(value: string): string {
-  if (looksLikeStandaloneFormula(value)) return value;
+function lookupFrench(value: string): string {
   return manualFrench[value] ?? frDictionary[value] ?? value;
+}
+
+function translateFrenchCore(value: string): string {
+  if (looksLikeStandaloneFormula(value) && !hasNaturalLanguageCue(value)) return value;
+  return lookupFrench(value);
 }
 
 function preserveOuterWhitespace(source: string, translated: string): string {
@@ -67,8 +74,12 @@ function preserveOuterWhitespace(source: string, translated: string): string {
 
 function looksLikeStandaloneFormula(text: string): boolean {
   const wordCount = text.match(/[A-Za-zÀ-ÖØ-öø-ÿ]{2,}/g)?.length ?? 0;
-  const hasMathSyntax = /[=∫∑∂∇√≈≤≥<>^_+\-*\/]|[₀-₉ᵀᵢ-ᵤ]|[Α-ω]/.test(text);
+  const hasMathSyntax = /[=∫∑∂∇√≈≤≥<>^_+*\/]|[₀-₉ᵀᵢ-ᵤ]|[Α-ω]/.test(text);
   return hasMathSyntax && wordCount < 3;
+}
+
+function hasNaturalLanguageCue(text: string): boolean {
+  return /\b(with|means|learns|always|at|large|small|lower|higher|faster|slower|independent|dependent|dimensional|vector|voltage|signal|noise|rate|state|input|output)\b/i.test(text);
 }
 
 function translateDynamicFrench(text: string): string | null {
@@ -156,9 +167,6 @@ function translateDynamicFrench(text: string): string | null {
   match = text.match(/^(.+) · (not_started|beginner|practicing|strong|mastered) · best (\d+)% · attempts (\d+)$/);
   if (match) return `${translateFrenchCore(match[1])} · ${translateFrenchCore(match[2])} · meilleur ${match[3]} % · tentatives ${match[4]}`;
 
-  match = text.match(/^(.+) means (.+)\.$/);
-  if (match) return `${match[1]} signifie ${translateFrenchCore(match[2])}.`;
-
   match = text.match(/^Earn (\d+) more coins? to unlock this lesson\.$/);
   if (match) return `Gagne ${match[1]} pièce${match[1] === '1' ? '' : 's'} de plus pour débloquer cette leçon.`;
 
@@ -176,11 +184,17 @@ export function translateText(value: string, language: AppLanguage): string {
   if (!value.trim()) return value;
 
   const core = value.trim();
-  if (looksLikeStandaloneFormula(core) && !/\bmeans\b/.test(core)) return value;
 
   const dynamic = translateDynamicFrench(core);
   if (dynamic) return preserveOuterWhitespace(value, dynamic);
 
-  const translated = translateFrenchCore(core);
-  return translated !== core ? preserveOuterWhitespace(value, translated) : value;
+  const translated = lookupFrench(core);
+  if (translated !== core) {
+    if (looksLikeStandaloneFormula(core) && !hasNaturalLanguageCue(core)) return value;
+    return preserveOuterWhitespace(value, translated);
+  }
+
+  if (looksLikeStandaloneFormula(core)) return value;
+
+  return value;
 }

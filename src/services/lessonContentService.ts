@@ -1,7 +1,7 @@
 import { getNotationTerms } from '../content/notationTerms';
 import { neuroscienceLessonDetails } from '../content/neuroscienceLessonDetails';
 import { Lesson } from '../content/types';
-import { AppLanguage, translateText } from '../i18n';
+import { AppLanguage, translateText } from '../i18n/translations';
 
 function uniqueDetails(values: string[]): string[] {
   const seen = new Set<string>();
