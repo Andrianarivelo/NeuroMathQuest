@@ -12,6 +12,7 @@ import { useLessonUnlocks } from '../../src/hooks/useLessonUnlocks';
 import { lessonAccess } from '../../src/services/unlockService';
 import { buildCourseDetails } from '../../src/services/lessonContentService';
 import { purchaseLessonUnlock } from '../../src/services/purchaseService';
+import { localizeLesson, useI18n } from '../../src/i18n';
 
 export default function LessonScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -20,18 +21,20 @@ export default function LessonScreen() {
   const { progressMap, refresh: refreshProgress } = useProgress();
   const { wallet, refresh: refreshWallet } = useWallet();
   const { purchasedLessonIds, refresh: refreshUnlocks } = useLessonUnlocks();
+  const { language } = useI18n();
   const [courseDetailIndex, setCourseDetailIndex] = useState(0);
   const [memoryHookOpen, setMemoryHookOpen] = useState(false);
   const [purchaseMessage, setPurchaseMessage] = useState('');
 
-  const lesson = getLesson(id ?? '');
+  const baseLesson = getLesson(id ?? '');
+  const lesson = baseLesson ? localizeLesson(baseLesson, language) : null;
   useEffect(() => {
     setCourseDetailIndex(0);
     setMemoryHookOpen(false);
     setPurchaseMessage('');
   }, [lesson?.id]);
 
-  if (!lesson) {
+  if (!baseLesson || !lesson) {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg, justifyContent: 'center', alignItems: 'center' }}>
         <Text style={{ ...theme.typography.body, color: theme.colors.textMuted }}>Lesson not found.</Text>
@@ -39,12 +42,12 @@ export default function LessonScreen() {
     );
   }
 
-  const access = lessonAccess(lesson, progressMap, purchasedLessonIds, wallet.coinsTotal);
+  const access = lessonAccess(baseLesson, progressMap, purchasedLessonIds, wallet.coinsTotal);
   const locked = !access.isUnlocked;
-  const p = progressMap.get(lesson.id);
+  const p = progressMap.get(baseLesson.id);
   const stars = p ? (p.mastery === 'mastered' ? 3 : p.mastery === 'strong' ? 2 : p.mastery === 'practicing' ? 1 : 0) : 0;
   const notationTerms = getNotationTerms(lesson);
-  const courseDetails = buildCourseDetails(lesson);
+  const courseDetails = buildCourseDetails(baseLesson, language);
   const selectedCourseDetail = courseDetails[courseDetailIndex] ?? courseDetails[0];
   const goToPreviousDetail = () => {
     setCourseDetailIndex((current) => Math.max(0, current - 1));
@@ -53,7 +56,7 @@ export default function LessonScreen() {
     setCourseDetailIndex((current) => Math.min(courseDetails.length - 1, current + 1));
   };
   const handlePurchase = () => {
-    const result = purchaseLessonUnlock(lesson, progressMap, purchasedLessonIds);
+    const result = purchaseLessonUnlock(baseLesson, progressMap, purchasedLessonIds);
     setPurchaseMessage(result.message);
     refreshWallet();
     refreshUnlocks();

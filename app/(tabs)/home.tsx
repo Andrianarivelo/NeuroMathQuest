@@ -18,12 +18,12 @@ import { randomEncouragement } from '../../src/content/encouragement';
 import { isoDay } from '../../src/utils/date';
 import { recordUsageEvent } from '../../src/services/backend/syncService';
 import { pickReviewSet, ReviewCandidate } from '../../src/services/reviewService';
-import { useI18n } from '../../src/i18n';
+import { localizeLesson, useI18n } from '../../src/i18n';
 
 export default function HomeScreen() {
   const theme = useTheme();
   const router = useRouter();
-  const { t } = useI18n();
+  const { language, t } = useI18n();
   const { rows, progressMap, completedCount, masteredCount, refresh: refreshProgress } = useProgress();
   const { currentStreak, todayLessons, refresh: refreshStreak } = useStreak();
   const { wallet, levelInfo, refresh: refreshWallet } = useWallet();
@@ -81,6 +81,10 @@ export default function HomeScreen() {
   const dailyGoal = settings.dailyGoalLessons;
   const goalProgress = dailyGoal > 0 ? Math.min(1, todayLessons / dailyGoal) : 0;
   const completedQuestCount = quests.filter((quest) => quest.completed).length;
+  const displayNextLesson = nextLesson ? localizeLesson(nextLesson, language) : null;
+  const displayNextPurchasableLesson = nextPurchasableLesson
+    ? localizeLesson(nextPurchasableLesson.lesson, language)
+    : null;
 
   const learnerName = settings.profileName?.trim() || 'NeuroMath Explorer';
   const heroMsg = `${t(sessionGreeting)}, ${learnerName}.`;
@@ -129,7 +133,7 @@ export default function HomeScreen() {
 
             {nextLesson && (
               <Button
-                label={`Continue: ${nextLesson.title}`}
+                label={`Continue: ${displayNextLesson?.title ?? nextLesson.title}`}
                 size="md"
                 fullWidth
                 onPress={() => router.push(`/lesson/${nextLesson.id}`)}
@@ -140,7 +144,7 @@ export default function HomeScreen() {
                 label={
                   nextPurchasableLesson.access.missingCoins > 0
                     ? `Earn ${nextPurchasableLesson.access.missingCoins} coins`
-                    : `Unlock: ${nextPurchasableLesson.lesson.title}`
+                    : `Unlock: ${displayNextPurchasableLesson?.title ?? nextPurchasableLesson.lesson.title}`
                 }
                 size="md"
                 fullWidth

@@ -19,16 +19,16 @@ describe('masteryService', () => {
       expect(computeMastery({ attempts: 3, bestScore: 0.7, lastScore: 0.7, successfulAttempts: 0 })).toBe('practicing');
     });
 
-    it('returns strong with score >= 0.8 and 2+ successful attempts', () => {
-      expect(computeMastery({ attempts: 3, bestScore: 0.85, lastScore: 0.85, successfulAttempts: 2 })).toBe('strong');
+    it('returns strong with score >= 0.8 after one successful attempt', () => {
+      expect(computeMastery({ attempts: 1, bestScore: 0.85, lastScore: 0.85, successfulAttempts: 1 })).toBe('strong');
     });
 
-    it('returns mastered with score >= 0.95 and 2+ successful attempts', () => {
-      expect(computeMastery({ attempts: 4, bestScore: 1.0, lastScore: 1.0, successfulAttempts: 3 })).toBe('mastered');
+    it('returns mastered with a perfect first attempt', () => {
+      expect(computeMastery({ attempts: 1, bestScore: 1.0, lastScore: 1.0, successfulAttempts: 1 })).toBe('mastered');
     });
 
-    it('does not return mastered with only 1 successful attempt', () => {
-      expect(computeMastery({ attempts: 1, bestScore: 1.0, lastScore: 1.0, successfulAttempts: 1 })).toBe('practicing');
+    it('does not require repeated successful attempts for mastery', () => {
+      expect(computeMastery({ attempts: 2, bestScore: 1.0, lastScore: 0.67, successfulAttempts: 1 })).toBe('mastered');
     });
   });
 
@@ -47,6 +47,12 @@ describe('masteryService', () => {
       expect(result.bestScore).toBe(0.67);
       expect(result.mastery).toBe('practicing');
       expect(result.stars).toBe(1);
+    });
+
+    it('gives 3 stars for a perfect first attempt', () => {
+      const result = applyAttempt(null, 1.0, 0.8);
+      expect(result.mastery).toBe('mastered');
+      expect(result.stars).toBe(3);
     });
 
     it('keeps best score when new score is lower', () => {

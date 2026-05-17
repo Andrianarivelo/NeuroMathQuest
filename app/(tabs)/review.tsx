@@ -7,11 +7,13 @@ import { useProgress } from '../../src/hooks/useProgress';
 import { pickReviewSet, ReviewCandidate } from '../../src/services/reviewService';
 import { getLesson } from '../../src/content/tracks';
 import { Button, Card, EmptyState, StarRow, SectionTitle } from '../../src/components';
+import { localizeLesson, useI18n } from '../../src/i18n';
 
 export default function ReviewScreen() {
   const theme = useTheme();
   const router = useRouter();
   const { rows, refresh } = useProgress();
+  const { language } = useI18n();
 
   useFocusEffect(useCallback(() => { refresh(); }, []));
 
@@ -55,8 +57,9 @@ export default function ReviewScreen() {
               Exam focus
             </Text>
             {weakConcepts.map((c) => {
-              const lesson = getLesson(c.lessonId);
-              if (!lesson) return null;
+              const baseLesson = getLesson(c.lessonId);
+              if (!baseLesson) return null;
+              const lesson = localizeLesson(baseLesson, language);
               return (
                 <Card
                   key={c.lessonId}
@@ -82,8 +85,9 @@ export default function ReviewScreen() {
               Ready topics
             </Text>
             {strengthening.map((c) => {
-              const lesson = getLesson(c.lessonId);
-              if (!lesson) return null;
+              const baseLesson = getLesson(c.lessonId);
+              if (!baseLesson) return null;
+              const lesson = localizeLesson(baseLesson, language);
               return (
                 <Card
                   key={c.lessonId}

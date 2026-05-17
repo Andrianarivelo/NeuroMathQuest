@@ -11,6 +11,7 @@ import { lessonAccess, lessonState, LessonState } from '../../src/services/unloc
 import { LessonNode, Card, ProgressBar, CoinChip } from '../../src/components';
 import { TrackId } from '../../src/content/types';
 import { trackTints } from '../../src/theme';
+import { localizeLesson, localizeTrack, useI18n } from '../../src/i18n';
 
 export default function LearnScreen() {
   const theme = useTheme();
@@ -19,6 +20,7 @@ export default function LearnScreen() {
   const { progressMap, refresh } = useProgress();
   const { wallet, refresh: refreshWallet } = useWallet();
   const { purchasedLessonIds, refresh: refreshUnlocks } = useLessonUnlocks();
+  const { language } = useI18n();
   const [activeTrack, setActiveTrack] = useState<TrackId>('neuroscience');
 
   useFocusEffect(useCallback(() => {
@@ -27,7 +29,7 @@ export default function LearnScreen() {
     refreshUnlocks();
   }, [refresh, refreshWallet, refreshUnlocks]));
 
-  const currentTrack = tracks.find((t) => t.id === activeTrack)!;
+  const currentTrack = localizeTrack(tracks.find((t) => t.id === activeTrack)!, language);
   const lessons = useMemo(() => getTrackLessons(activeTrack), [activeTrack]);
   const states = new Map<string, LessonState>(
     lessons.map((l) => [l.id, lessonState(l, progressMap, purchasedLessonIds)])
@@ -99,6 +101,7 @@ export default function LearnScreen() {
             }}
           >
             {tracks.map((t) => {
+              const localizedTrack = localizeTrack(t, language);
               const tint = trackTints[t.id as keyof typeof trackTints];
               const active = t.id === activeTrack;
               const trackLessons = getTrackLessons(t.id);
@@ -135,7 +138,7 @@ export default function LearnScreen() {
                       lineHeight: 15,
                     }}
                   >
-                    {t.title}
+                    {localizedTrack.title}
                   </Text>
                   <Text
                     numberOfLines={1}
@@ -160,6 +163,7 @@ export default function LearnScreen() {
 
         {/* Lesson path */}
         {lessons.map((lesson, idx) => {
+          const localizedLesson = localizeLesson(lesson, language);
           const state = states.get(lesson.id) ?? 'locked';
           const p = progressMap.get(lesson.id);
           const access = lessonAccess(lesson, progressMap, purchasedLessonIds, wallet.coinsTotal);
@@ -169,7 +173,7 @@ export default function LearnScreen() {
                 <View style={{ width: 3, height: 24, backgroundColor: theme.colors.border, borderRadius: 2, marginBottom: 4 }} />
               )}
               <LessonNode
-                title={lesson.title}
+                title={localizedLesson.title}
                 state={state}
                 stars={p ? (p.mastery === 'mastered' ? 3 : p.mastery === 'strong' ? 2 : p.mastery === 'practicing' ? 1 : 0) : 0}
                 xp={lesson.xpReward}

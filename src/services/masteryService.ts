@@ -16,10 +16,10 @@ export interface MasteryInput {
 }
 
 export function computeMastery(input: MasteryInput): MasteryLevel {
-  const { attempts, bestScore, successfulAttempts } = input;
+  const { attempts, bestScore } = input;
   if (attempts === 0) return 'not_started';
-  if (bestScore >= 0.95 && successfulAttempts >= 2) return 'mastered';
-  if (bestScore >= 0.8 && successfulAttempts >= 2) return 'strong';
+  if (bestScore >= 0.95) return 'mastered';
+  if (bestScore >= 0.8) return 'strong';
   if (bestScore >= 0.6) return 'practicing';
   return 'beginner';
 }

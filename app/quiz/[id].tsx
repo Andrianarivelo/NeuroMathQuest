@@ -13,6 +13,7 @@ import { useLessonUnlocks } from '../../src/hooks/useLessonUnlocks';
 import { randomEncouragement } from '../../src/content/encouragement';
 import { selectQuizQuestions } from '../../src/services/quizService';
 import { lessonAccess } from '../../src/services/unlockService';
+import { localizeLesson, localizeQuizQuestion, useI18n } from '../../src/i18n';
 
 const optionLabels = ['A', 'B', 'C', 'D'];
 
@@ -24,10 +25,15 @@ export default function QuizScreen() {
   const { progressMap } = useProgress();
   const { wallet } = useWallet();
   const { purchasedLessonIds } = useLessonUnlocks();
+  const { language } = useI18n();
 
-  const lesson = getLesson(id ?? '');
+  const baseLesson = getLesson(id ?? '');
+  const lesson = baseLesson ? localizeLesson(baseLesson, language) : null;
   const [seed] = useState(() => `${Date.now()}-${Math.random()}`);
-  const questions = useMemo(() => (lesson ? selectQuizQuestions(lesson, seed) : []), [lesson?.id, seed]);
+  const questions = useMemo(
+    () => (baseLesson ? selectQuizQuestions(baseLesson, seed).map((question) => localizeQuizQuestion(question, language)) : []),
+    [baseLesson?.id, language, seed]
+  );
   const [qi, setQi] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [answered, setAnswered] = useState(false);
@@ -35,7 +41,7 @@ export default function QuizScreen() {
   const [correctRun, setCorrectRun] = useState(0);
   const [missedIds, setMissedIds] = useState<string[]>([]);
 
-  if (!lesson) {
+  if (!baseLesson || !lesson) {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg, justifyContent: 'center', alignItems: 'center' }}>
         <Text style={{ ...theme.typography.body, color: theme.colors.textMuted }}>Quiz not found.</Text>
@@ -43,7 +49,7 @@ export default function QuizScreen() {
     );
   }
 
-  const access = lessonAccess(lesson, progressMap, purchasedLessonIds, wallet.coinsTotal);
+  const access = lessonAccess(baseLesson, progressMap, purchasedLessonIds, wallet.coinsTotal);
   if (!access.isUnlocked) {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg, justifyContent: 'center', padding: 24 }}>

@@ -1,6 +1,7 @@
 import { getNotationTerms } from '../content/notationTerms';
 import { neuroscienceLessonDetails } from '../content/neuroscienceLessonDetails';
 import { Lesson } from '../content/types';
+import { AppLanguage, translateText } from '../i18n';
 
 function uniqueDetails(values: string[]): string[] {
   const seen = new Set<string>();
@@ -14,10 +15,14 @@ function uniqueDetails(values: string[]): string[] {
   return result;
 }
 
-export function buildCourseDetails(lesson: Lesson): string[] {
+export function buildCourseDetails(lesson: Lesson, language: AppLanguage = 'en'): string[] {
   return uniqueDetails([
-    ...(neuroscienceLessonDetails[lesson.id] ?? []),
-    ...lesson.questions.map((question) => question.explanation),
-    ...getNotationTerms(lesson).map((term) => `${term.symbol} means ${term.meaning}.`),
+    ...(neuroscienceLessonDetails[lesson.id] ?? []).map((detail) => translateText(detail, language)),
+    ...lesson.questions.map((question) => translateText(question.explanation, language)),
+    ...getNotationTerms(lesson).map((term) =>
+      language === 'fr'
+        ? `${term.symbol} signifie ${translateText(term.meaning, language)}.`
+        : `${term.symbol} means ${term.meaning}.`
+    ),
   ]).slice(0, lesson.trackId === 'neuroscience' ? 8 : 6);
 }

@@ -12,12 +12,14 @@ import { rewardsRepository } from '../../src/repositories/rewardsRepository';
 import { achievements } from '../../src/content/achievements';
 import { MasteryLevel } from '../../src/services/masteryService';
 import { nextAchievementProgress } from '../../src/services/achievementProgressService';
+import { localizeTrack, useI18n } from '../../src/i18n';
 
 export default function ProgressScreen() {
   const theme = useTheme();
   const { rows, completedCount, masteredCount, refresh: rp } = useProgress();
   const { currentStreak, recent, refresh: rs } = useStreak();
   const { wallet, levelInfo, refresh: rw } = useWallet();
+  const { language } = useI18n();
 
   useFocusEffect(useCallback(() => { rp(); rs(); rw(); }, []));
 
@@ -99,12 +101,13 @@ export default function ProgressScreen() {
           {/* Mastery by track */}
           <Text style={{ ...theme.typography.h3, color: theme.colors.text, marginBottom: 8 }}>Mastery by track</Text>
           {tracks.map((t) => {
+            const track = localizeTrack(t, language);
             const lessons = getTrackLessons(t.id);
             const done = rows.filter((r) => r.track_id === t.id && r.mastery !== 'not_started').length;
             return (
               <Card key={t.id} style={{ marginBottom: 10 }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
-                  <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>{t.title}</Text>
+                  <Text style={{ ...theme.typography.bodyStrong, color: theme.colors.text }}>{track.title}</Text>
                   <Text style={{ ...theme.typography.caption, color: theme.colors.textMuted }}>{done}/{lessons.length}</Text>
                 </View>
                 <View style={{ height: 8, borderRadius: 4, backgroundColor: theme.colors.bgMuted, overflow: 'hidden' }}>

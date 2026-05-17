@@ -8,6 +8,7 @@ import { useTheme } from '../src/theme/ThemeProvider';
 import { AnswerOption, AnswerOptionState, Button, CoinChip, ProgressBar, XPChip } from '../src/components';
 import { randomEncouragement } from '../src/content/encouragement';
 import { buildExamQuestions, completeExamAttempt, ExamAttemptResult } from '../src/services/examService';
+import { useI18n } from '../src/i18n';
 
 const optionLabels = ['A', 'B', 'C', 'D'];
 
@@ -16,6 +17,7 @@ export default function ExamScreen() {
   const theme = useTheme();
   const router = useRouter();
   const { width } = useWindowDimensions();
+  const { language } = useI18n();
   const [seed] = useState(() => `${Date.now()}-${Math.random()}`);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [selectedByQuestionId, setSelectedByQuestionId] = useState<Record<string, number>>({});
@@ -28,7 +30,7 @@ export default function ExamScreen() {
     () => rawLessonIds.split(',').map((item) => item.trim()).filter(Boolean),
     [rawLessonIds]
   );
-  const questions = useMemo(() => buildExamQuestions(lessonIds, seed, 8), [lessonIds.join(','), seed]);
+  const questions = useMemo(() => buildExamQuestions(lessonIds, seed, 8, language), [lessonIds.join(','), language, seed]);
   const mobileWebBottomPadding = Platform.OS === 'web' && width < 640 ? 84 : 16;
 
   if (result) {

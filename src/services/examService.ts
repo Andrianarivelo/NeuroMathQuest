@@ -1,5 +1,6 @@
 import { getLesson } from '../content/tracks';
 import { Lesson } from '../content/types';
+import { AppLanguage, localizeQuizQuestion, translateText } from '../i18n';
 import { QuizQuestionWithId, selectQuizQuestions } from './quizService';
 import { applyDailyQuestProgress, completeLessonAttempt, LessonAttemptResult } from './lessonService';
 
@@ -68,7 +69,8 @@ function uniqueLessonIds(values: string[]): string[] {
 export function buildExamQuestions(
   lessonIds: string[],
   seed: string | number = Date.now(),
-  desiredCount = 8
+  desiredCount = 8,
+  language: AppLanguage = 'en'
 ): ExamQuestion[] {
   const lessons = uniqueLessonIds(lessonIds)
     .map((lessonId) => getLesson(lessonId))
@@ -76,11 +78,11 @@ export function buildExamQuestions(
 
   const questionPool = lessons.flatMap((lesson) =>
     selectQuizQuestions(lesson, `${seed}:${lesson.id}`, 2).map((question, index) => ({
-      ...question,
+      ...localizeQuizQuestion(question, language),
       id: `${lesson.id}_${question.id}`,
       examQuestionId: `${lesson.id}_${question.id}_${index}`,
       lessonId: lesson.id,
-      lessonTitle: lesson.title,
+      lessonTitle: translateText(lesson.title, language),
     }))
   );
 
