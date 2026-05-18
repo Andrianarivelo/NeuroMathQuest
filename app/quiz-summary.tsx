@@ -21,10 +21,14 @@ export default function QuizSummary() {
   const router = useRouter();
   const [result, setResult] = useState<LessonAttemptResult | null>(null);
 
-  const lesson = getLesson(params.lessonId ?? '');
-  const correct = parseInt(params.correct ?? '0', 10);
-  const total = parseInt(params.total ?? '3', 10);
-  const missed = (params.missed ?? '').split(',').filter(Boolean);
+  const lessonId = Array.isArray(params.lessonId) ? params.lessonId[0] : params.lessonId ?? '';
+  const correctParam = Array.isArray(params.correct) ? params.correct[0] : params.correct ?? '0';
+  const totalParam = Array.isArray(params.total) ? params.total[0] : params.total ?? '3';
+  const missedParam = Array.isArray(params.missed) ? params.missed[0] : params.missed ?? '';
+  const lesson = getLesson(lessonId);
+  const correct = parseInt(correctParam, 10);
+  const total = parseInt(totalParam, 10);
+  const missed = missedParam.split(',').filter(Boolean);
 
   useEffect(() => {
     if (!lesson) return;

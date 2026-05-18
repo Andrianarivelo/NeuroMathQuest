@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { View, SafeAreaView, Pressable, Platform, ScrollView, useWindowDimensions } from 'react-native';
 import { TranslatedText as Text } from '../../src/i18n/TranslatedText';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -19,6 +19,7 @@ const optionLabels = ['A', 'B', 'C', 'D'];
 
 export default function QuizScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const lessonId = Array.isArray(id) ? id[0] : id ?? '';
   const theme = useTheme();
   const router = useRouter();
   const { width } = useWindowDimensions();
@@ -27,9 +28,9 @@ export default function QuizScreen() {
   const { purchasedLessonIds } = useLessonUnlocks();
   const { language } = useI18n();
 
-  const baseLesson = getLesson(id ?? '');
+  const baseLesson = getLesson(lessonId);
   const lesson = baseLesson ? localizeLesson(baseLesson, language) : null;
-  const [seed] = useState(() => `${Date.now()}-${Math.random()}`);
+  const seed = useMemo(() => `${lessonId}-${Date.now()}-${Math.random()}`, [lessonId]);
   const questions = useMemo(
     () => (baseLesson ? selectQuizQuestions(baseLesson, seed).map((question) => localizeQuizQuestion(question, language)) : []),
     [baseLesson?.id, language, seed]
@@ -39,7 +40,16 @@ export default function QuizScreen() {
   const [answered, setAnswered] = useState(false);
   const [correctCount, setCorrectCount] = useState(0);
   const [correctRun, setCorrectRun] = useState(0);
-  const [missedIds, setMissedIds] = useState<string[]>([]);
+  const [resultsByQuestionId, setResultsByQuestionId] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    setQi(0);
+    setSelectedIndex(null);
+    setAnswered(false);
+    setCorrectCount(0);
+    setCorrectRun(0);
+    setResultsByQuestionId({});
+  }, [lessonId]);
 
   if (!baseLesson || !lesson) {
     return (
@@ -65,6 +75,17 @@ export default function QuizScreen() {
   }
 
   const q = questions[qi];
+  if (!q) {
+    return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.bg, justifyContent: 'center', alignItems: 'center', padding: 24 }}>
+        <Text style={{ ...theme.typography.body, color: theme.colors.textMuted, textAlign: 'center' }}>
+          No quiz questions available for this lesson yet.
+        </Text>
+        <Button label="Go to lesson" fullWidth onPress={() => router.replace(`/lesson/${baseLesson.id}`)} style={{ marginTop: 16 }} />
+      </SafeAreaView>
+    );
+  }
+
   const isCorrect = selectedIndex === q.answerIndex;
   const progress = (qi + (answered ? 1 : 0)) / questions.length;
   const mobileWebBottomPadding = Platform.OS === 'web' && width < 640 ? 84 : 16;
@@ -74,6 +95,7 @@ export default function QuizScreen() {
     setSelectedIndex(optionIndex);
     setAnswered(true);
     const correct = optionIndex === q.answerIndex;
+    setResultsByQuestionId((results) => ({ ...results, [q.id]: correct }));
     if (correct) {
       setCorrectCount((c) => c + 1);
       setCorrectRun((run) => run + 1);
@@ -82,7 +104,6 @@ export default function QuizScreen() {
       }
     } else {
       setCorrectRun(0);
-      setMissedIds((m) => [...m, q.id]);
       if (Platform.OS !== 'web') {
         void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning).catch(() => undefined);
       }
@@ -96,13 +117,18 @@ export default function QuizScreen() {
       setAnswered(false);
     } else {
       // Navigate to summary with params.
+      const finalResults = { ...resultsByQuestionId, [q.id]: isCorrect };
+      const finalCorrectCount = questions.filter((question) => finalResults[question.id]).length;
+      const finalMissedIds = questions
+        .filter((question) => finalResults[question.id] === false)
+        .map((question) => question.id);
       router.replace({
         pathname: '/quiz-summary',
         params: {
           lessonId: lesson.id,
-          correct: String(correctCount),
+          correct: String(finalCorrectCount),
           total: String(questions.length),
-          missed: missedIds.join(','),
+          missed: finalMissedIds.join(','),
         },
       });
     }

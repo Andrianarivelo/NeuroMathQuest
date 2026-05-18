@@ -2,6 +2,7 @@ import { allLessons, getLesson, tracks } from '../src/content/tracks';
 import { localizeLesson, localizeTrack, translateText } from '../src/i18n';
 import { Lesson } from '../src/content/types';
 import { buildCourseDetails } from '../src/services/lessonContentService';
+import { encouragementCopy } from '../src/content/encouragement';
 
 function lessonText(lesson: Lesson): string {
   const parts = [
@@ -132,5 +133,33 @@ describe('localizeContent', () => {
       .toBe('Un maximum spectral révèle une composante rythmique.');
     expect(translateText('Current streak: 2 days. Keep the rhythm gentle and steady.', 'fr'))
       .toBe('Série actuelle : 2 jours. Continue régulièrement, à ton rythme.');
+  });
+
+  it('uses natural French for quiz UI and encouragement copy', () => {
+    const quizUiStrings = [
+      'Perfect!',
+      'Well done',
+      'Good effort',
+      'Good learning moment',
+      'Perfect score bonus!',
+      'Mastery bonus unlocked!',
+      'Milestone chest unlocked!',
+      'Try again',
+      'See results',
+      '3/3 correct',
+      'Achievement: ach_test',
+      'No quiz questions available for this lesson yet.',
+    ];
+
+    const localizedText = [
+      ...quizUiStrings.map((text) => translateText(text, 'fr')),
+      ...Object.values(encouragementCopy).flat().map((text) => translateText(text, 'fr')),
+    ].join('\n');
+
+    expect(translateText('You own this one now.', 'fr')).toBe('Ce concept est maintenant solide.');
+    expect(translateText('3/3 correct', 'fr')).toBe('3/3 bonnes réponses');
+    expect(localizedText).not.toMatch(/appartient maintenant|vous appartient|dans les livres/i);
+    expect(localizedText).not.toMatch(/strie|butin|tout le truc|vous êtes apparu|Joliment raisonné/i);
+    expect(localizedText).not.toMatch(/rythme devient plus facile|Ce genre de journée s'additionne/i);
   });
 });

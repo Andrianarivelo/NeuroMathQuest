@@ -15,6 +15,28 @@ const manualFrench: Record<string, string> = {
   'Reset': 'Réinitialiser',
   'App language': "Langue de l'application",
   'Choose the language used across the app.': "Choisis la langue utilisée dans toute l'application.",
+  'Loading...': 'Chargement...',
+  'Close': 'Fermer',
+  'Next': 'Suivant',
+  'Continue': 'Continuer',
+  'Try again': 'Réessayer',
+  'See results': 'Voir les résultats',
+  'Perfect!': 'Parfait!',
+  'Well done': 'Bien joué',
+  'Good effort': 'Bel effort',
+  'Correct': 'Bonne réponse',
+  'correct': 'bonnes réponses',
+  'Good learning moment': "Point d'apprentissage utile",
+  'Quiz not found.': 'Quiz introuvable.',
+  'No quiz questions available for this lesson yet.':
+    "Aucune question de quiz n'est encore disponible pour cette leçon.",
+  'Lesson locked': 'Leçon verrouillée',
+  'Unlock the lesson before starting its quiz.': 'Déverrouille la leçon avant de commencer son quiz.',
+  'Go to lesson': 'Aller à la leçon',
+  'mastery': 'maîtrise',
+  'Perfect score bonus!': 'Bonus de score parfait!',
+  'Mastery bonus unlocked!': 'Bonus de maîtrise débloqué!',
+  'Milestone chest unlocked!': 'Coffre de progression débloqué!',
   'Never': 'Jamais',
   'Locked': 'Verrouillé',
   'coins': 'pièces',
@@ -52,6 +74,81 @@ const manualFrench: Record<string, string> = {
   'Students': 'Étudiants',
   'Lessons': 'Leçons',
   'Open larger illustration for': "Ouvrir l'illustration agrandie pour",
+  'Welcome back': 'Bon retour',
+  'Good to see you': 'Content de te revoir',
+  'Ready for a bright learning moment': "Prêt pour une idée claire aujourd'hui",
+  'Let us build one clear idea today': "Construisons une idée claire aujourd'hui",
+  'Your next concept is waiting': "Le prochain concept t'attend",
+  'Small steps count': 'Les petits pas comptent',
+  'You are doing steady work': 'Tu avances régulièrement',
+  'Nicely reasoned.': 'Raisonnement solide.',
+  'That is the one.': "C'est la bonne réponse.",
+  'Clean answer. Keep the rhythm.': 'Réponse nette. Continue comme ça.',
+  'You are seeing the pattern.': 'Tu repères la structure.',
+  'Exactly right. Onwards.': 'Exactement. On continue.',
+  'Solid. Your instincts are getting sharper.': "Solide. Ton intuition s'affine.",
+  'Yes. That explanation will stick.': 'Oui. Cette explication va rester.',
+  'Nice effort. The explanation gives the missing piece.':
+    "Bon effort. L'explication donne l'élément qui manquait.",
+  'Not quite yet. You now have a sharper idea.': 'Pas encore. Tu comprends mieux maintenant.',
+  'This is useful practice. Keep going with the next one.':
+    "C'est un bon entraînement. Continue avec la suivante.",
+  'Missed answers are part of learning. You are still moving.':
+    "Les erreurs font partie de l'apprentissage. Tu avances.",
+  'A little off, and that is okay. You just learned something.':
+    "Ce n'était pas encore ça, et c'est utile. Tu viens d'apprendre quelque chose.",
+  'Every attempt makes the concept easier to remember.':
+    'Chaque tentative rend le concept plus facile à retenir.',
+  'First lesson in the books. That is the hardest one.':
+    "Première leçon terminée. C'est souvent la plus difficile.",
+  'You started. That already puts you ahead.': "Tu as commencé. C'est déjà important.",
+  'Welcome in. The rhythm gets easier from here.':
+    'Bienvenue. Le rythme devient plus naturel ensuite.',
+  'Lesson complete. Small step, real progress.':
+    'Leçon terminée. Petit pas, vrai progrès.',
+  'Done. Your brain just did the work.': 'Terminé. Ton cerveau a fait le travail.',
+  'One more concept under your belt.': 'Un concept de plus maîtrisé.',
+  'Nicely done. You earned it.': "Bien joué. C'est mérité.",
+  'Concept mastered. You have earned that star.':
+    'Concept maîtrisé. Cette étoile est méritée.',
+  'You own this one now.': 'Ce concept est maintenant solide.',
+  'Mastery unlocked. This will carry you.':
+    "Maîtrise atteinte. Cette base va t'aider.",
+  'Streak still alive. That consistency matters.':
+    'Série maintenue. La régularité compte.',
+  'Another day, another step. Streak protected.':
+    'Un jour de plus, une étape de plus. Série préservée.',
+  'You showed up. That is the whole trick.':
+    "Tu étais là. C'est le plus important.",
+  'Chest opened. Enjoy the loot.': 'Coffre ouvert. Profite de la récompense.',
+  'Rewards inside. You earned them.': 'Récompenses obtenues. Elles sont méritées.',
+  'A small prize for a real effort.': 'Une petite récompense pour un vrai effort.',
+  'Quest complete. That is momentum.': "Quête terminée. L'élan continue.",
+  'Quest done. Your brain is building patterns.':
+    'Quête terminée. Ton cerveau construit des repères.',
+  'Nice work. Quest cleared.': 'Bon travail. Quête validée.',
+  'Welcome back, concept. You remembered it.':
+    "Ce concept revient, et tu t'en souviens.",
+  'Exam win. That memory is stronger now.':
+    'Révision réussie. Ce souvenir est plus solide.',
+  'Nice recovery. Practice is doing its job.':
+    "Bonne récupération. L'entraînement fait son travail.",
+  'Good to see you again.': 'Content de te revoir.',
+  'Picking up right where you left off.':
+    "Tu reprends exactement où tu t'étais arrêté.",
+  'You came back. That is what learners do.':
+    "Tu es revenu. C'est ce que font les vrais apprenants.",
+  'Daily goal reached. Rest your eyes and enjoy.':
+    'Objectif quotidien atteint. Repose tes yeux et profite.',
+  'You hit your target. That counts.': 'Objectif atteint. Ça compte.',
+  'Daily goal complete. This kind of day adds up.':
+    'Objectif quotidien terminé. Ces journées finissent par compter.',
+  'A real milestone. Look how far you have come.':
+    'Vrai jalon atteint. Regarde le chemin parcouru.',
+  'Milestone unlocked. Serious momentum.':
+    'Jalon débloqué. Bel élan.',
+  'A bigger step than it feels. Well earned.':
+    "C'est un plus grand pas qu'il n'y paraît. C'est mérité.",
   'A vector of one-hots': 'Un vecteur binaire à position unique',
   'Without comfortable indexing, sums like Σ wᵢ rᵢ are hard to read. With it, they are just "weighted sums".':
     'Sans indices clairs, des expressions comme Σ wᵢ rᵢ deviennent difficiles à lire. Avec les indices, on voit simplement une somme pondérée.',
@@ -875,7 +972,7 @@ function translateDynamicFrench(text: string): string | null {
   if (match) return `${match[1]} leçon${match[1] === '1' ? '' : 's'} restante${match[1] === '1' ? '' : 's'}.`;
 
   match = text.match(/^(\d+)\/(\d+) correct$/);
-  if (match) return `${match[1]}/${match[2]} correct`;
+  if (match) return `${match[1]}/${match[2]} bonne${match[1] === '1' ? '' : 's'} réponse${match[1] === '1' ? '' : 's'}`;
 
   match = text.match(/^(\d+)\/(\d+) answered$/);
   if (match) return `${match[1]}/${match[2]} répondu`;
@@ -927,6 +1024,9 @@ function translateDynamicFrench(text: string): string | null {
 
   match = text.match(/^(.+) · (not_started|beginner|practicing|strong|mastered) · best (\d+)% · attempts (\d+)$/);
   if (match) return `${translateFrenchCore(match[1])} · ${translateFrenchCore(match[2])} · meilleur ${match[3]} % · tentatives ${match[4]}`;
+
+  match = text.match(/^Achievement: (.+)$/);
+  if (match) return `Succès : ${translateFrenchCore(match[1])}`;
 
   match = text.match(/^Earn (\d+) more coins? to unlock this lesson\.$/);
   if (match) return `Gagne ${match[1]} pièce${match[1] === '1' ? '' : 's'} de plus pour débloquer cette leçon.`;
