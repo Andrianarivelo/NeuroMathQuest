@@ -375,6 +375,116 @@ const manualFrench: Record<string, string> = {
     "Le codage parcimonieux représente chaque entrée avec un petit sous-ensemble de neurones actifs au sein d'une population plus grande. Apprendre des codes parcimonieux sur des images naturelles produit des champs récepteurs localisés, orientés et passe-bande qui ressemblent à ceux des cellules simples de V1.",
   'Sparse codes are energy-efficient and explain a wide range of sensory representations.':
     "Les codes parcimonieux sont économes en énergie et expliquent un large éventail de représentations sensorielles.",
+  'The brain, clearly and kindly': 'Le cerveau, simplement et clairement',
+  'The basic shapes that make up a thinking brain.': 'Les formes cellulaires de base du cerveau.',
+  '190 lessons - 5 tracks - fully offline': '190 leçons, 5 parcours, entièrement hors ligne',
+  'Pick your starting focus. You can always explore all tracks later.':
+    'Choisis ton point de départ. Tu pourras explorer tous les parcours ensuite.',
+  'What does this neuron care about?': 'À quoi ce neurone répond-il?',
+  'A balanced budget cares about...': 'Un budget équilibré tient compte de...',
+  'A continuous attractor on a 2D sheet can implement...':
+    'Un attracteur continu sur une carte 2D peut représenter...',
+  'A concrete value sampled from the distribution':
+    'Une valeur réellement tirée de la distribution',
+  'A circuit view supports more humane explanations and connects symptoms to multiple treatment routes.':
+    'Une lecture en termes de circuits permet des explications plus humaines et relie les symptômes à plusieurs options thérapeutiques.',
+  'A Hopfield network is a recurrent network with symmetric weights and binary units. It stores patterns as attractors. Given a corrupted version of a stored pattern, the dynamics converge to the closest stored one - a form of content-addressable memory.':
+    "Un réseau de Hopfield est un réseau récurrent à poids symétriques et à unités binaires. Il mémorise des motifs sous forme d'attracteurs. À partir d'une version bruitée d'un motif mémorisé, la dynamique converge vers le motif stocké le plus proche, ce qui réalise une mémoire adressable par le contenu.",
+  'A continuous attractor network has a family of stable states arranged along a continuous manifold, such as a ring. Small nudges move the activity along the ring rather than away from it. Classic models of head direction and spatial orientation use this structure.':
+    "Un réseau d'attracteur continu possède une famille d'états stables organisés le long d'une variété continue, par exemple un anneau. De faibles perturbations déplacent l'activité le long de cet anneau au lieu de l'en écarter. Les modèles classiques de direction de la tête et d'orientation spatiale utilisent cette structure.",
+  'ICA seeks a linear unmixing of multivariate data into components that are as statistically independent as possible, not merely uncorrelated. Unlike PCA, it cares about higher-order statistics, which lets it recover non-Gaussian sources.':
+    "L'ICA cherche une séparation linéaire de données multivariées en composantes aussi indépendantes statistiquement que possible, et pas seulement décorrélées. Contrairement à la PCA, elle exploite les statistiques d'ordre supérieur, ce qui permet de récupérer des sources non gaussiennes.",
+  'Inference is using a trained model to produce predictions on new inputs. Deployment cares about latency, throughput, memory, monitoring, and rollback. Many production systems freeze the model and serve it through a versioned API.':
+    "L'inférence consiste à utiliser un modèle entraîné pour produire des prédictions sur de nouvelles entrées. Le déploiement prend en compte la latence, le débit, la mémoire, la surveillance et le retour arrière. Beaucoup de systèmes de production figent le modèle et le servent via une API versionnée.",
+  'Safe rollouts and rollback': 'Déploiements progressifs et retour arrière sécurisé',
+  'Before transformers, LSTMs powered most translation, speech, and language models.':
+    'Avant les transformeurs, les LSTM étaient au cœur de nombreux modèles de traduction, de parole et de langage.',
+  'Brain-score and model-brain alignment': 'Brain-Score et alignement modèle-cerveau',
+  'Brain-score and similar benchmarks evaluate how well an AI model predicts neural and behavioural data across many regions and tasks. Higher scores often, but not always, correlate with better task performance, and the relationship itself is a research question.':
+    "Brain-Score et les benchmarks similaires évaluent dans quelle mesure un modèle d'IA prédit des données neuronales et comportementales sur plusieurs régions et tâches. Des scores plus élevés sont souvent, mais pas toujours, associés à de meilleures performances, et cette relation est elle-même une question de recherche.",
+  'A brain-score benchmark measures...': 'Un benchmark Brain-Score mesure...',
+  'brain-score': 'Brain-Score',
+  'Dendritic spines': 'Épines dendritiques',
+  'Tiny compartments that shape synaptic input':
+    'De petits compartiments qui modulent les entrées synaptiques',
+  'Many excitatory synapses land on dendritic spines: small protrusions on dendrites with a narrow neck and a rounded head. A spine can partly isolate chemical and electrical signals, so one synapse can change without immediately changing the whole dendrite. Spine size, shape, and receptor content help determine how strongly an input affects the neuron.':
+    "De nombreuses synapses excitatrices se font sur des épines dendritiques: de petites protubérances des dendrites, avec un col étroit et une tête arrondie. Une épine peut isoler partiellement les signaux chimiques et électriques, de sorte qu'une synapse peut changer sans modifier immédiatement toute la dendrite. La taille, la forme et le contenu en récepteurs de l'épine contribuent à déterminer la force d'une entrée synaptique.",
+  'dendritic spine': 'épine dendritique',
+  'spine head': "tête de l'épine",
+  'spine neck': "col de l'épine",
+  'postsynaptic density': 'densité postsynaptique',
+  'A learning event can enlarge some spines and add more AMPA receptors, making those specific synaptic inputs more effective.':
+    "Un épisode d'apprentissage peut agrandir certaines épines et y ajouter des récepteurs AMPA, ce qui rend ces entrées synaptiques plus efficaces.",
+  'Think of spines as tiny workbenches on a dendrite: each one can tune a single connection without rewiring the whole cell.':
+    "On peut voir les épines comme de petits ateliers sur une dendrite: chacune peut ajuster une connexion locale sans recâbler toute la cellule.",
+  'Spines link cellular anatomy to learning, because many long-term synaptic changes happen at this microscopic scale.':
+    "Les épines relient l'anatomie cellulaire à l'apprentissage, car de nombreux changements synaptiques durables se produisent à cette échelle microscopique.",
+  'Most dendritic spines receive which kind of input?':
+    "Quel type d'entrée la plupart des épines dendritiques reçoivent-elles?",
+  'Excitatory synaptic input': 'Une entrée synaptique excitatrice',
+  'Spines are common postsynaptic sites for excitatory synapses, especially in cortex and hippocampus.':
+    "Les épines sont des sites postsynaptiques fréquents pour les synapses excitatrices, en particulier dans le cortex et l'hippocampe.",
+  'Why does a spine neck matter?': "Pourquoi le col d'une épine dendritique est-il important?",
+  'It can partly isolate local signals': 'Il peut isoler partiellement les signaux locaux',
+  'The thin neck helps local biochemical and voltage signals remain partly compartmentalised.':
+    "Le col fin aide les signaux biochimiques et électriques locaux à rester partiellement compartimentés.",
+  'A larger, receptor-rich spine often indicates...':
+    'Une épine dendritique plus grande et riche en récepteurs indique souvent...',
+  'A stronger synaptic connection': 'Une connexion synaptique plus forte',
+  'Large spines often have larger postsynaptic densities and stronger synaptic responses.':
+    "Les grandes épines ont souvent une densité postsynaptique plus importante et des réponses synaptiques plus fortes.",
+  'Many excitatory synapses onto cortical pyramidal neurons sit on dendritic spines.':
+    'De nombreuses synapses excitatrices des neurones pyramidaux corticaux se trouvent sur des épines dendritiques.',
+  'A spine can partly isolate biochemical signals, letting one synapse change without changing every nearby synapse.':
+    "Une épine dendritique peut isoler partiellement les signaux biochimiques, ce qui permet à une synapse de changer sans modifier toutes les synapses voisines.",
+  'Spine size often relates to synaptic strength, though the relationship is not perfectly one-to-one.':
+    "La taille d'une épine est souvent liée à la force synaptique, même si la relation n'est pas parfaitement univoque.",
+  'Spines are dynamic structures that can grow, shrink, appear, or disappear with experience and disease.':
+    "Les épines sont des structures dynamiques qui peuvent grandir, rétrécir, apparaître ou disparaître avec l'expérience et la maladie.",
+  'When you reach for a cup, cortical areas plan the trajectory while spinal motor neurons actually command your arm muscles.':
+    'Lorsque tu attrapes une tasse, des régions corticales planifient la trajectoire tandis que les motoneurones spinaux commandent réellement les muscles du bras.',
+  'Motor neurons in the spinal cord drive muscles directly, while motor cortex, cerebellum, and basal ganglia plan and refine movement. The final common path is always the motor neuron, whose firing rate sets muscle force.':
+    "Les motoneurones de la moelle épinière activent directement les muscles, tandis que le cortex moteur, le cervelet et les noyaux gris centraux planifient et affinent le mouvement. La voie finale commune reste le motoneurone, dont la fréquence de décharge fixe la force musculaire.",
+  'Every voluntary movement exits the nervous system through spinal motor neurons.':
+    'Tout mouvement volontaire quitte le système nerveux par les motoneurones spinaux.',
+  'Some neurons have axons that are extremely long, so the cell needs an internal delivery system. Motor proteins move cargo along microtubule tracks. Anterograde transport carries vesicles, proteins, and mitochondria from the cell body toward axon terminals. Retrograde transport carries used materials and signals back to the cell body.':
+    "Certains neurones ont des axones très longs; la cellule a donc besoin d'un système de transport interne. Des protéines motrices déplacent des cargaisons le long des microtubules. Le transport antérograde achemine vésicules, protéines et mitochondries du soma vers les terminaisons axonales. Le transport rétrograde ramène vers le soma des matériaux usagés et des signaux.",
+  'Axonal transport is the neuron logistics network: tracks, motors, cargo, and return messages.':
+    'Le transport axonal est la logistique interne du neurone: rails de microtubules, moteurs moléculaires, cargaisons et signaux de retour.',
+  'Anterograde transport moves cargo...':
+    'Le transport antérograde déplace les cargaisons...',
+  'Tracks for intracellular transport': 'Rails du transport intracellulaire',
+  'Kinesin motors usually move cargo away from the soma, while dynein motors move cargo back toward the soma.':
+    'Les moteurs kinésine déplacent généralement les cargaisons loin du soma, tandis que les moteurs dynéine les ramènent vers le soma.',
+  'Transported cargo includes vesicles, mitochondria, proteins, RNA, and damaged material for recycling.':
+    "Les cargaisons transportées comprennent des vésicules, des mitochondries, des protéines, de l'ARN et du matériel endommagé destiné au recyclage.",
+  'If a presynaptic neuron repeatedly helps drive a postsynaptic neuron to fire, that connection can become more effective.':
+    "Si un neurone présynaptique contribue de façon répétée à faire décharger un neurone postsynaptique, cette connexion peut devenir plus efficace.",
+  'Calcium entering spines can trigger molecular pathways that strengthen or weaken synapses.':
+    "Le calcium qui entre dans les épines dendritiques peut déclencher des voies moléculaires qui renforcent ou affaiblissent les synapses.",
+  'Slow fluorescence movies that proxy spiking':
+    "Films de fluorescence lents utilisés comme indicateurs indirects de l'activité neuronale",
+  'Calcium signals are slow optical proxies for neural activity.':
+    "Les signaux calciques sont des indicateurs optiques indirects et lents de l'activité neuronale.",
+  'Pain begins with nociceptors that detect potentially damaging stimuli. Their signals enter the spinal cord, ascend toward the thalamus and cortex, and interact with emotion and attention systems. Pain is not just a raw input: descending pathways from the brain can amplify or suppress spinal signals, which is why context changes pain experience.':
+    "La douleur commence avec des nocicepteurs qui détectent des stimuli potentiellement dommageables. Leurs signaux entrent dans la moelle épinière, montent vers le thalamus et le cortex, puis interagissent avec les systèmes émotionnels et attentionnels. La douleur n'est pas un simple signal brut: les voies descendantes du cerveau peuvent amplifier ou inhiber les signaux médullaires, ce qui explique pourquoi le contexte modifie l'expérience douloureuse.",
+  'Pain signals enter the spinal cord, pass through local gating circuits, and ascend toward brainstem, thalamic, and cortical regions.':
+    'Les signaux de douleur entrent dans la moelle épinière, passent par des circuits locaux de contrôle, puis montent vers le tronc cérébral, le thalamus et le cortex.',
+  'The autonomic nervous system controls organs without requiring conscious effort. The sympathetic branch prepares the body for action by increasing heart rate and mobilising energy. The parasympathetic branch supports restoration, digestion, and calm regulation. These branches work with the brainstem, hypothalamus, and body feedback loops.':
+    "Le système nerveux autonome contrôle les organes sans effort conscient. La branche sympathique prépare le corps à l'action en augmentant la fréquence cardiaque et en mobilisant l'énergie. La branche parasympathique favorise la récupération, la digestion et une régulation calme. Ces branches fonctionnent avec les boucles de rétroaction du tronc cérébral, de l'hypothalamus et du corps.",
+  'Indices are tiny pointers that say "this box, please".':
+    'Les indices sont de petits repères qui désignent une composante précise.',
+  'If your model can dream the data, it has captured something about the brain.':
+    "Si ton modèle peut générer des données plausibles, il a capturé une partie de la structure de l'activité cérébrale.",
+  'Picking pretty colours only': 'Choisir seulement de belles couleurs',
+  'Sample quality plus held-out fit is the standard test.':
+    "On vérifie la qualité des échantillons et l'ajustement aux données mises de côté.",
+  'Wiggle a part, watch the brain, learn what depends on what.':
+    'Perturbe une partie du système, observe le cerveau, puis infère les dépendances causales.',
+  'Pure correlation cannot tell you what would happen if you intervened. Causal inference is essential for circuit-level understanding.':
+    "La corrélation seule ne permet pas de savoir ce qui se passerait après une intervention. L'inférence causale est essentielle pour comprendre les circuits.",
+  'Interventions break confounding that pure correlation cannot.':
+    'Les interventions lèvent des ambiguïtés causales que la corrélation seule ne peut pas résoudre.',
 };
 
 function lookupFrench(value: string): string {
@@ -382,6 +492,139 @@ function lookupFrench(value: string): string {
 }
 
 const scientificFrenchReplacements: Array<[RegExp, string]> = [
+  [/\bpost-synaptique\b/g, 'postsynaptique'],
+  [/\bPost-synaptique\b/g, 'Postsynaptique'],
+  [/\bpost-synaptiques\b/g, 'postsynaptiques'],
+  [/\bPost-synaptiques\b/g, 'Postsynaptiques'],
+  [/\bpré-synaptique\b/g, 'présynaptique'],
+  [/\bPré-synaptique\b/g, 'Présynaptique'],
+  [/\bpré-synaptiques\b/g, 'présynaptiques'],
+  [/\bPré-synaptiques\b/g, 'Présynaptiques'],
+  [/\bpost synaptique\b/g, 'postsynaptique'],
+  [/\bpré synaptique\b/g, 'présynaptique'],
+  [/\baxonale terminale\b/g, 'terminaison axonale'],
+  [/\bAxonale terminale\b/g, 'Terminaison axonale'],
+  [/\bColonne dendritique\b/g, 'Épine dendritique'],
+  [/\bcellule pensante\b/g, "cellule capable de traiter l'information"],
+  [/\bCellule pensante\b/g, "Cellule capable de traiter l'information"],
+  [/\barborescence d'entrée de la cellule\b/g, "arbre d'entrée de la cellule"],
+  [/\bLe repos n'est pas fini\b/g, "Le repos n'est pas l'arrêt"],
+  [/\bK\+ leak\b/g, 'canal de fuite K+'],
+  [/\bNa\+\/K\+ pump\b/g, 'pompe Na+/K+'],
+  [/\ble petit intérieur négatif\b/g, "l'intérieur légèrement négatif"],
+  [/\bCanaux sodium ouverts et dépendants du potentiel\b/g, 'Ouvrir les canaux sodium dépendants du potentiel'],
+  [/\bDéplacez Na\+ vers l'extérieur et K\+ vers l'intérieur par rapport à leurs gradients\b/g, 'Déplacer Na+ vers l’extérieur et K+ vers l’intérieur contre leurs gradients'],
+  [/\bDéplacez Na\+ vers l'extérieur et K\+ vers l'intérieur contre leurs gradients\b/g, 'Déplacer Na+ vers l’extérieur et K+ vers l’intérieur contre leurs gradients'],
+  [/\bcanal dépendant de la tension\b/g, 'canal voltage-dépendant'],
+  [/\bCanal dépendant de la tension\b/g, 'Canal voltage-dépendant'],
+  [/\bcanaux dépendants de la tension\b/g, 'canaux voltage-dépendants'],
+  [/\bCanaux dépendants de la tension\b/g, 'Canaux voltage-dépendants'],
+  [/\bportail\b/g, "contrôle d'ouverture"],
+  [/\bPortail\b/g, "Contrôle d'ouverture"],
+  [/\bNoté\b/g, 'Graduel'],
+  [/\bPlus de flux de courant\b/g, 'Un courant plus fort'],
+  [/\bL’électrique devient chimique et redevient électrique\b/g, "L'électricité devient chimie, puis redevient électricité"],
+  [/\bLibération de neurotransmetteur à travers un petit espace\b/g, 'Libération de neurotransmetteur dans la fente synaptique'],
+  [/\bLa liaison ouvre des canaux dépendants du ligand\b/g, 'La liaison ouvre des canaux ligand-dépendants'],
+  [/\bRôle passionnant\b/g, 'Rôle excitateur'],
+  [/\bco-édition\b/g, 'co-libération'],
+  [/\bCo-édition\b/g, 'Co-libération'],
+  [/\bproduits chimiques que les neurones utilisent pour parler\b/g, 'molécules chimiques utilisées par les neurones pour communiquer'],
+  [/\butilisent pour parler\b/g, 'utilisent pour communiquer'],
+  [/\bles produits chimiques\b/g, 'les molécules chimiques'],
+  [/\bLe neurotransmetteur se diffuse\b/g, 'Le neurotransmetteur diffuse'],
+  [/\bla cellule suivante\b/g, 'la cellule cible'],
+  [/\bDe quoi ce neurone se soucie-t-il\?/g, 'À quoi ce neurone répond-il?'],
+  [/\bUn budget équilibré se soucie de\b/g, 'Un budget équilibré tient compte de'],
+  [/\bIl se soucie des statistiques d'ordre supérieur\b/g, "Elle exploite les statistiques d'ordre supérieur"],
+  [/\bil se soucie des statistiques d'ordre supérieur\b/g, "elle exploite les statistiques d'ordre supérieur"],
+  [/\bLe déploiement se soucie de\b/g, 'Le déploiement prend en compte'],
+  [/\bscore cérébral\b/g, 'Brain-Score'],
+  [/\bScore cérébral\b/g, 'Brain-Score'],
+  [/\bbenchmark du Brain-Score\b/g, 'benchmark Brain-Score'],
+  [/\bbenchmarks? similaires évaluent\b/g, 'benchmarks similaires évaluent'],
+  [/\bproxys optiques lents pour l’activité neuronale\b/g, "indicateurs optiques indirects et lents de l'activité neuronale"],
+  [/\bproxy de l'activité neuronale\b/g, "indicateur indirect de l'activité neuronale"],
+  [/\bproxy un potentiel d'action\b/g, "servent d'indicateur indirect de l'activité neuronale"],
+  [/\bproxy\b/g, 'indicateur indirect'],
+  [/\bproxys\b/g, 'indicateurs indirects'],
+  [/\bmodèles comme attracteurs\b/g, "motifs sous forme d'attracteurs"],
+  [/\bmodèle stocké\b/g, 'motif mémorisé'],
+  [/\bDe petits coups de pouce déplacent\b/g, 'De faibles perturbations déplacent'],
+  [/\bcoups de pouce\b/g, 'faibles perturbations'],
+  [/\bpatrons de décharge\b/g, 'motifs de décharge'],
+  [/\bPatrons de décharge\b/g, 'Motifs de décharge'],
+  [/\bschémas de déclenchement\b/g, 'motifs de décharge'],
+  [/\bpatrons de tir\b/g, 'motifs de décharge'],
+  [/\bcellule réceptrice\b/g, 'cellule cible'],
+  [/\bespace étroit\b/g, 'fente synaptique'],
+  [/\btraces de microtubules\b/g, 'microtubules'],
+  [/\bmarchandises\b/g, 'cargaisons'],
+  [/\bMarchandises\b/g, 'Cargaisons'],
+  [/\bpistes, moteurs, cargaisons\b/g, 'rails de microtubules, moteurs moléculaires, cargaisons'],
+  [/\bPistes pour le transport intracellulaire\b/g, 'Rails du transport intracellulaire'],
+  [/\bla colonne vertébrale peut isoler\b/g, "l'épine dendritique peut isoler"],
+  [/\bUne colonne vertébrale peut isoler\b/g, "Une épine dendritique peut isoler"],
+  [/\bLa taille, la forme et le contenu des récepteurs de la colonne vertébrale\b/g, "La taille, la forme et le contenu en récepteurs de l'épine"],
+  [/\btête de la colonne vertébrale\b/g, "tête de l'épine"],
+  [/\bcolonne vertébrale, cou\b/g, "col de l'épine"],
+  [/\bPourquoi la colonne vertébrale est-elle importante\?/g, "Pourquoi le col d'une épine dendritique est-il important?"],
+  [/\bUne colonne vertébrale plus grande et riche en récepteurs indique souvent\b/g, "Une épine dendritique plus grande et riche en récepteurs indique souvent"],
+  [/\bLa taille de la colonne vertébrale est souvent liée\b/g, "La taille de l'épine est souvent liée"],
+  [/\bLe calcium pénétrant dans la colonne vertébrale\b/g, 'Le calcium qui entre dans les épines dendritiques'],
+  [/\bmotoneurones de la colonne vertébrale\b/g, 'motoneurones spinaux'],
+  [/\bsignaux de la colonne vertébrale\b/g, 'signaux médullaires'],
+  [/\bdéclencher le décharge\b/g, 'provoquer la décharge'],
+  [/\bLe transport antérograde transporte\b/g, 'Le transport antérograde achemine'],
+  [/\bLe transport rétrograde transporte\b/g, 'Le transport rétrograde ramène'],
+  [/\bmatériaux utilisés\b/g, 'matériaux usagés'],
+  [/\balimentaient la plupart des modèles\b/g, 'étaient au cœur de nombreux modèles'],
+  [/\bfeuille 2D peut mettre en œuvre\b/g, 'carte 2D peut représenter'],
+  [/\bitinéraires de traitement\b/g, 'options thérapeutiques'],
+  [/\bModèles de neurones enrichis\b/g, "Modèles de neurones à potentiels d'action"],
+  [/\bmodèles de neurones enrichis\b/g, "modèles de neurones à potentiels d'action"],
+  [/\bneurones à potentiel d'action\b/g, "neurones à potentiels d'action"],
+  [/\bModèles tarifaires\b/g, 'Modèles de fréquence de décharge'],
+  [/\bmodèles tarifaires\b/g, 'modèles de fréquence de décharge'],
+  [/\bDescriptions fluides de l'activité de la population\b/g, "Descriptions continues de l'activité de population"],
+  [/\bCourbes de réglage\b/g, "Courbes d'accord"],
+  [/\bcourbes de réglage\b/g, "courbes d'accord"],
+  [/\bCombiner les antécédents et les preuves\b/g, 'Combiner a priori et observations'],
+  [/\bles antécédents et les preuves\b/g, 'les a priori et les observations'],
+  [/\bantécédents\b/g, 'a priori'],
+  [/\bprocessus de potentiel d'action\b/g, 'processus ponctuels de décharge'],
+  [/\bprocessus de potentiels d'action\b/g, 'processus ponctuels de décharge'],
+  [/\bFamilles modèles\b/g, 'Familles de modèles'],
+  [/\bfamilles modèles\b/g, 'familles de modèles'],
+  [/\bFissures, fuites et évaluation honnête\b/g, 'Découpage des données, fuites et évaluation honnête'],
+  [/\bConstruire et diviser des données\b/g, 'Construire et découper les données'],
+  [/\bOptimiseurs, plannings et stabilité\b/g, "Optimiseurs, calendriers d'apprentissage et stabilité"],
+  [/\bThéorie, modèles, formation, perfectionnement\b/g, 'Théorie, modèles, entraînement, affinage'],
+  [/\bformation, l'inférence et la mise au point\b/g, "l'entraînement, l'inférence et le fine-tuning"],
+  [/\bAjustement, invite et alignement\b/g, 'Fine-tuning, prompting et alignement'],
+  [/\bAffiner les modèles\b/g, 'Affiner les modèles'],
+  [/\bNeuroIA\b/g, 'NeuroAI'],
+  [/\bL'IA comme modèle de cerveau\b/g, "L'IA comme modèle du cerveau"],
+  [/\bIA sur les potentiels d'action et les sondes\b/g, "IA appliquée aux potentiels d'action et aux sondes"],
+  [/\bL'IA dans les cliniques et les appareils fonctionnels\b/g, "L'IA en clinique et dans les dispositifs d'assistance"],
+  [/\bappareils fonctionnels\b/g, "dispositifs d'assistance"],
+  [/\bAccumuler des preuves et les conserver en ligne\b/g, 'Accumuler des indices et les maintenir en mémoire'],
+  [/\bCouches, types de cellules et contrôle de l’état du cerveau\b/g, "Couches, types cellulaires et contrôle de l'état cérébral"],
+  [/\bDes grilles de nombres qui connectent les neurones\b/g, 'Des tableaux de nombres pour représenter les connexions neuronales'],
+  [/\bNotation de lecture\b/g, 'Lire la notation'],
+  [/\bScalaires, vecteurs et langage de nombreux nombres\b/g, 'Scalaires, vecteurs et langage des grands ensembles de nombres'],
+  [/\bVariables aléatoires et leur comportement\b/g, 'Variables aléatoires et comportement probabiliste'],
+  [/\bAxes naturels, étirements et structure de bas rang\b/g, 'Axes naturels, étirements et structure de faible rang'],
+  [/\bLire les cerveaux et faire bouger le monde\b/g, "Lire l'activité cérébrale pour agir sur le monde"],
+  [/\brêver les données\b/g, 'générer des données plausibles'],
+  [/\bRemuez une partie\b/g, 'Perturbe une partie du système'],
+  [/\bLes interventions sont déconcertantes\b/g, 'Les interventions lèvent des ambiguïtés causales'],
+  [/\bles interventions sont déconcertantes\b/g, 'les interventions lèvent des ambiguïtés causales'],
+  [/\bLa corrélation pure ne peut pas vous dire\b/g, 'La corrélation seule ne permet pas de savoir'],
+  [/\bLa corrélation pure\b/g, 'La corrélation seule'],
+  [/\bla corrélation pure\b/g, 'la corrélation seule'],
+  [/\ble test standard\b/g, 'le test de référence'],
+  [/\bLe test standard\b/g, 'Le test de référence'],
   [/\bCadences de déclenchement\b/g, 'Fréquences de décharge'],
   [/\bCadence de déclenchement\b/g, 'Fréquence de décharge'],
   [/\bCadences de tir\b/g, 'Fréquences de décharge'],

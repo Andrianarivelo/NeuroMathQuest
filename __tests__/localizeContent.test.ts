@@ -1,5 +1,5 @@
-import { allLessons, getLesson } from '../src/content/tracks';
-import { localizeLesson, translateText } from '../src/i18n';
+import { allLessons, getLesson, tracks } from '../src/content/tracks';
+import { localizeLesson, localizeTrack, translateText } from '../src/i18n';
 import { Lesson } from '../src/content/types';
 import { buildCourseDetails } from '../src/services/lessonContentService';
 
@@ -20,6 +20,20 @@ function lessonText(lesson: Lesson): string {
     ]),
   ];
   return parts.join('\n');
+}
+
+function trackText(): string {
+  return tracks
+    .map((track) => {
+      const localized = localizeTrack(track, 'fr');
+      return [
+        localized.title,
+        localized.tagline,
+        localized.description,
+        ...localized.modules.flatMap((module) => [module.title, module.description]),
+      ].join('\n');
+    })
+    .join('\n');
 }
 
 describe('localizeContent', () => {
@@ -78,6 +92,7 @@ describe('localizeContent', () => {
         lessonText(localizeLesson(lesson, 'fr')),
         ...buildCourseDetails(lesson, 'fr'),
       ].join('\n'))
+      .concat(trackText())
       .join('\n');
 
     expect(localizedText).not.toMatch(/cadence de tir|cadence de déclenchement|cuisson/i);
@@ -90,10 +105,23 @@ describe('localizeContent', () => {
     expect(localizedText).not.toMatch(/(^|[^A-Za-zÀ-ÖØ-öø-ÿ])(émetteurs?|transmetteurs?|trieurs?|intégrations)([^A-Za-zÀ-ÖØ-öø-ÿ]|$)/i);
     expect(localizedText).not.toMatch(/la potentiel d'action|une potentiel d'action/i);
     expect(localizedText).not.toMatch(/Spike binaire|flux de réaction|Signal GRAS/i);
+    expect(localizedText).not.toMatch(/colonne vertébrale|post-synaptique|pré-synaptique/i);
+    expect(localizedText).not.toMatch(/se soucie|score cérébral|proxy|proxys|itinéraires de traitement/i);
+    expect(localizedText).not.toMatch(/coups de pouce|modèles comme attracteurs|patrons de décharge/i);
+    expect(localizedText).not.toMatch(/gentiment|déclencher le décharge|marchandises|feuille 2D peut mettre en œuvre/i);
+    expect(localizedText).not.toMatch(/Modèles tarifaires|antécédents|Fissures|NeuroIA|appareils fonctionnels/i);
+    expect(localizedText).not.toMatch(/Ajustement, invite|Familles modèles|Notation de lecture/i);
+    expect(localizedText).not.toMatch(/rêver les données|Remuez une partie|interventions sont déconcertantes|corrélation pure/i);
 
     expect(localizeLesson(getLesson('A04')!, 'fr').whyItMatters).toContain("potentiels d'action");
+    expect(localizeLesson(getLesson('A21')!, 'fr').explanation).toContain('épines dendritiques');
+    expect(localizeLesson(getLesson('A23')!, 'fr').explanation).toContain('cargaisons');
     expect(localizeLesson(getLesson('B11')!, 'fr').explanation).toContain('Σᵢ wᵢ xᵢ');
     expect(localizeLesson(getLesson('C01')!, 'fr').explanation).toContain('neurone intégrateur à fuite');
+    expect(localizeLesson(getLesson('E18')!, 'fr').title).toContain('Brain-Score');
+    expect(localizeTrack(tracks[0], 'fr').tagline).toBe('Le cerveau, simplement et clairement');
+    expect(localizeTrack(tracks[2], 'fr').modules.find((module) => module.id === 'C-rate')?.title)
+      .toBe('Modèles de fréquence de décharge');
   });
 
   it('polishes literal French fragments before they reach the UI', () => {
